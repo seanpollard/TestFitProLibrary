@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:custom="http://schemas.android.com/apk/res-auto"
+                android:orientation="vertical"
+                android:layout_width="@dimen/setting_option_box_width"
+                android:layout_height="@dimen/setting_option_box_height"
+                android:background="@drawable/settings_button_option_blue"
+                android:weightSum="1">
+
+    <ImageView
+        android:id="@+id/image_view_setting_option_icon"
+        android:layout_marginTop="24dp"
+        android:layout_width="94dp"
+        android:layout_height="94dp"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/ic_dialog_time"
+        android:layout_gravity="center"/>
+
+    <com.ifit.android.werewolf.view.IfitTextView
+        android:id="@+id/txt_view_setting_option_title"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        custom:typeface="proxima_regular"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        android:textAlignment="center"
+        android:gravity="center"
+        android:layout_below="@id/image_view_setting_option_icon"
+        android:textAllCaps="true"
+        android:text="Equipment\nSettings"/>
+
+    <com.ifit.android.werewolf.view.IfitTextView
+        android:id="@+id/txt_view_setting_option_additional_option"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txt_view_setting_option_title"
+        android:layout_marginTop="16dp"
+        android:layout_centerHorizontal="true"
+        android:textColor="@android:color/white"
+        android:paddingRight="24dp"
+        android:paddingLeft="24dp"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:textSize="14sp"
+        custom:typeface="proxima_regular"
+        android:text="Language\nUnits\nTime out"/>
+
+
+</RelativeLayout>

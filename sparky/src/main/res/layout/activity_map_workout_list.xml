@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+    
+    <com.ifit.android.werewolf.view.LoggedOutInfoView
+        app:viewType="map"
+        android:id="@+id/mapWorkoutLoggedOutInfoView"
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"/>
+
+    <ListView
+        android:divider="@color/greyscale_0"
+        android:dividerHeight="@dimen/workout_list_view_divider_height"
+        android:id="@+id/mapWorkoutListView"
+        android:layout_width="@dimen/list_item_workout_width"
+        android:layout_height="match_parent"/>
+
+</LinearLayout>

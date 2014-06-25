@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<com.ifit.android.werewolf.view.CheckableRelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/list_item_height">
+    
+    <com.ifit.android.werewolf.view.CheckableImageView
+        android:focusable="false"
+        android:id="@android:id/selectedIcon"
+        android:src="@drawable/settings_check_selector"
+        android:adjustViewBounds="true"
+        android:layout_marginTop="@dimen/list_item_settings_image_margin_top"
+        android:layout_marginLeft="@dimen/list_item_settings_image_margin_left"
+        android:layout_width="@dimen/list_item_settings_image_width"
+        android:layout_height="@dimen/list_item_settings_image_height" />
+
+    <com.ifit.android.werewolf.view.IfitTextView
+        android:focusable="false"
+        android:paddingRight="@dimen/settings_padding"
+        android:paddingLeft="@dimen/settings_padding"
+        android:gravity="center_vertical"
+        android:textColor="@color/settings_list_item_text_color"
+        android:id="@android:id/text1"
+        android:textSize="@dimen/list_item_text_size"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</com.ifit.android.werewolf.view.CheckableRelativeLayout>

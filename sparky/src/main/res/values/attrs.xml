@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="GoalSettingWidget">
+        <attr name="valueFormat">
+            <enum name="decimal_zero" value="0"/>
+            <enum name="decimal_one" value="1"/>
+            <enum name="decimal_two" value="2"/>
+            <enum name="time" value="3"/>
+        </attr>
+        <attr name="goalLabel" format="string"/>
+        <attr name="step" format="float"/>
+        <!--<attr name="icon" format="reference"/>-->
+    </declare-styleable>
+    <declare-styleable name="WorkoutStatisticFlipperView">
+        <attr name="size" format="enum">
+            <enum name="small" value="0"/>
+            <enum name="large" value="1"/>
+        </attr>
+        <attr name="include_statistics">
+            <flag name="time_elapsed" value="1"/>
+            <flag name="time_left" value="2"/>
+            <flag name="distance" value="4"/>
+            <flag name="speed" value="8"/>
+            <flag name="pace" value="16"/>
+            <flag name="average_incline" value="32"/>
+            <flag name="lap_time" value="64"/>
+            <flag name="elevation" value="128"/>
+            <flag name="heart_rate" value="256"/>
+            <flag name="calories_burned" value="512"/>
+            <flag name="calories_per_hour" value="1024"/>
+            <flag name="laps_completed" value="2048"/>
+        </attr>
+        <attr name="default_statistic" format="enum">
+            <enum name="time_elapsed" value="0"/>
+            <enum name="time_left" value="1"/>
+            <enum name="distance" value="2"/>
+            <enum name="speed" value="3"/>
+            <enum name="pace" value="4"/>
+            <enum name="average_incline" value="5"/>
+            <enum name="lap_time" value="6"/>
+            <enum name="elevation" value="7"/>
+            <enum name="heart_rate" value="8"/>
+            <enum name="calories_burned" value="9"/>
+            <enum name="calories_per_hour" value="10"/>
+            <enum name="laps_completed" value="11"/>
+        </attr>
+        <attr name="preferences_key" format="string"/>
+    </declare-styleable>
+    <declare-styleable name="IfitFontedView">
+        <attr name="typeface">
+            <enum name="proxima_regular" value="0"/>
+            <enum name="proxima_bold" value="1"/>
+            <enum name="proxima_extraBold" value="2"/>
+            <enum name="proxima_lightItalic" value="3"/>
+            <enum name="roboto_regular" value="4"/>
+            <enum name="proxima_semiBold" value="5"/>
+            <enum name="proxima_black" value="6"/>
+            <enum name="proxima_thin" value="7"/>
+            <enum name="proxima_light" value="8"/>
+        </attr>
+    </declare-styleable>
+    <declare-styleable name="IfitButton">
+        <attr name="IfitButtonLabel" format="string"/>
+        <attr name="IfitButtonImageSrc" format="reference"/>
+        <attr name="IfitButtonLeftImageSrc" format="reference"/>
+        <attr name="IfitButtonTextSize" format="dimension"/>
+        <attr name="IfitButtonTextColor" format="color"/>
+        <attr name="IfitButtonBackground" format="reference"/>
+        <attr name="IfitButtonCaratWidth" format="dimension"/>
+        <attr name="IfitButtonCaratHeight" format="dimension"/>
+        <attr name="IfitButtonTextAllCaps" format="boolean"/>
+        <attr name="IfitButtonTextIsBold" format="boolean"/>
+        <attr name="IfitButtonPadding" format="dimension"/>
+        <attr name="IfitButtonSideTextPadding" format="dimension"/>
+        <attr name="IfitButtonCaratTopMargin" format="dimension"/>
+    </declare-styleable>
+    <declare-styleable name="DashboardLabeledButton">
+        <attr name="button_background" format="reference"/>
+        <attr name="button_image" format="reference"/>
+        <attr name="button_label" format="string"/>
+        <attr name="image_left_padding" format="dimension"/>
+        <attr name="image_height" format="dimension"/>
+        <attr name="image_width" format="dimension"/>
+    </declare-styleable>
+    <declare-styleable name="SettingsOptionView">
+        <!--<attr name="background" format="reference"/>-->
+        <attr name="type" format="enum">
+            <enum name="equipment_settings" value="0"/>
+            <enum name="maintenance" value="1"/>
+            <enum name="network" value="2"/>
+            <enum name="entertainment" value="3"/>
+        </attr>
+    </declare-styleable>
+    <declare-styleable name="IfitLabeledButton">
+        <attr name="drawableSource" format="reference"/>
+        <attr name="buttonLabel" format="string"/>
+    </declare-styleable>
+    <declare-styleable name="IfitProgressBar">
+        <attr name="tickType" format="enum">
+            <enum name="distance" value="0"/>
+            <enum name="time" value="1"/>
+            <enum name="calories" value="2"/>
+            <enum name="none" value="3"/>
+        </attr>
+        <attr name="unitType" format="enum">
+            <enum name="meters" value="0"/>
+            <enum name="kilometers" value="1"/>
+            <enum name="miles" value="2"/>
+            <enum name="none" value="3"/>
+        </attr>
+        <attr name="targetValue" format="float"/>
+        <attr name="currentValue" format="float"/>
+        <attr name="backgroundColor" format="color"/>
+        <attr name="foregroundColor" format="color"/>
+        <attr name="progressBarLabel" format="string"/>
+    </declare-styleable>
+
+    <declare-styleable name="GoalSettingWidgetBase">
+        <attr name="text" format="string"/>
+        <attr name="goal_type" format="enum">
+            <enum name="time" value="0"/>
+            <enum name="distance" value="1"/>
+            <enum name="calories" value="2"/>
+            <enum name="pace" value="3"/>
+            <enum name="incline" value="4"/>
+            <enum name="speed" value="5"/>
+        </attr>
+    </declare-styleable>
+    
+    <declare-styleable name="IFitSidePhotoView">
+        <attr name="photo_background" format="reference"/>
+        <attr name="photo_icon" format="reference"/>
+        <attr name="photo_title" format="string"/>
+        <attr name="photo_slogan" format="string"/>
+        <attr name="photo_description" format="string"/>
+    </declare-styleable>
+
+    <declare-styleable name="GoalWorkoutInfoView">
+        <attr name="info_index" format="integer"/>
+        <attr name="info_type" format="enum">
+            <enum name="time" value="0"/>
+            <enum name="distance" value="1"/>
+            <enum name="calories" value="2"/>
+            <enum name="pace" value="3"/>
+            <enum name="incline" value="4"/>
+            <enum name="speed" value="5"/>
+        </attr>
+    </declare-styleable>
+    <declare-styleable name="LoggedOutInfoView">
+        <attr name="viewType" format="enum">
+            <enum name="compete" value="0"/>
+            <enum name="train" value="1"/>
+            <enum name="track" value="2"/>
+            <enum name="map" value="3"/>
+            <enum name="video" value="4"/>
+            <enum name="weight" value="5"/>
+            <enum name="goal" value="6"/>
+        </attr>
+        <attr name="hideButton" format="boolean"/>
+    </declare-styleable>
+    <declare-styleable name="IfitSearchBox">
+        <attr name="hint" format="string"/>
+    </declare-styleable>
+</resources>

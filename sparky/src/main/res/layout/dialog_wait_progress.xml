@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:minWidth="364dp"
+              android:layout_height="match_parent"
+              android:background="@android:color/white">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="8dp"
+        android:layout_marginBottom="10dp">
+
+        <com.ifit.android.werewolf.view.IfitTextView
+            app:typeface="proxima_semiBold"
+            android:textAppearance="@android:style/TextAppearance.Large"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="20dp"
+            android:id="@+id/titleTextView"
+            android:textAllCaps="false"
+            android:textColor="@color/greyscale_4"/>
+
+        <ProgressBar
+            android:indeterminateOnly="true"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/titleProgressBar"/>
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/greyscale_5"/>
+
+    <com.ifit.android.werewolf.view.IfitTextView
+        app:typeface="proxima_regular"
+        android:padding="16dp"
+        android:textSize="16sp"
+        android:textColor="@color/greyscale_4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAllCaps="false"
+        android:id="@+id/messageTextView"/>
+
+</LinearLayout>

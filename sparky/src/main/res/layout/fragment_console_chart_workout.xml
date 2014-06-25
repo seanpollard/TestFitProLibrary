@@ -1,0 +1,10 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/console_chart_fragment"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@color/built_in_detail_top_grey"
+    tools:context="com.ifit.android.werewolf.charts.ConsoleChartWorkoutFragment">
+
+</RelativeLayout>

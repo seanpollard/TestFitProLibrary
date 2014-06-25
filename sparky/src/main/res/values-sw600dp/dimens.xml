@@ -1,0 +1,162 @@
+<resources>
+    <dimen name="large_button_height">52dp</dimen>
+    <dimen name="small_button_height">34dp</dimen>
+
+    <dimen name="carat_top_margin">-1px</dimen>
+
+    <!-- Side Photo -->
+    <dimen name="side_photo_width">0dp</dimen>
+    <dimen name="side_photo_height">0dp</dimen>
+
+    <!-- Side Photo Margins -->
+    <dimen name="side_photo_icon_margin_top">200dp</dimen>
+    <dimen name="side_photo_text_title_margin_top_bottom">14dp</dimen>
+    <dimen name="side_photo_text_slogan_margin_bottom">10dp</dimen>
+
+    <!-- Side Photo Text Size -->
+    <dimen name="side_photo_text_size_title">65sp</dimen>
+    <dimen name="side_photo_text_size_slogan">25sp</dimen>
+    <dimen name="side_photo_text_size_description">20sp</dimen>
+
+    <!-- Dashboard -->
+    <dimen name="dashboard_button_width">120dp</dimen>
+    <dimen name="dashboard_button_height">64dp</dimen>
+    <dimen name="dashboard_button_text_size">16sp</dimen>
+    <dimen name="dashboard_button_label_spacing">16dp</dimen>
+    <dimen name="dashboard_button_image_height">47dp</dimen>
+    <dimen name="dashboard_bottom_button_margin">36dp</dimen>
+    <dimen name="dashboard_button_left_right_margin">6dp</dimen>
+    <dimen name="dashboard_button_image_left_padding_map">-6dp</dimen>
+    <dimen name="dashboard_button_image_left_padding_train">-14dp</dimen>
+    <dimen name="dashboard_button_image_left_padding_compete">0dp</dimen>
+    <dimen name="dashboard_button_image_left_padding_track">-4dp</dimen>
+    <dimen name="dashboard_button_image_left_padding_goal">0dp</dimen>
+    <dimen name="dashboard_button_image_left_padding_video">-12dp</dimen>
+    <dimen name="dashboard_button_image_left_padding_weight">9dp</dimen>
+    <dimen name="dashboard_start_button_text_padding_left">24dp</dimen>
+    <dimen name="dashboard_start_button_width">200dp</dimen>
+    <dimen name="dashboard_start_button_height">160dp</dimen>
+    <dimen name="dashboard_start_button_margin_top">102dp</dimen>
+    <dimen name="dashboard_start_button_text_size">40sp</dimen>
+    <dimen name="dashboard_start_button_right_text_padding">24dp</dimen>
+
+    <!-- Workout ListView -->
+    <dimen name="list_view_angle_offset">16dp</dimen>
+    <dimen name="list_item_workout_info_image_margin_top">1dp</dimen>
+    <dimen name="list_item_workout_info_image_size">16dp</dimen>
+    <dimen name="list_item_workout_info_value_margin_left">2dp</dimen>
+    <dimen name="list_item_workout_info_value_text_size">22sp</dimen>
+    <dimen name="list_item_workout_info_value_margin_bottom">-4dp</dimen>
+    <dimen name="list_item_workout_info_label_margin_left">3dp</dimen>
+    <dimen name="list_item_workout_info_label_text_size">12sp</dimen>
+    <dimen name="list_item_workout_info_label_margin_bottom">0dp</dimen>
+    <dimen name="list_item_workout_info_height">20dp</dimen>
+    <dimen name="list_item_workout_info_top_margin">12dp</dimen>
+    <dimen name="list_item_workout_name_text_size">28sp</dimen>
+    <dimen name="list_item_workout_name_margin_left">2dp</dimen>
+    <dimen name="list_item_workout_name_margin_bottom">11dp</dimen>
+    <dimen name="list_item_workout_separator_width">360dp</dimen>
+    <dimen name="list_item_workout_separator_height">1dp</dimen>
+    <dimen name="list_item_workout_separator_margin_right">30dp</dimen>
+    <dimen name="list_item_workout_info_width">428dp</dimen>
+    <dimen name="list_item_workout_shadow_width">3dp</dimen>
+    <dimen name="list_item_workout_image_width">168dp</dimen>
+    <dimen name="list_item_workout_height">151dp</dimen>
+    <dimen name="list_item_workout_width">580dp</dimen>
+    <dimen name="workout_list_view_divider_height">4dp</dimen>
+    <dimen name="list_left_image_width">300dp</dimen>
+
+    <!-- Map -->
+    <dimen name="console_map_width">960dp</dimen>
+    <dimen name="console_map_height">624dp</dimen>
+    <dimen name="console_map_padding">170px</dimen>
+
+    <!--Console StreetView no image available-->
+    <dimen name="console_street_view_top_margin">120dp</dimen>
+    <dimen name="console_street_view_image_height">164dp</dimen>
+    <dimen name="console_street_view_image_width">99dp</dimen>
+    <dimen name="console_street_view_text_size">38sp</dimen>
+    
+    <!--Built-in Detail-->
+    <dimen name="built_in_detail_start_button_height">52dp</dimen>
+    <dimen name="built_in_detail_start_button_text_size">20sp</dimen>
+    <dimen name="built_in_detail_label_text_size">10sp</dimen>
+    <dimen name="built_in_detail_label_margin_right">18dp</dimen>
+    <dimen name="built_in_detail_label_margin_top">-10dp</dimen>
+    <dimen name="built_in_detail_value_text_size">38sp</dimen>
+    <dimen name="built_in_detail_value_margin_right">16dp</dimen>
+    <dimen name="built_in_detail_calories_image_height">40dp</dimen>
+    <dimen name="built_in_detail_distance_image_height">36dp</dimen>
+    <dimen name="built_in_detail_time_image_height">42dp</dimen>
+    <dimen name="built_in_detail_calories_image_margin_side">26dp</dimen>
+    <dimen name="built_in_detail_distance_time_image_margin_side">20dp</dimen>
+    <dimen name="built_in_detail_image_margin_top">4dp</dimen>
+    <dimen name="built_in_detail_info_row_height">80dp</dimen>
+    <dimen name="built_in_detail_info_row_padding">16dp</dimen>
+    <dimen name="built_in_detail_info_padding_top">2dp</dimen>
+    <dimen name="built_in_detail_info_padding_sides">18dp</dimen>
+    <dimen name="built_in_detail_speed_label_margin_top">-4dp</dimen>
+    <dimen name="built_in_detail_speed_label_text_size">12sp</dimen>
+    <dimen name="built_in_detail_speed_value_text_size">42sp</dimen>
+    <dimen name="built_in_detail_speed_width">200dp</dimen>
+    <dimen name="built_in_detail_speed_padding">6dp</dimen>
+    <dimen name="built_in_detail_speed_container_height">84dp</dimen>
+    <dimen name="built_in_detail_subtitle_text_size">16sp</dimen>
+    <dimen name="built_in_detail_subtitle_margin_top">-6dp</dimen>
+    <dimen name="built_in_detail_title_text_size">22sp</dimen>
+    <dimen name="built_in_detail_title_container_height">76dp</dimen>
+    <dimen name="built_in_detail_title_container_padding">18dp</dimen>
+    <dimen name="built_in_detail_container_width">384dp</dimen>
+    <dimen name="built_in_detail_container_padding">10dp</dimen>
+    <dimen name="built_in_detail_container_margin_top">16dp</dimen>
+    <dimen name="built_in_detail_container_margin_right">16dp</dimen>
+    <dimen name="built_in_detail_map_padding">48dp</dimen>
+
+    <!-- Logged out info -->
+    <dimen name="logged_out_info_join_ifit_width">200dp</dimen>
+    <dimen name="logged_out_info_join_ifit_margin_top">30dp</dimen>
+    <dimen name="logged_out_info_join_ifit_padding">12dp</dimen>
+    <dimen name="logged_out_info_image_width">64dp</dimen>
+    <dimen name="logged_out_info_text_size_title">44sp</dimen>
+    <dimen name="logged_out_info_text_size_description">20sp</dimen>
+    <dimen name="logged_out_info_text_size_motivation_description">14sp</dimen>
+    <dimen name="logged_out_info_text_size_join_ifit">14sp</dimen>
+    <dimen name="logged_out_info_margin_top_title">12dp</dimen>
+    <dimen name="logged_out_info_margin_bottom_title">32dp</dimen>
+    <dimen name="logged_out_info_margin_bottom_description">12dp</dimen>
+    <dimen name="logged_out_info_image_margin_top">84dp</dimen>
+
+    <!-- Logged Out Summary -->
+    <dimen name="summary_logged_out_join_ifit_margin_top">48dp</dimen>
+
+    <!--Settings-->
+    <dimen name="list_item_with_icon_image_width_height">38dp</dimen>
+    <dimen name="list_item_with_icon_image_margin_left">34dp</dimen>
+    <dimen name="list_item_with_icon_image_margin_right">22dp</dimen>
+    <dimen name="list_item_text_size">24sp</dimen>
+    <dimen name="list_item_height">68dp</dimen>
+    <dimen name="list_item_settings_image_margin_top">22dp</dimen>
+    <dimen name="list_item_settings_image_margin_left">36dp</dimen>
+    <dimen name="list_item_settings_image_width">35dp</dimen>
+    <dimen name="list_item_settings_image_height">26dp</dimen>
+    <dimen name="settings_padding">92dp</dimen>
+    <dimen name="divider_height">1px</dimen>
+    <dimen name="settings_button_text_size">18sp</dimen>
+    <dimen name="settings_button_width">140dp</dimen>
+    <dimen name="settings_button_height">60dp</dimen>
+    <dimen name="settings_button_margin_top">10dp</dimen>
+    <dimen name="settings_safety_key_list_height">140dp</dimen>
+    <dimen name="settings_safety_key_text_margin_top">22dp</dimen>
+    <dimen name="settings_safety_key_text_size">17sp</dimen>
+    <dimen name="settings_activity_title_width">400dp</dimen>
+    <dimen name="settings_activity_title_height">78dp</dimen>
+    <dimen name="settings_activity_title_text_size">24sp</dimen>
+    <dimen name="settings_activity_active_image_margin_left">68dp</dimen>
+    <dimen name="settings_activity_active_image_margin_right">12dp</dimen>
+    <dimen name="settings_activity_active_text_size">24sp</dimen>
+    <dimen name="settings_activity_active_button_margin_right">20dp</dimen>
+    <dimen name="settings_activity_active_button_width">48dp</dimen>
+    <dimen name="settings_activity_active_button_height">40dp</dimen>
+    <dimen name="settings_activity_list_view_width">400dp</dimen>
+    <dimen name="settings_shadow_width">2dp</dimen>
+</resources>

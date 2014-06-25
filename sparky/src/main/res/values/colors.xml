@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Setting button gradient -->
+    <color name="settings_options_blue_1">#0096d6</color>
+    <color name="settings_options_blue_2">#159cd6</color>
+
+    <color name="settings_options_blue_1_pressed">#4cb5e2</color>
+    <color name="settings_options_blue_2_pressed">#5bb9e2</color>
+
+    <!--dashboard button gradient colors-->
+    <color name="dashboard_gradient_green_1">#99cc00</color>
+    <color name="dashboard_gradient_green_2">#a8cc3d</color>
+    <color name="dashboard_gradient_purple_1">#990066</color>
+    <color name="dashboard_gradient_purple_2">#992e75</color>
+    <color name="dashboard_gradient_red_1">#ff0000</color>
+    <color name="dashboard_gradient_red_2">#ff3333</color>
+    <color name="dashboard_gradient_yellow_1">#ffcc00</color>
+    <color name="dashboard_gradient_yellow_2">#ffd633</color>
+    <color name="dashboard_gradient_teal_1">#33ccff</color>
+    <color name="dashboard_gradient_teal_2">#66d9ff</color>
+    <color name="dashboard_gradient_pink_1">#ff0066</color>
+    <color name="dashboard_gradient_pink_2">#ff3385</color>
+    <color name="dashboard_gradient_orange_1">#ff9900</color>
+    <color name="dashboard_gradient_orange_2">#ffa826</color>
+
+    <!--dashboard button pressed gradient colors-->
+    <color name="dashboard_gradient_green_1_pressed">#b7db4c</color>
+    <color name="dashboard_gradient_green_2_pressed">#c2db77</color>
+    <color name="dashboard_gradient_purple_1_pressed">#b74c93</color>
+    <color name="dashboard_gradient_purple_2_pressed">#b76c9e</color>
+    <color name="dashboard_gradient_red_1_pressed">#ff4c4c</color>
+    <color name="dashboard_gradient_red_2_pressed">#ff7070</color>
+    <color name="dashboard_gradient_yellow_1_pressed">#ffdb4c</color>
+    <color name="dashboard_gradient_yellow_2_pressed">#ffe270</color>
+    <color name="dashboard_gradient_teal_1_pressed">#70dbff</color>
+    <color name="dashboard_gradient_teal_2_pressed">#93e4ff</color>
+    <color name="dashboard_gradient_pink_1_pressed">#ff4c93</color>
+    <color name="dashboard_gradient_pink_2_pressed">#ff70a9</color>
+    <color name="dashboard_gradient_orange_1_pressed">#ffb74c</color>
+    <color name="dashboard_gradient_orange_2_pressed">#ffc267</color>
+
+    <!--built-in detail colors-->
+    <color name="built_in_detail_top_grey">#ff3d3d3d</color>
+    <color name="built_in_detail_target_speed">#ff434343</color>
+    <color name="built_in_detail_button_color">#ffebebea</color>
+    <color name="built_in_detail_separator_color">#ffd1d1d0</color>
+    <color name="built_in_detail_opaque_border">#33000000</color>
+
+    <!--draw a map colors-->
+    <color name="draw_map_opaque_border">#33000000</color>
+    <color name="draw_map_top_grey">#ff2a2a2a</color>
+    <color name="draw_map_unselected_button_color">#ffebebeb</color>
+    <color name="draw_map_selected_button_color">#ff434343</color>
+    <color name="draw_map_info_button_color">@color/draw_map_selected_button_color</color>
+    <color name="draw_map_info_button_color_pressed">#ff7b7b7b</color>
+    <color name="draw_map_checked_button_color">#ff55b7e7</color>
+    <color name="draw_map_unchecked_button_color">@color/draw_map_unselected_button_color</color>
+    <color name="draw_map_unselected_text_color">#ff858585</color>
+    <color name="draw_map_selected_text_color">@android:color/white</color>
+    <color name="draw_map_white_button_text_color">#ff2f9ed7</color>
+    <color name="draw_map_white_button_pressed_color">#cc82c4e7</color>
+    <color name="draw_map_view_type_toggle_color">#abffffff</color>
+    <color name="draw_map_view_type_toggle_color_selected">#d922aee5</color>
+    <color name="draw_map_view_type_text_color">#ff3f403f</color>
+    <color name="draw_map_view_type_text_color_selected">@android:color/white</color>
+    <color name="draw_map_white_button_shadow_color">#26000000</color>
+    
+    <!--settings colors-->
+    <color name="settings_list_item_text_color">#ff2b2b2b</color>
+    <color name="master_list_item_text_color_unselected">#ff919191</color>
+    <color name="settings_list_item_divider_color">#ffcecece</color>
+    <color name="settings_activity_title_background">#ff141414</color>
+    <color name="settings_activity_settings_title_background_color">#ff282828</color>
+    <color name="master_list_view_background_color">#ff1e1e1e</color>
+    <color name="master_list_view_divider_color">#444444</color>
+    <color name="settings_shadow_color">#2E000000</color>
+
+    <!-- Chart Colors -->
+    <color name="chart_color_1">#ffff0063</color>
+    <color name="chart_color_2">#ffaf2889</color>
+    <color name="chart_color_3">#ff5158b5</color>
+    <color name="chart_color_4">#ff1f76cb</color>
+    <color name="chart_color_5">#ff12b1c5</color>
+    <color name="chart_color_6">#ff7bda7e</color>
+    <color name="chart_color_7">#ffbeef51</color>
+    <color name="chart_bubble_outer">#64ffffff</color>
+    <color name="chart_bubble_active_inner">#c80096d6</color>
+    <color name="chart_bubble_non_active_inner">#ffb2b2b2</color>
+    <color name="really_dark_grey">#303030</color>
+    <color name="chart_grey_background">#7f828586</color>
+    <color name="display_group_background">#ffe5d594</color>
+
+    <color name="purple">#ff990066</color>
+    <color name="purple_selected">#ffb7669d</color>
+    <color name="pink">#ffFF0066</color>
+    <color name="pink_selected">#fff1629f</color>
+    <color name="dark_blue">#ff006089</color>
+    <color name="dark_blue_selected">#ff6c9ab3</color>
+    <color name="ifit_blue">#ff0096D6</color>
+    <color name="ifit_blue_selected">#ff6cb7da</color>
+    <color name="light_blue">#ff33CCFF</color>
+    <color name="light_blue_selected">#ff87d6f4</color>
+    <color name="green">#ff99CC00</color>
+    <color name="green_selected">#ffbada6a</color>
+    <color name="special_green">#ff54b948</color>
+    <color name="orange">#ffFF9900</color>
+    <color name="orange_selected">#fff4ba6a</color>
+    <color name="gold">#ffFFCC00</color>
+    <color name="gold_selected">#fff3d96b</color>
+    <color name="red">#ffC13334</color>
+    <color name="red_selected">#ffDD3355</color>
+    <color name="sort_by_blue_text">#ff0D80CA</color>
+    <color name="light_blue_radio_bg">#ffCEF2FE</color>
+    <color name="list_selector_holo_blue">#ff85D3EE</color>
+
+    <color name="greyscale_0">#ff101010</color>
+    <color name="greyscale_1">#ff141414</color>
+    <color name="greyscale_2">#ff1E1E1E</color>
+    <color name="greyscale_3">#ff282828</color>
+    <color name="greyscale_4">#ff424242</color>
+    <color name="greyscale_9">#ff6A6A6A</color>
+    <color name="greyscale_5">#ff747474</color>
+    <color name="greyscale_6">#ff929292</color>
+    <color name="greyscale_7">#ffCECECE</color>
+    <color name="greyscale_8">#ffEBEBEB</color>
+
+
+</resources>

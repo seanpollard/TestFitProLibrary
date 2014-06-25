@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="logged_out_info_icon_context_description">LoggedOutInitWorkoutIcon</string>
+    <string name="logged_out_info_train_title">Train</string>
+    <string name="logged_out_info_train_description">Rise To The Top</string>
+    <string name="logged_out_info_train_motivation_description">Want to be the best? Then start training like the best.</string>
+    <string name="logged_out_info_track_title">Track</string>
+    <string name="logged_out_info_track_description">Lose Weight Faster</string>
+    <string name="logged_out_info_track_motivation_description">Track every workout to view your progress\nand watch pounds fall off</string>
+    <string name="logged_out_info_map_title">Maps</string>
+    <string name="logged_out_info_map_description">Explore Your World.</string>
+    <string name="logged_out_info_map_motivation_description">Way to go!\nWhere do you want to go next?\nPick anywhere in the world!</string>
+    <string name="logged_out_info_compete_title">Compete</string>
+    <string name="logged_out_info_compete_description">Race Anyone, Anytime, Anywhere.</string>
+    <string name="logged_out_info_compete_motivation_description">Want to be the best? Then start training like the best.</string>
+    <string name="logged_out_info_goal_title">Set A Goal</string>
+    <string name="logged_out_info_goal_description">Make Your Goals a Reality.</string>
+    <string name="logged_out_info_goal_motivation_description">You\'re one step closer!\nSet your goals even higher\nto push yourself harder and further.</string>
+    <string name="logged_out_info_video_title">Video</string>
+    <string name="logged_out_info_video_description">Watch While You Move.</string>
+    <string name="logged_out_info_video_motivation_description">Great Job!\nFly through your workout in HD video.</string>
+    <string name="logged_out_info_weight_title">Weight</string>
+    <string name="logged_out_info_weight_description">Lose Weight Faster</string>
+    <string name="logged_out_info_weight_motivation_description">Track every workout to view your progress and watch pounds fall off</string>
+
+    <!-- Lose Weight -->
+    <string name="lose_weight_logged_in_slogan">Shed pounds\n with Jillian Michaels.</string>
+    <string name="lose_weight_logged_in_description">Way to go!\n Were do you want to go next?\n Pick anywhere in the world</string>
+
+</resources>

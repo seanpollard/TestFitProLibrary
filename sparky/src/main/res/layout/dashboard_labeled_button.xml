@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:id="@android:id/button1"
+        android:layout_width="@dimen/dashboard_button_width"
+        android:layout_height="@dimen/dashboard_button_height">
+
+        <ImageView
+            android:adjustViewBounds="true"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:id="@android:id/icon"
+            android:layout_height="@dimen/dashboard_button_image_height"
+            android:layout_width="wrap_content"/>
+
+    </RelativeLayout>
+
+    <com.ifit.android.werewolf.view.IfitTextView
+        android:clickable="true"
+        android:layout_marginTop="@dimen/dashboard_button_label_spacing"
+        android:id="@android:id/text1"
+        android:textColor="@color/greyscale_4"
+        android:layout_gravity="center"
+        android:textAllCaps="true"
+        android:includeFontPadding="false"
+        android:textSize="@dimen/dashboard_button_text_size"
+        app:typeface="proxima_semiBold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+</LinearLayout>

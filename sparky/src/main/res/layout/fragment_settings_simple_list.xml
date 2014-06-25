@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ListView
+        android:choiceMode="singleChoice"
+        android:divider="@drawable/settings_list_item_divider"
+        android:id="@android:id/list"
+        android:dividerHeight="@dimen/divider_height"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <com.ifit.android.werewolf.view.IfitButton
+        android:layout_marginRight="@dimen/settings_padding"
+        android:layout_gravity="right"
+        android:gravity="center"
+        android:layout_marginTop="@dimen/settings_button_margin_top"
+        android:id="@android:id/button1"
+        app:IfitButtonLabel="@string/settings_set"
+        app:IfitButtonTextColor="@android:color/white"
+        app:IfitButtonTextAllCaps="true"
+        app:IfitButtonTextSize="@dimen/settings_button_text_size"
+        app:typeface="proxima_bold"
+        app:IfitButtonBackground="@drawable/button_selector_green"
+        android:layout_width="@dimen/settings_button_width"
+        android:layout_height="@dimen/settings_button_height"/>
+
+</LinearLayout>

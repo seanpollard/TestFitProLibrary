@@ -1,0 +1,100 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.ifit.android.werewolf.view.IfitTextView
+        android:id="@android:id/empty"
+        android:layout_width="@dimen/settings_activity_title_width"
+        android:layout_height="@dimen/settings_activity_title_height"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:background="@color/settings_activity_title_background"
+        android:gravity="center"
+        android:text="@string/settings"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/settings_activity_title_text_size"
+        app:typeface="proxima_semiBold" />
+
+    <com.ifit.android.werewolf.view.IfitTextView
+        android:id="@+id/inactiveHeaderTextView"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/settings_activity_title_height"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@android:id/empty"
+        android:background="@color/settings_activity_settings_title_background_color"
+        android:gravity="center"
+        android:text="@string/equipment"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/settings_activity_title_text_size"
+        app:typeface="proxima_semiBold" />
+
+    <RelativeLayout
+        android:id="@+id/activeHeaderContainer"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/settings_activity_title_height"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@android:id/empty"
+        android:background="@color/settings_activity_settings_title_background_color"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:visibility="invisible">
+
+        <ImageView
+            android:layout_centerVertical="true"
+            android:id="@+id/activeHeaderImageView"
+            android:src="@drawable/ic_settings_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="@dimen/settings_activity_active_image_margin_left"
+            android:layout_marginRight="@dimen/settings_activity_active_image_margin_right" />
+
+        <com.ifit.android.werewolf.view.IfitTextView
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/activeHeaderImageView"
+            android:id="@+id/activeHeaderTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textSize="@dimen/settings_activity_active_text_size"
+            app:typeface="proxima_semiBold"
+            android:gravity="center"
+            android:textColor="@android:color/white" />
+
+        <ImageButton
+            android:layout_marginRight="@dimen/settings_activity_active_button_margin_right"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:id="@+id/activeHeaderInfoButton"
+            android:layout_width="@dimen/settings_activity_active_button_width"
+            android:layout_height="@dimen/settings_activity_active_button_height"
+            android:layout_gravity="right|center_vertical"
+            android:background="@drawable/draw_map_info_button_selector"
+            android:src="@drawable/ic_info_image" />
+
+    </RelativeLayout>
+
+    <ListView
+        android:id="@+id/settingsListView"
+        android:layout_width="@dimen/settings_activity_list_view_width"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@android:id/empty"
+        android:background="@color/master_list_view_background_color"
+        android:divider="@color/master_list_view_divider_color"
+        android:dividerHeight="@dimen/divider_height" />
+
+    <FrameLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/inactiveHeaderTextView"
+        android:layout_toRightOf="@id/settingsListView" />
+
+    <View
+        android:layout_width="@dimen/settings_shadow_width"
+        android:layout_height="match_parent"
+        android:layout_toRightOf="@id/settingsListView"
+        android:background="@color/settings_shadow_color" />
+
+</RelativeLayout>

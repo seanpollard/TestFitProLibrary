@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true" />
+
+    <LinearLayout
+        android:layout_width="370dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="24dp"
+        android:layout_marginTop="22dp"
+        android:background="@color/draw_map_opaque_border"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/white"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="62dp"
+                android:background="@color/draw_map_top_grey"
+                android:padding="12dp">
+
+                <com.ifit.android.werewolf.view.IfitTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:text="@string/draw_route"
+                    android:textAllCaps="true"
+                    android:textColor="@android:color/white"
+                    android:textSize="24sp"
+                    app:typeface="proxima_extraBold" />
+
+                <ImageButton
+                    android:id="@+id/infoButton"
+                    android:layout_width="48dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/draw_map_info_button_selector"
+                    android:src="@drawable/ic_info_image" />
+            </RelativeLayout>
+
+            <com.ifit.android.werewolf.view.IfitSearchBox
+                android:id="@+id/mapsIfitSearchBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="26dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginRight="12dp"
+                android:layout_marginTop="22dp"
+                app:hint="@string/type_location" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="116dp"
+                android:orientation="horizontal">
+
+                <RadioGroup
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <com.ifit.android.werewolf.view.IfitRadioButton
+                        android:id="@+id/snapRadioButton"
+                        style="@style/DrawMapRadioButtonStyle"
+                        android:checked="true"
+                        android:drawableTop="@drawable/draw_map_radio_drawable_snap_selector"
+                        android:text="@string/snap" />
+
+                    <View
+                        android:layout_width="1px"
+                        android:layout_height="match_parent"
+                        android:background="@android:color/transparent"
+                        android:focusable="false" />
+
+                    <com.ifit.android.werewolf.view.IfitRadioButton
+                        android:id="@+id/drawRadioButton"
+                        style="@style/DrawMapRadioButtonStyle"
+                        android:drawableTop="@drawable/draw_map_radio_drawable_draw_selector"
+                        android:text="@string/draw"
+                        app:typeface="proxima_regular" />
+
+                </RadioGroup>
+
+                <View
+                    android:layout_width="1px"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/transparent"
+                    android:focusable="false" />
+
+                <com.ifit.android.werewolf.view.IfitCheckBox
+                    android:id="@+id/returnCheckBox"
+                    style="@style/DrawMapRadioButtonStyle"
+                    android:drawableTop="@drawable/draw_map_radio_drawable_return_selector"
+                    android:text="@string/return_text"
+                    app:typeface="proxima_regular" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="68dp"
+                android:orientation="horizontal">
+
+                <com.ifit.android.werewolf.view.IfitButton
+                    android:id="@+id/undoButton"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    app:IfitButtonBackground="@drawable/draw_map_white_button_selector"
+                    app:IfitButtonCaratTopMargin="-1dp"
+                    app:IfitButtonCaratWidth="11dp"
+                    app:IfitButtonLabel="@string/back_one"
+                    app:IfitButtonLeftImageSrc="@drawable/ic_arrow_back"
+                    app:IfitButtonTextAllCaps="true"
+                    app:IfitButtonTextColor="#ff2f9ed7"
+                    app:IfitButtonTextSize="18sp" />
+
+                <com.ifit.android.werewolf.view.IfitButton
+                    android:id="@+id/resetButton"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    app:IfitButtonBackground="@drawable/draw_map_white_button_selector"
+                    app:IfitButtonCaratTopMargin="-1dp"
+                    app:IfitButtonCaratWidth="16dp"
+                    app:IfitButtonLabel="Reset All"
+                    app:IfitButtonLeftImageSrc="@drawable/ic_reset"
+                    app:IfitButtonTextAllCaps="true"
+                    app:IfitButtonTextColor="#ff2f9ed7"
+                    app:IfitButtonTextSize="18sp" />
+
+            </LinearLayout>
+
+            <com.ifit.android.werewolf.view.IfitButton
+                android:id="@+id/saveButton"
+                android:layout_width="match_parent"
+                android:layout_height="62dp"
+                android:layout_gravity="center"
+                android:clickable="true"
+                android:gravity="center"
+                app:IfitButtonBackground="@drawable/detail_start_workout_button_selector"
+                app:IfitButtonLabel="@string/save_workout"
+                app:IfitButtonTextAllCaps="true"
+                app:IfitButtonTextColor="@android:color/white"
+                app:IfitButtonTextSize="@dimen/built_in_detail_start_button_text_size"
+                app:typeface="proxima_bold" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <RadioGroup
+        android:id="@+id/mapViewTypeRadioGroup"
+        android:layout_width="246dp"
+        android:layout_height="56dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="34dp"
+        android:layout_marginTop="34dp"
+        android:orientation="horizontal">
+
+        <com.ifit.android.werewolf.view.IfitRadioButton
+            android:id="@+id/mapRadioButton"
+            style="@style/DrawMapViewTypeRadioButtonStyle"
+            android:checked="true"
+            android:text="@string/map" />
+
+        <com.ifit.android.werewolf.view.IfitRadioButton
+            android:id="@+id/satelliteRadioButton"
+            style="@style/DrawMapViewTypeRadioButtonStyle"
+            android:text="@string/satellite" />
+
+    </RadioGroup>
+
+    <View
+        android:layout_width="246dp"
+        android:layout_height="2dp"
+        android:layout_alignLeft="@id/mapViewTypeRadioGroup"
+        android:layout_below="@id/mapViewTypeRadioGroup"
+        android:background="@color/draw_map_white_button_shadow_color" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="34dp"
+        android:layout_marginLeft="34dp"
+        android:orientation="vertical">
+
+        <ImageButton
+            android:background="@drawable/draw_map_zoom_button_selector"
+            android:id="@+id/zoomInButton"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:src="@drawable/ic_plus_black" />
+
+        <View
+            android:layout_width="56dp"
+            android:layout_height="2dp"
+            android:background="@color/draw_map_white_button_shadow_color" />
+
+        <View
+            android:layout_width="56dp"
+            android:layout_height="8dp"
+            android:background="@android:color/transparent" />
+
+        <ImageButton
+            android:background="@drawable/draw_map_zoom_button_selector"
+            android:id="@+id/zoomOutButton"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:src="@drawable/ic_minus_black" />
+        <View
+            android:layout_width="56dp"
+            android:layout_height="2dp"
+            android:background="@color/draw_map_white_button_shadow_color" />
+
+    </LinearLayout>
+
+</RelativeLayout>

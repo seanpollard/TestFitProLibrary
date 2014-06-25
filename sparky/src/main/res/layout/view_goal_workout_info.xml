@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:custom="http://schemas.android.com/apk/res-auto"
+              android:layout_width="250dp"
+              android:layout_height="250dp"
+              android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/image_view_goal_workout_info_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/ic_icn_summary_pace"
+        />
+
+    <com.ifit.android.werewolf.view.IfitTextView
+        android:id="@+id/txt_view_goal_workout_info_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_gravity="center_horizontal"
+        android:textSize="30sp"
+        android:textAlignment="center"
+        android:text="@string/pace"
+        custom:typeface="proxima_regular"
+        />
+
+    <com.ifit.android.werewolf.view.IfitTextView
+        android:id="@+id/txt_view_goal_workout_info_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_gravity="center_horizontal"
+        android:textSize="60sp"
+        android:textAlignment="center"
+        android:text="@string/zero_decimal"
+        custom:typeface="proxima_bold"
+        />
+
+    <com.ifit.android.werewolf.view.IfitTextView
+        android:id="@+id/txt_view_goal_workout_info_unit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_gravity="center_horizontal"
+        android:textSize="26sp"
+        android:textAlignment="center"
+        android:text="@string/minutes_per_mile_capitalized"
+        custom:typeface="proxima_regular"
+        />
+
+</LinearLayout>

@@ -1,0 +1,3 @@
+[submodule "SparkyAndroidLib"]
+	path = SparkyAndroidLib
+	url = git@github.ifit-dev.com:Sparky/SparkyAndroidLib.git

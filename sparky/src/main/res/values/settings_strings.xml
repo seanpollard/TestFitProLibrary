@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Settings Screen -->
+    <string name="settings_title">Settings</string>
+    <string name="equipment">Equipment</string>
+    <string name="maintenance">Maintenance</string>
+    <string name="wireless_network">Wireless Network</string>
+    <string name="entertainment">Entertainment</string>
+
+    <!-- Equipment Settings -->
+    <string name="language">Language</string>
+    <string name="display_units">Display Units (US/Metric)</string>
+    <string name="demo_mode">Demo Mode</string>
+    <string name="reset_timeout">Reset Timeout</string>
+    <string name="safety_key">Safety Key</string>
+    <string name="screen_lock">Screen Lock</string>
+    <string name="auto_login">Auto Login</string>
+    <string name="auto_update">Auto Update</string>
+    <string-array name="equipment_settings">
+        <item>@string/language</item>
+        <item>@string/display_units</item>
+        <item>@string/demo_mode</item>
+        <item>@string/reset_timeout</item>
+        <item>@string/safety_key</item>
+        <!--<item>@string/screen_lock</item>-->
+        <item>@string/auto_login</item>
+        <item>@string/auto_update</item>
+    </string-array>
+    <string name="english">English</string>
+    <string name="espanol">Espanol</string>
+    <string name="francais">Francais</string>
+    <string name="deutsch">Deutsch</string>
+    <string name="japanese">Japanese</string>
+    <string name="chinese">Chinese</string>
+    <string-array name="equipment_languages">
+        <item>@string/english</item>
+        <item>@string/espanol</item>
+        <item>@string/francais</item>
+        <item>@string/deutsch</item>
+        <item>@string/japanese</item>
+        <item>@string/chinese</item>
+    </string-array>
+    <string-array name="equipment_units">
+        <item>US</item>
+        <item>Metric</item>
+    </string-array>
+    <string-array name="equipment_reset_timeout">
+        <item>1 minute</item>
+        <item>2 minutes</item>
+        <item>3 minutes</item>
+        <item>5 minutes</item>
+    </string-array>
+    <string name="safety_key_warning"><b>Warning:</b> Disabling the Safety Key could result in serious injury. An emergency stop will require pressing the stop button. Access to the treadmill must be controlled to prevent unauthorized use.</string>
+    <string name="settings_set">set</string>
+
+
+    <string-array name="setting_enabled_disabled">
+        <item>Enabled</item>
+        <item>Disabled</item>
+    </string-array>
+    <string-array name="settings_on_off">
+        <item>On</item>
+        <item>Off</item>
+    </string-array>
+
+</resources>

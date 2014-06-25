@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView android:id="@+id/streetViewImageView"
+        android:layout_width="match_parent"
+        android:scaleType="fitXY"
+        android:layout_height="match_parent"/>
+
+    <LinearLayout android:id="@+id/streetViewNotAvailable" android:visibility="visible"
+        android:orientation="vertical" android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/noImageImageView"
+            android:layout_marginTop="@dimen/console_street_view_top_margin"
+            android:layout_gravity="center"
+            android:layout_width="@dimen/console_street_view_image_width"
+            android:layout_height="@dimen/console_street_view_image_height"
+            android:layout_marginBottom="4dp"/>
+        <TextView
+            android:layout_gravity="center"
+            android:maxWidth="768dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAllCaps="true"
+            android:textSize="@dimen/console_street_view_text_size"
+            android:textColor="@color/greyscale_6"
+            android:textStyle="normal"
+            android:text="@string/no_street_view"
+            android:typeface="sans"/>
+    </LinearLayout>
+
+</RelativeLayout>

@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@color/built_in_detail_opaque_border"
+    android:orientation="vertical"
+    android:padding="@dimen/built_in_detail_container_padding">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/built_in_detail_title_container_height"
+        android:background="@color/built_in_detail_top_grey"
+        android:orientation="vertical"
+        android:padding="@dimen/built_in_detail_title_container_padding">
+
+        <!--<com.ifit.android.werewolf.view.IfitTextView-->
+            <!--android:id="@+id/titleTextView"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:ellipsize="end"-->
+            <!--android:singleLine="true"-->
+            <!--android:text="Workout Title"-->
+            <!--android:textColor="@android:color/white"-->
+            <!--android:textSize="@dimen/built_in_detail_title_text_size"-->
+            <!--app:typeface="proxima_bold" />-->
+        <TextView
+            android:id="@+id/titleTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:text="Workout Title"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/built_in_detail_title_text_size"/>
+
+        <!--<com.ifit.android.werewolf.view.IfitTextView-->
+            <!--android:id="@+id/subtitleTextView"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginTop="@dimen/built_in_detail_subtitle_margin_top"-->
+            <!--android:ellipsize="end"-->
+            <!--android:singleLine="true"-->
+            <!--android:text="Workout subtitle"-->
+            <!--android:textColor="@android:color/white"-->
+            <!--android:textSize="@dimen/built_in_detail_subtitle_text_size"-->
+            <!--app:typeface="proxima_regular" />-->
+        <TextView
+            android:id="@+id/subtitleTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/built_in_detail_subtitle_margin_top"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:text="Workout subtitle"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/built_in_detail_subtitle_text_size" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/built_in_detail_speed_container_height"
+        android:background="@android:color/white"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/built_in_detail_speed_layout"
+            android:layout_width="@dimen/built_in_detail_speed_width"
+            android:layout_height="match_parent"
+            android:background="@color/built_in_detail_target_speed"
+            android:orientation="vertical"
+            android:padding="@dimen/built_in_detail_speed_padding">
+
+            <!--<com.ifit.android.werewolf.view.IfitTextView-->
+                <!--android:id="@+id/speedTextView"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:ellipsize="end"-->
+                <!--android:gravity="center"-->
+                <!--android:singleLine="true"-->
+                <!--android:text="1.0"-->
+                <!--android:textColor="@android:color/white"-->
+                <!--android:textSize="@dimen/built_in_detail_speed_value_text_size"-->
+                <!--app:typeface="proxima_extraBold" />-->
+            <TextView
+                android:id="@+id/speedTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:singleLine="true"
+                android:text="1.0"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/built_in_detail_speed_value_text_size" />
+
+            <!--<com.ifit.android.werewolf.view.IfitTextView-->
+                <!--android:id="@+id/speedLabelTextView"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginTop="@dimen/built_in_detail_speed_label_margin_top"-->
+                <!--android:ellipsize="end"-->
+                <!--android:gravity="center"-->
+                <!--android:singleLine="true"-->
+                <!--android:text="@string/adjust_target_speed_s"-->
+                <!--android:textColor="@android:color/white"-->
+                <!--android:textSize="@dimen/built_in_detail_speed_label_text_size"-->
+                <!--app:typeface="proxima_semiBold" />-->
+            <TextView
+                android:id="@+id/speedLabelTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/built_in_detail_speed_label_margin_top"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:singleLine="true"
+                android:text="@string/adjust_target_speed_s"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/built_in_detail_speed_label_text_size" />
+        </LinearLayout>
+
+        <View
+            android:id="@+id/built_in_detail_seperator_1"
+            android:layout_width="1px"
+            android:layout_height="match_parent"
+            android:background="@android:color/white" />
+
+        <ImageButton
+            android:id="@+id/speedMinusButton"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/detail_plus_minus_button_selector"
+            android:src="@drawable/ic_detail_minus" />
+
+        <View
+            android:id="@+id/built_in_detail_seperator_2"
+            android:layout_width="1px"
+            android:layout_height="match_parent"
+            android:background="@android:color/white" />
+
+        <ImageButton
+            android:id="@+id/speedPlusButton"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/detail_plus_minus_button_selector"
+            android:src="@drawable/ic_detail_plus" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/built_in_detail_views_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/built_in_detail_info_padding_sides"
+        android:paddingRight="@dimen/built_in_detail_info_padding_sides"
+        android:paddingTop="@dimen/built_in_detail_info_padding_top">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/built_in_detail_info_row_height"
+            android:paddingBottom="@dimen/built_in_detail_info_row_padding"
+            android:paddingTop="@dimen/built_in_detail_info_row_padding">
+
+            <ImageView
+                android:id="@+id/timeImageView"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/built_in_detail_time_image_height"
+                android:layout_marginLeft="@dimen/built_in_detail_distance_time_image_margin_side"
+                android:layout_marginRight="@dimen/built_in_detail_distance_time_image_margin_side"
+                android:layout_marginTop="@dimen/built_in_detail_image_margin_top"
+                android:src="@drawable/ic_detail_time" />
+
+            <!--<com.ifit.android.werewolf.view.IfitTextView-->
+                <!--android:id="@+id/timeTextView"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_alignParentRight="true"-->
+                <!--android:layout_alignParentTop="true"-->
+                <!--android:layout_marginRight="@dimen/built_in_detail_value_margin_right"-->
+                <!--android:text="45:00"-->
+                <!--android:textSize="@dimen/built_in_detail_value_text_size"-->
+                <!--app:typeface="proxima_bold" />-->
+            <TextView
+                android:id="@+id/timeTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginRight="@dimen/built_in_detail_value_margin_right"
+                android:text="45:00"
+                android:textSize="@dimen/built_in_detail_value_text_size"/>
+
+            <!--<com.ifit.android.werewolf.view.IfitTextView-->
+                <!--android:id="@+id/timeLabelTextView"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_alignParentRight="true"-->
+                <!--android:layout_below="@id/timeTextView"-->
+                <!--android:layout_marginRight="@dimen/built_in_detail_label_margin_right"-->
+                <!--android:layout_marginTop="@dimen/built_in_detail_label_margin_top"-->
+                <!--android:text="@string/elapsed_time_s"-->
+                <!--android:textAllCaps="false"-->
+                <!--android:textSize="@dimen/built_in_detail_label_text_size"-->
+                <!--app:typeface="proxima_regular" />-->
+            <TextView
+                android:id="@+id/timeLabelTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@id/timeTextView"
+                android:layout_marginRight="@dimen/built_in_detail_label_margin_right"
+                android:layout_marginTop="@dimen/built_in_detail_label_margin_top"
+                android:text="@string/elapsed_time_s"
+                android:textAllCaps="false"
+                android:textSize="@dimen/built_in_detail_label_text_size"/>
+        </RelativeLayout>
+
+        <View
+            android:id="@+id/built_in_detail_seperator_3"
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/built_in_detail_separator_color" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/built_in_detail_info_row_height"
+            android:paddingBottom="@dimen/built_in_detail_info_row_padding"
+            android:paddingTop="@dimen/built_in_detail_info_row_padding">
+
+            <ImageView
+                android:id="@+id/distanceImageView"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/built_in_detail_distance_image_height"
+                android:layout_marginLeft="@dimen/built_in_detail_distance_time_image_margin_side"
+                android:layout_marginRight="@dimen/built_in_detail_distance_time_image_margin_side"
+                android:layout_marginTop="@dimen/built_in_detail_image_margin_top"
+                android:src="@drawable/ic_detail_distance" />
+
+            <!--<com.ifit.android.werewolf.view.IfitTextView-->
+                <!--android:id="@+id/distanceTextView"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_alignParentRight="true"-->
+                <!--android:layout_alignParentTop="true"-->
+                <!--android:layout_marginRight="@dimen/built_in_detail_value_margin_right"-->
+                <!--android:text="4.50"-->
+                <!--android:textSize="@dimen/built_in_detail_value_text_size"-->
+                <!--app:typeface="proxima_bold" />-->
+            <TextView
+                android:id="@+id/distanceTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginRight="@dimen/built_in_detail_value_margin_right"
+                android:text="4.50"
+                android:textSize="@dimen/built_in_detail_value_text_size"/>
+
+            <!--<com.ifit.android.werewolf.view.IfitTextView-->
+                <!--android:id="@+id/distanceLabelTextView"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_alignParentRight="true"-->
+                <!--android:layout_below="@id/distanceTextView"-->
+                <!--android:layout_marginRight="@dimen/built_in_detail_label_margin_right"-->
+                <!--android:layout_marginTop="@dimen/built_in_detail_label_margin_top"-->
+                <!--android:text="@string/distance_s"-->
+                <!--android:textAllCaps="false"-->
+                <!--android:textSize="@dimen/built_in_detail_label_text_size"-->
+                <!--app:typeface="proxima_regular" />-->
+            <TextView
+                android:id="@+id/distanceLabelTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@id/distanceTextView"
+                android:layout_marginRight="@dimen/built_in_detail_label_margin_right"
+                android:layout_marginTop="@dimen/built_in_detail_label_margin_top"
+                android:text="@string/distance_s"
+                android:textAllCaps="false"
+                android:textSize="@dimen/built_in_detail_label_text_size"/>
+        </RelativeLayout>
+
+        <View
+            android:id="@+id/built_in_detail_seperator_4"
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/built_in_detail_separator_color" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/built_in_detail_info_row_height"
+            android:paddingBottom="@dimen/built_in_detail_info_row_padding"
+            android:paddingTop="@dimen/built_in_detail_info_row_padding">
+
+            <ImageView
+                android:id="@+id/caloriesImageView"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/built_in_detail_calories_image_height"
+                android:layout_marginLeft="@dimen/built_in_detail_calories_image_margin_side"
+                android:layout_marginRight="@dimen/built_in_detail_calories_image_margin_side"
+                android:layout_marginTop="@dimen/built_in_detail_image_margin_top"
+                android:src="@drawable/ic_detail_calorie" />
+
+            <!--<com.ifit.android.werewolf.view.IfitTextView-->
+                <!--android:id="@+id/caloriesTextView"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_alignParentRight="true"-->
+                <!--android:layout_alignParentTop="true"-->
+                <!--android:layout_marginRight="@dimen/built_in_detail_value_margin_right"-->
+                <!--android:text="140"-->
+                <!--android:textSize="@dimen/built_in_detail_value_text_size"-->
+                <!--app:typeface="proxima_bold" />-->
+            <TextView
+                android:id="@+id/caloriesTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginRight="@dimen/built_in_detail_value_margin_right"
+                android:text="140"
+                android:textSize="@dimen/built_in_detail_value_text_size"/>
+
+            <!--<com.ifit.android.werewolf.view.IfitTextView-->
+                <!--android:id="@+id/caloriesLabelTextView"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_alignParentRight="true"-->
+                <!--android:layout_below="@id/caloriesTextView"-->
+                <!--android:layout_marginRight="@dimen/built_in_detail_label_margin_right"-->
+                <!--android:layout_marginTop="@dimen/built_in_detail_label_margin_top"-->
+                <!--android:text="@string/estimated_calories"-->
+                <!--android:textAllCaps="false"-->
+                <!--android:textSize="@dimen/built_in_detail_label_text_size"-->
+                <!--app:typeface="proxima_regular" />-->
+            <TextView
+                android:id="@+id/caloriesLabelTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@id/caloriesTextView"
+                android:layout_marginRight="@dimen/built_in_detail_label_margin_right"
+                android:layout_marginTop="@dimen/built_in_detail_label_margin_top"
+                android:text="@string/estimated_calories"
+                android:textAllCaps="false"
+                android:textSize="@dimen/built_in_detail_label_text_size"/>
+        </RelativeLayout>
+    </LinearLayout>
+
+    <!--<com.ifit.android.werewolf.view.IfitButton-->
+        <!--android:id="@+id/startWorkoutButton"-->
+        <!--android:clickable="true"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:gravity="center"-->
+        <!--app:IfitButtonBackground="@drawable/detail_start_workout_button_selector"-->
+        <!--app:IfitButtonTextColor="@android:color/white"-->
+        <!--app:IfitButtonLabel="@string/start_workout"-->
+        <!--app:IfitButtonTextAllCaps="true"-->
+        <!--app:typeface="proxima_bold"-->
+        <!--app:IfitButtonTextSize="@dimen/built_in_detail_start_button_text_size"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="@dimen/built_in_detail_start_button_height"/>-->
+    <Button
+        android:id="@+id/startWorkoutButton"
+        android:clickable="true"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/built_in_detail_start_button_height"/>
+</LinearLayout>

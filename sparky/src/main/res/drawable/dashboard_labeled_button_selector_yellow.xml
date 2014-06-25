@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <shape android:shape="rectangle">
+            <gradient android:startColor="@color/dashboard_gradient_yellow_1_pressed"
+                      android:endColor="@color/dashboard_gradient_yellow_2_pressed"
+                      android:angle="90"/>
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <gradient android:startColor="@color/dashboard_gradient_yellow_1"
+                      android:endColor="@color/dashboard_gradient_yellow_2"
+                      android:angle="90"/>
+        </shape>
+    </item>
+</selector>

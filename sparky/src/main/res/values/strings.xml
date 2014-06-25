@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Fit Pro</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="connect_options">USB</string>
+    <string name="stop_system">Stop</string>
+    <string name="comm_status_str">Enable Comm Stats</string>
+    <string name="server_status_str">Server Stats</string>
+    <string name="idle_name">Idle Mode</string>
+    <string name="run_name">Running Mode</string>
+    <string name="title_wifi_activity_connection">Wifi Connection Activity</string>
+    <string name="instruction">Press Connect to connect to the system.</string>
+    <string name="welcome">Welcome to Fit Pro</string>
+    <string name="version"></string>
+
+    <string name="shared_preferences_key">com.ifit.sfit.sparky.SHARED_PREFERENCES</string>
+
+    <!-- items created to satisfy the compiler -->
+    <string name="time">time</string>
+    <string name="pace">pace</string>
+
+    <!-- General Strings -->
+    <string name="workout">Workout</string>
+    <string name="workout_upper">WORKOUT</string>
+    <string name="time_min_upper">TIME (min)</string>
+    <string name="distance_upper">DISTANCE</string>
+    <string name="pace_upper">PACE</string>
+    <string name="speed_upper">SPEED</string>
+    <string name="calories_upper">CALORIES</string>
+    <string name="incline_percent_upper">INCLINE (%)</string>
+    <string name="incline_percent_upper_no_parentheses">INCLINE %</string>
+    <string name="settings">Settings</string>
+    <string name="sync">Sync</string>
+    <string name="calories">0.0</string>
+    <string name="schedule">schedule</string>
+    <string name="calorie">Calorie</string>
+    <string name="distance">Distance</string>
+    <string name="label_lap">Lap</string>
+    <string name="label_lap_plural">Laps</string>
+    <string name="cal">cal</string>
+    <string name="mph">mph</string>
+    <string name="kph">kph</string>
+    <string name="zero">0</string>
+    <string name="zero_decimal">0.0</string>
+    <string name="zero_time">0:00</string>
+    <string name="minutes_per_mile">min per mi</string>
+    <string name="minutes_per_kilometer">min per km</string>
+    <string name="minutes_per_mile_capitalized">Min per mi</string>
+    <string name="minutes_per_kilometer_capitalized">Min per km</string>
+    <string name="mi_hr">mi/hr</string>
+    <string name="time_elapsed">00:00</string>
+    <string name="elapsed">Elapsed</string>
+    <string name="average_heart_rate">Average Heart Rate</string>
+
+    <!-- Console Track Fragment -->
+    <string name="console_track_fragment_lap_number">LAP NUMBER</string>
+    <string name="console_track_fragment_lap_time">LAP TIME</string>
+    <string name="console_track_totals_current_totals">Current Totals</string>
+
+    <!-- Workout Summary Screen -->
+    <string name="summary_miles_label">Miles</string>
+    <string name="summary_kilometers_label">Miles</string>
+    <string name="summary_mile_per_minute_pace">Minutes Per Mile</string>
+    <string name="summary_mile_per_hour_pace">Minutes Per Mile</string>
+    <string name="summary_kilometer_per_minute_pace">Minutes Per Kilometer</string>
+    <string name="summary_kilometer_per_hour_pace">Minutes Per Kilometer</string>
+    <string name="summary_no_pace_label">--:--</string>
+    <string name="summary_time_elapsed_label">Time Elapsed</string>
+    <string name="summary_calories_burned_label">Calories Burned</string>
+    <string name="summary_average_incline_label">Average Incline</string>
+    <string name="summary_average_heart_rate_label">Average Heart Rate</string>
+    <string name="summary_button_new_workout_label">New Workout</string>
+    <string name="summary_button_finish_label">Finish</string>
+    <string name="summary_text_workout_summary">Workout Summary</string>
+    <string name="summary_text_powered_by_google_maps">Make sure your next workout is powered by </string>
+    <string name="summary_ifit_dot_com">Visit www.ifit.com</string>
+
+    <!-- Dashboard Screen -->
+    <string name="map">Map</string>
+    <string name="train">Train</string>
+    <string name="lose_weight">Lose Weight</string>
+    <string name="video">Video</string>
+    <string name="set_a_goal">Set A Goal</string>
+    <string name="track">Track</string>
+    <string name="compete">Compete</string>
+    <string name="start">Start</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+
+    <!-- Goal Screen -->
+    <string name="goal_btn_start">START ></string>
+    <string name="goal_total_time">TOTAL TIME (min)</string>
+    <string name="goal_total_distance">TOTAL DISTANCE (miles)</string>
+    <string name="goal_total_calories">TOTAL CALORIES</string>
+    <string name="goal_avg_pace">AVERAGE PACE</string>
+    <string name="goal_header_speed">SPEED</string>
+    <string name="goal_header_incline">INCLINE (% grade)</string>
+    <string name="goal_time">TIME (min)</string>
+    <string name="goal_distance">DISTANCE (miles)</string>
+    <string name="goal_calories">CALORIES</string>
+    <string name="goal_pace">PACE</string>
+    <string name="goal_speed">SPEED</string>
+    <string name="goal_incline">INCLINE (% grade)</string>
+
+    <!-- Train Screen -->
+    <string name="title_activity_train">TrainActivity</string>
+    <string name="join_ifit">Join IFit</string>
+
+    <!-- Login -->
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="signing_in">Signing In</string>
+    <string name="please_wait">Please Wait…</string>
+    <string name="please_login_first">Please Login First</string>
+
+    <!-- Maps -->
+    <string name="no_street_view">No Street View Available</string>
+    <string name="start_workout">Start Workout</string>
+    <string name="estimated_calories">ESTIMATED CALORIES</string>
+    <string name="adjust_target_speed_s">Adjust target speed (%s)</string>
+    <string name="elapsed_time_s">ELAPSED TIME (%s)</string>
+    <string name="distance_s">DISTANCE (%s)</string>
+    <string name="finish">FINISH</string>
+
+    <!-- Create Map -->
+    <string name="sign_in_fail">Failed to sign in!</string>
+    <string name="add_points">Please add some points before creating a map workout</string>
+    <string name="location_error_no_network">Failed to Find Location: No network connection</string>
+    <string name="no_results">No results</string>
+    <string name="create_snap_timeout">Creating snapped point timed out. Please try adding the point again.</string>
+    <string name="path_too_long">The point is too far away. Please select a closer point or save your workout.</string>
+    <string name="more_than_one_point">You must draw more than one point</string>
+    <string name="please_wait_done">Please wait until the search is complete before removing points!</string>
+    <string name="warning">Warning</string>
+    <string name="going_back_discard">Going back will discard all unsaved changes. Continue?</string>
+    <string name="please_wait_workout_creation">Please wait for your workout to be created</string>
+    <string name="create_workout_success">Successfully created workout!</string>
+    <string name="create_workout_failure">Failed to Create Workout: Please try again</string>
+    <string name="create_map_workout">Create Map Workout</string>
+    <string name="workout_title">Workout Title</string>
+    <string name="description_optional">Description (Optional)</string>
+    <string name="create">Create</string>
+    <string name="switch_draw_modes">Switch Draw Modes</string>
+    <string name="no_network_snap_message">Snap mode requires a network connection whereas Freehand mode does not. Would you like to switch to Freehand mode instead?</string>
+
+    <string-array name="workout_types">
+        <item>Run</item>
+        <item>Cycle</item>
+    </string-array>
+
+    <!-- WPL -->
+    <string name="wpl_error">There was an error while trying to load the workout file.\n  You may try the workout again from the workouts list.</string>
+    <string name="wpl_error_title">Failed to load workout</string>
+
+    <!-- URLs -->
+    <string name="ifit_register_url">https://www.ifit.com/register</string>
+    <string name="draw_route">Draw a Route</string>
+    <string name="type_location">Type Location</string>
+    <string name="snap">Snap</string>
+    <string name="draw">Draw</string>
+    <string name="return_text">Return</string>
+    <string name="back_one">Back One</string>
+    <string name="save_workout">Save workout</string>
+    <string name="satellite">Satellite</string>
+    <string name="title_activity_details_screen">DetailsScreenActivity</string>
+
+    <!-- Map Modal -->
+    <string name="map_workout_list_activity_draw_modal_button_text">Draw Map</string>
+    <string name="map_workout_list_activity_draw_modal_dialog_title">How to Draw a Map</string>
+    <string name="map_workout_list_activity_draw_modal_dialog_info_1"><b>To begin drawing your route</b> click where you would\nlike to begin, then click the points you want along\nthe route.</string>
+    <string name="map_workout_list_activity_draw_modal_dialog_info_2"><b>To remove the last point,</b> click on it again, or click\non the BACK ONE button.</string>
+    <string name="map_workout_list_activity_draw_modal_dialog_info_3"><b>To modify the route,</b> select a point and drag it.</string>
+    <string name="map_workout_list_activity_draw_modal_dialog_info_4"><b>If you want to stay on a road</b> use the SNAP TO\nROAD mode, that will help you to easily stay on a\nroad.</string>
+    <string name="map_workout_list_activity_draw_modal_dialog_info_5"><b>To draw routes on trails</b> or off road use the DRAW\nFREE HAND mode.</string>
+    <string name="yes">yes</string>
+    <string name="no">no</string>
+    <string name="ok">ok</string>
+    <string name="cancel">cancel</string>
+
+
+</resources>

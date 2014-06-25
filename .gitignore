@@ -1,0 +1,95 @@
+.gradle
+/local.properties
+/.idea/workspace.xml
+.DS_Store
+###########################
+# WINDOWS
+###########################
+
+*Thumbs.db 
+*Desktop.ini
+
+###########################
+# OSX
+###########################
+
+*.DS_Store
+Icon?
+._*
+.Spotlight-V100
+.Trashes
+
+###########################
+# MAVEN
+###########################
+
+# maven auto version incrementing
+pom.xml.versionsBackup
+iFit/pom.xml.versionsBackup
+
+###########################
+# ANDROID
+###########################
+
+# built application files
+*.apk
+*.ap_
+
+# files for the dex VM
+*.dex
+
+# Java class files
+*.class
+
+# generated GUI files
+*/R.java
+
+iFit/gen
+iFit/.idea/*
+FecpController/
+###########################
+# PROJECT
+###########################
+
+# Zip files
+*.zip
+
+###########################
+# Intellij
+###########################
+out
+.idea/*
+*.iml
+out/*/gen
+iFit/gen
+/bin
+local.properties
+*/local.properties
+
+###########################
+# Android Studio
+##########################
+*/build/*
+/build
+.gradle/*
+*/gen/*
+*/BuildConfig.java
+*/Manifest.java
+
+###########################
+# Eclipse
+###########################
+.classpath
+.externalToolBuilders/
+.project
+.settings/
+iFit/bin/classes/
+lint.xml
+build
+iFit/target
+iFitMachine/target
+android-websockets/target
+WolfShared/target
+google-play-services_lib/target/generated-sources
+iFit/gen-external-apklibs
+WolfShared/target

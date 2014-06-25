@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">SparkyDevApp</string>
+    <string name="title_item_detail">Item Detail</string>
+    <string name="title_activity_connection">ConnectionActivity</string>
+    <string name="title_wifi_activity_connection">Wifi Connection Activity</string>
+    <string name="welcome">Welcome to Sparky Dev App</string>
+    <string name="version">0.0.1</string>
+    <string name="instruction">Press Connect to connect to the system.</string>
+    <string name="action_settings">Settings</string>
+
+</resources>

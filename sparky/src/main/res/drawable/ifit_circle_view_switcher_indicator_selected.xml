@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="oval">
+    <stroke android:color="@color/greyscale_4" android:width="2px" />
+    <!--<size android:height="@dimen/view_switcher_dot_indicator_size" android:width="@dimen/view_switcher_dot_indicator_size"/>-->
+    <solid android:color="@color/ifit_blue" />
+</shape>

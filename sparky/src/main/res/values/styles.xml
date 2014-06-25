@@ -1,0 +1,108 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="android:Theme.Holo.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+    </style>
+
+    <style name="WorkoutValueGroupLabel">
+        <!--<item name="android:textSize">@dimen/value_group_label_size</item>-->
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="WorkoutValueGroupValue">
+        <!--<item name="android:textSize">@dimen/value_group_value_size</item>-->
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="WorkoutValueGroup">
+        <item name="android:layout_margin">10dp</item>
+        <item name="android:background">@color/display_group_background</item>
+    </style>
+
+    <style name="DashboardLabeledButtonStyle">
+        <item name="android:layout_marginLeft">@dimen/dashboard_button_left_right_margin</item>
+        <item name="android:layout_marginRight">@dimen/dashboard_button_left_right_margin</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="DefaultIfitButtonStyle">
+        <item name="android:layout_height">@dimen/large_button_height</item>
+        <item name="IfitButtonCaratHeight">32dp</item>
+        <item name="IfitButtonCaratWidth">18dp</item>
+        <item name="IfitButtonImageSrc">@drawable/ic_btn_blue_arrow</item>
+        <item name="IfitButtonTextIsBold">true</item>
+        <item name="IfitButtonTextAllCaps">true</item>
+        <item name="IfitButtonTextSize">28sp</item>
+        <item name="IfitButtonSideTextPadding">6dp</item>
+        <item name="IfitButtonPadding">10dp</item>
+        <item name="IfitButtonCaratTopMargin">@dimen/carat_top_margin</item>
+        <item name="IfitButtonTextColor">@android:color/white</item>
+        <item name="IfitButtonBackground">@drawable/ifit_button_ifit_blue</item>
+        <item name="typeface">proxima_bold</item>
+    </style>
+
+    <style name="TrainLoggedOutTextViewStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:layout_centerHorizontal">true</item>
+    </style>
+
+    <style name="IfitRadioButton">
+        <item name="android:textColor">@color/ifit_radio_button_text</item>
+        <item name="android:background">@drawable/ifit_radio_button</item>
+        <item name="android:button">@null</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:paddingTop">7dp</item>
+        <item name="android:paddingBottom">7dp</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:paddingRight">10dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">true</item>
+	</style>
+
+    <style name="EditTextDialog" parent="android:Widget.EditText">
+        <item name="android:background">@drawable/edit_text_holo_light</item>
+    </style>
+
+    <style name="SetAGoalRadioButtonStyle">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:background">@drawable/goal_option_selector</item>
+        <item name="android:button">@null</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:paddingTop">48dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:paddingRight">10dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="DrawMapRadioButtonStyle" parent="SetAGoalRadioButtonStyle">
+        <item name="android:textColor">@color/draw_map_radio_text_selector</item>
+        <item name="android:background">@drawable/draw_map_radio_background_selector</item>
+        <item name="android:layout_width">116dp</item>
+        <item name="android:layout_height">116dp</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:paddingTop">40dp</item>
+        <item name="android:paddingBottom">16dp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="typeface">proxima_semiBold</item>
+    </style>
+
+    <style name="DrawMapViewTypeRadioButtonStyle">
+        <item name="android:textColor">@color/draw_map_view_type_text_selector</item>
+        <item name="android:background">@drawable/draw_map_view_type_radio_background_selector</item>
+        <item name="android:layout_width">123dp</item>
+        <item name="android:layout_height">56dp</item>
+        <item name="android:button">@null</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="typeface">proxima_bold</item>
+    </style>
+
+</resources>
