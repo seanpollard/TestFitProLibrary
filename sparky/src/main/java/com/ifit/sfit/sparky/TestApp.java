@@ -4,9 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.Html;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.style.BackgroundColorSpan;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -16,6 +13,7 @@ import android.widget.Toast;
 
 import com.ifit.sparky.fecp.FecpCommand;
 import com.ifit.sparky.fecp.FitProUsb;
+import com.ifit.sparky.fecp.OnCommandReceivedListener;
 import com.ifit.sparky.fecp.SystemDevice;
 import com.ifit.sparky.fecp.communication.FecpController;
 import com.ifit.sparky.fecp.communication.SystemStatusListener;
@@ -694,8 +692,9 @@ public class TestApp extends Activity implements View.OnClickListener, SystemSta
                     "Min Speed: \""+minSpeed+"\"\n";
 
             try{
-                TestRunMotor t = new TestRunMotor(this.fecpController,this,this.mSFitSysCntrl);
-                t.runMotor();
+               TestMotor t = new TestMotor(this.fecpController,this,this.mSFitSysCntrl);
+               configString = t.testStartSpeed();
+                //configString= "Hello World";
             } catch(Exception e){
                 e.printStackTrace();
             }
