@@ -681,8 +681,11 @@ public class TestApp extends Activity implements View.OnClickListener, SystemSta
     @Override
     public void onClick(View v)
     {
+        testingView = (TextView) findViewById(R.id.testView);
+        resultView = (TextView)findViewById(R.id.passFailView);
         //Press this button to check the values entered by the user
         if(v == checkValsButton){
+
             configString = "";      //clear out Configuration results for each time the Check Values button is pressed
 
             systemString += "Console Name: \""+consoleName+"\"\nModel Number: \""+model+"\"\nPart Number: \""+
@@ -699,9 +702,8 @@ public class TestApp extends Activity implements View.OnClickListener, SystemSta
                 e.printStackTrace();
             }
 
-            testingView = (TextView) findViewById(R.id.testView);
+
             testingView.setText(configString);
-            resultView = (TextView)findViewById(R.id.passFailView);
 
             if(configString.contains("FAIL")) {
                 passFail = "<font color = #ff0000>FAIL </font>";

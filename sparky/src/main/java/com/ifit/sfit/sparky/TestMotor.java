@@ -44,6 +44,7 @@ public class TestMotor implements OnCommandReceivedListener {
     //Variables needed to initialize connection with Brainboard
     private FecpController mFecpController;
     private TestApp mAct;
+    private HandleCmd hCmd;
     private SFitSysCntrl mSFitSysCntrl;
     private SystemDevice MainDevice;
     private double currentSpeed; // Current motor speed
@@ -105,8 +106,8 @@ public class TestMotor implements OnCommandReceivedListener {
         mSFitSysCntrl.getFitProCntrl().addCmd(readModeCommand);
         Thread.sleep(1000);
 
-        startResults += "The current mode is " + ((ModeConverter)this.mSFitSysCntrl.getFitProCntrl().getSysDev().getCurrentSystemData().get(BitFieldId.WORKOUT_MODE)).getMode().getDescription()
-        + "\n";
+        startResults += "The current mode is " + hCmd.getMode()+ "\n";
+
 
         //Set Mode to Running
         ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.RUNNING);
@@ -119,8 +120,9 @@ public class TestMotor implements OnCommandReceivedListener {
        // ((WriteReadDataCmd)readModeCommand.getCommand()).addReadBitField(BitFieldId.WORKOUT_MODE);
         //mSFitSysCntrl.getFitProCntrl().addCmd(readModeCommand);
         //Thread.sleep(1000);
-        startResults += "The current mode is " + ((ModeConverter)this.mSFitSysCntrl.getFitProCntrl().getSysDev().getCurrentSystemData().get(BitFieldId.WORKOUT_MODE)).getMode().getDescription()
-                + "\n";
+        startResults += "The current mode is " + hCmd.getMode()+ "\n";
+
+        Thread.sleep(5000);
 
         FecpCommand readSpeedCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),this, 100, 1000);//every 1 second
         ((WriteReadDataCmd)readSpeedCommand.getCommand()).addReadBitField(BitFieldId.KPH);
@@ -131,7 +133,7 @@ public class TestMotor implements OnCommandReceivedListener {
         //Check status of the command to receive the speed
         startResults += "Status of reading current speed: " + (readSpeedCommand.getCommand()).getStatus().getStsId().getDescription() + "\n";
 
-        currentSpeed = ((SpeedConverter)this.mSFitSysCntrl.getFitProCntrl().getSysDev().getCurrentSystemData().get(BitFieldId.KPH)).getSpeed();
+        currentSpeed = hCmd.getSpeed();
 
        // mFecpController.removeCmd(readSpeedCommand);
 
@@ -172,245 +174,10 @@ public class TestMotor implements OnCommandReceivedListener {
     }
 
 //Implementation of method from OnCommandReceivedListener Interface
+ //This method calls HandleCmd which is basically same as TestHandleInfo on version 0.0.8
     @Override
     public void onCommandReceived(Command cmd) {
-    HandleCmd hCmd = new HandleCmd(this.mAct, cmd);
-    this.mAct.runOnUiThread(hCmd);
+    hCmd = new HandleCmd(this.mAct, cmd);
     }
 
-    private class HandleCmd implements Runnable
-    {
-        private Command mCmd;
-        private Context mContext;
-        private  double mMaxSpeed = 0.0;
-        private  double mMinSpeed = 0.0;
-        private  ModeId mResultMode;
-        private  double mSpeed = 0.0;
-        private  double mActualSpeed = 0.0;
-        private  double mIncline = 0.0;
-        private  double mActualIncline = 0.0;
-        private  double mMaxIncline = 0.0;
-        private  double mMinIncline = 0.0;
-        private  int mTransMax = 0;
-        private  int mDistance = 0;
-        private  int mRunTime = 0;
-        private  double mCalories = 0;
-        private  double mWeight = 0;
-        private  int mAge = 0;
-        private  int mFanSpeed = 0;
-        private  int mIdleTimeout = 0;
-        private  int mPauseTimeout = 0;
-        private  KeyObject mKey;
-
-
-        private HandleCmd(Context context, Command cmd) {
-                this.mCmd = cmd;
-                this.mContext = context;
-            }
-        @Override
-        public void run() {
-            //check command type
-            TreeMap<BitFieldId, BitfieldDataConverter> commandData;
-
-            if(mCmd.getStatus().getStsId() == StatusId.FAILED)
-            {
-                return;
-            }
-            //if running mode, just join the party
-            if(mCmd.getCmdId() == CommandId.WRITE_READ_DATA) // || mCmd.getCmdId() == CommandId.PORTAL_DEV_LISTEN)
-            {
-                commandData = ((WriteReadDataSts)mCmd.getStatus()).getResultData();
-                /*
-                if(mCmd.getCmdId() == CommandId.PORTAL_DEV_LISTEN)
-                {
-                    commandData = ((PortalDeviceSts)mCmd.getStatus()).getmSysDev().getCurrentSystemData();
-                }
-                else {
-                    WriteReadDataSts sts = (WriteReadDataSts) mCmd.getStatus();
-                    commandData = sts.getResultData();
-                };
-            */
-                //Read the KPH value off of the Brainboard
-                if(commandData.containsKey(BitFieldId.KPH)) {
-
-                    try {
-                        mSpeed = ((SpeedConverter)commandData.get(BitFieldId.KPH).getData()).getSpeed();
-                        //System.out.println("Current Speed (TestHandleInfo): " + mSpeed);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                //Read the Actual KPH value off of the Brainboard
-                if(commandData.containsKey(BitFieldId.ACTUAL_KPH)) {
-
-                    try {
-                        mActualSpeed = ((SpeedConverter)commandData.get(BitFieldId.ACTUAL_KPH).getData()).getSpeed();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                //Read the Max KPH value off of the Brainboard
-                if(commandData.containsKey(BitFieldId.MAX_KPH)) {
-                    try{
-                        //currently gets a null pointer assigned as of 3/3/2014
-                        mMaxSpeed = ((SpeedConverter)commandData.get(BitFieldId.MAX_KPH).getData()).getSpeed();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                //Read the Min KPH value off of the Brainboard
-                if(commandData.containsKey(BitFieldId.MIN_KPH)) {
-                    try{
-                        //currently gets a null pointer assigned as of 3/3/2014
-                        mMinSpeed = ((SpeedConverter)commandData.get(BitFieldId.MIN_KPH).getData()).getSpeed();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                //Read the Incline value off of the Brainboard
-                if(commandData.containsKey(BitFieldId.GRADE)) {
-                    try {
-                        mIncline = ((GradeConverter)commandData.get(BitFieldId.GRADE).getData()).getIncline();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                //Read the Actual Incline value off of the Brainboard
-                if(commandData.containsKey(BitFieldId.ACTUAL_INCLINE)) {
-                    try {
-                        mActualIncline = ((GradeConverter)commandData.get(BitFieldId.ACTUAL_INCLINE).getData()).getIncline();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                //Read the Max Incline value off of the Brainboard
-                if(commandData.containsKey(BitFieldId.MAX_GRADE)) {
-                    try {
-                        mMaxIncline = ((GradeConverter)commandData.get(BitFieldId.MAX_GRADE).getData()).getIncline();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                //Read the Min Incline value off of the Brainboard
-                if(commandData.containsKey(BitFieldId.MIN_GRADE)) {
-                    try {
-                        mMinIncline = ((GradeConverter)commandData.get(BitFieldId.MIN_GRADE).getData()).getIncline();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                //Read the TransMax value off of the Brainboard
-                if(commandData.containsKey(BitFieldId.TRANS_MAX)) {
-                    try {
-                        mTransMax = ((ShortConverter)commandData.get(BitFieldId.TRANS_MAX).getData()).getValue();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                //Read the Workout Mode off of the Brainboard
-                if(commandData.containsKey(BitFieldId.WORKOUT_MODE)) {
-
-                    try {
-                        mResultMode = ((ModeConverter)commandData.get(BitFieldId.WORKOUT_MODE)).getMode();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                //Read the Distance value off of the Brainboard
-                if(commandData.containsKey(BitFieldId.DISTANCE)) {
-                    try{
-                        mDistance = ((LongConverter)commandData.get(BitFieldId.DISTANCE).getData()).getValue();
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
-                }
-
-                //Read the Running Time value off of the Brainboard
-                if(commandData.containsKey(BitFieldId.RUNNING_TIME)) {
-                    try {
-                        mRunTime = ((LongConverter) commandData.get(BitFieldId.RUNNING_TIME).getData()).getValue();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                //Read the Calories value off of the Brainboard
-                if(commandData.containsKey(BitFieldId.CALORIES)) {
-                    try {
-                        //currently returns the bitfield id of 13 only as of 3/4/2014
-                        mCalories = ((CaloriesConverter) commandData.get(BitFieldId.CALORIES).getData()).getCalories();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                //Read the Weight value off of the Brainboard
-                if(commandData.containsKey(BitFieldId.WEIGHT)) {
-                    try {
-                        mWeight = ((WeightConverter) commandData.get(BitFieldId.WEIGHT).getData()).getWeight();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                //Read the Age value off of the Brainboard
-                if(commandData.containsKey(BitFieldId.AGE)) {
-                    try {
-                        mAge = ((ByteConverter) commandData.get(BitFieldId.AGE).getData()).getValue();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                //Read the Fan Speed off of the Brainboard
-                if(commandData.containsKey(BitFieldId.FAN_SPEED)) {
-                    try{
-                        mFanSpeed = ((ByteConverter)commandData.get(BitFieldId.FAN_SPEED).getData()).getValue();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                //Read the Idle Timeout value off of the Brainboard
-                if(commandData.containsKey(BitFieldId.IDLE_TIMEOUT)) {
-                    try {
-                        mIdleTimeout = ((ShortConverter) commandData.get(BitFieldId.IDLE_TIMEOUT).getData()).getValue();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                //Read the Pause Timeout value off of the Brainboard
-                if(commandData.containsKey(BitFieldId.PAUSE_TIMEOUT)) {
-                    try {
-                        mIdleTimeout = ((ShortConverter) commandData.get(BitFieldId.PAUSE_TIMEOUT).getData()).getValue();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                //Read the Object Key value off of the Brainboard
-                if(commandData.containsKey(BitFieldId.KEY_OBJECT)) {
-                    try {
-                        mKey = ((KeyObjectConverter) commandData.get(BitFieldId.KEY_OBJECT).getData()).getKeyObject();
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                }
-
-            }
-        }
-       
-
-    }
 }
