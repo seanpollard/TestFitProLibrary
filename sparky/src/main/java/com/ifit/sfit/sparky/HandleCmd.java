@@ -2,6 +2,7 @@ package com.ifit.sfit.sparky;
 
 import android.content.Context;
 
+import com.ifit.sparky.fecp.OnCommandReceivedListener;
 import com.ifit.sparky.fecp.interpreter.bitField.BitFieldId;
 import com.ifit.sparky.fecp.interpreter.bitField.converter.BitfieldDataConverter;
 import com.ifit.sparky.fecp.interpreter.bitField.converter.ByteConverter;
@@ -21,15 +22,16 @@ import com.ifit.sparky.fecp.interpreter.status.PortalDeviceSts;
 import com.ifit.sparky.fecp.interpreter.status.StatusId;
 import com.ifit.sparky.fecp.interpreter.status.WriteReadDataSts;
 
+import junit.framework.Test;
+
 import java.util.TreeMap;
 
 /**
  * Created by jc.almonte on 6/27/14.
  */
-public class HandleCmd
+public class HandleCmd implements OnCommandReceivedListener
 {
-    private Command mCmd;
-    private Context mContext;
+    private TestApp mAct;
     private  double mMaxSpeed = 0.0;
     private  double mMinSpeed = 0.0;
     private ModeId mResultMode;
@@ -51,33 +53,33 @@ public class HandleCmd
     private KeyObject mKey;
 
 
-    public HandleCmd(Context context, Command cmd) {
-        this.mCmd = cmd;
-        this.mContext = context;
-        run();
-    }
+    public HandleCmd(TestApp act) {
 
-    private void run() {
+        this.mAct = act;
+    }
+    @Override
+    public void onCommandReceived(Command cmd) {
+
         //check command type
         TreeMap<BitFieldId, BitfieldDataConverter> commandData;
 
-        if(mCmd.getStatus().getStsId() == StatusId.FAILED)
+        if(cmd.getStatus().getStsId() == StatusId.FAILED)
         {
             return;
         }
         //if running mode, just join the party
-        if(mCmd.getCmdId() == CommandId.WRITE_READ_DATA || mCmd.getCmdId() == CommandId.PORTAL_DEV_LISTEN)
+        if(cmd.getCmdId() == CommandId.WRITE_READ_DATA || cmd.getCmdId() == CommandId.PORTAL_DEV_LISTEN)
         {
-            commandData = ((WriteReadDataSts)mCmd.getStatus()).getResultData();
+            commandData = ((WriteReadDataSts)cmd.getStatus()).getResultData();
 
-                if(mCmd.getCmdId() == CommandId.PORTAL_DEV_LISTEN)
-                {
-                    commandData = ((PortalDeviceSts)mCmd.getStatus()).getmSysDev().getCurrentSystemData();
-                }
-                else {
-                    WriteReadDataSts sts = (WriteReadDataSts) mCmd.getStatus();
-                    commandData = sts.getResultData();
-                };
+            if(cmd.getCmdId() == CommandId.PORTAL_DEV_LISTEN)
+            {
+                commandData = ((PortalDeviceSts)cmd.getStatus()).getmSysDev().getCurrentSystemData();
+            }
+            else {
+                WriteReadDataSts sts = (WriteReadDataSts) cmd.getStatus();
+                commandData = sts.getResultData();
+            };
 
             //Read the KPH value off of the Brainboard
             if(commandData.containsKey(BitFieldId.KPH)) {
@@ -259,6 +261,7 @@ public class HandleCmd
 
         }
     }
+
     public double getSpeed(){ return this.mSpeed; }
     public double getActualSpeed(){ return this.mActualSpeed; }
     public double getMaxSpeed() { return  this.mMaxSpeed; }
@@ -279,5 +282,4 @@ public class HandleCmd
     public int getPauseTimeout() { return this.mPauseTimeout; }
     public KeyObject getKey() { return this.mKey; }
 
-
-}
+    }
