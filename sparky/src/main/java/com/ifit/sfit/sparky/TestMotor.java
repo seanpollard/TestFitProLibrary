@@ -156,6 +156,83 @@ public class TestMotor {
         return startResults;
     }
 
+    //--------------------------------------------//
+    //                                            //
+    //              Testing Distance              //
+    //                                            //
+    //--------------------------------------------//
+    public String testDistance() throws Exception {
+        //outline for code support #929 in redmine
+        //start timer stopwatch
+        //send a speed of 10 kph for a 1.5 min/km pace
+        //wait 1.5 minutes
+        //read distance value
+        //verify distance is 250 meters
+        String distanceResults;
+
+        distanceResults = "\n----------------------------DISTANCE TEST---------------------------\n\n";
+        distanceResults += Calendar.getInstance().getTime() + "\n\n";
+        FecpCommand modeCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
+
+        //Set to read the WORKOUT_MODE value from the brainboard
+        ((WriteReadDataCmd) modeCommand.getCommand()).addReadBitField(BitFieldId.WORKOUT_MODE);
+
+        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand); //Send command to brainboard
+        Thread.sleep(1000);
+
+        distanceResults += "The status of reading the initial mode is: " + modeCommand.getCommand().getStatus().getStsId().getDescription() + "\n";
+        distanceResults += "Current Mode is: " + hCmd.getMode() + "\n";
+
+        //set mode to running
+        ((WriteReadDataCmd) modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.RUNNING);
+        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
+        Thread.sleep(1000);
+
+        distanceResults += "The status of changing mode to RUNNING is: " + modeCommand.getCommand().getStatus().getStsId().getDescription() + "\n";
+        distanceResults += "Current Mode is: " + hCmd.getMode() + "\n";
+
+        //Set the motor speed to 10 KPH
+        ((WriteReadDataCmd) modeCommand.getCommand()).addWriteData(BitFieldId.KPH, 10);
+        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
+
+        distanceResults += "The status of setting speed to 10kph: " + modeCommand.getCommand().getStatus().getStsId().getDescription() + "\n";
+        distanceResults += "Current Mode is: " + hCmd.getMode() + "\n";
+        distanceResults += "Now wait 1.5 mins...\n";
+
+        //wait 1.5 minutes
+        Thread.sleep(90000);
+
+        //set tor read distance
+       ((WriteReadDataCmd) modeCommand.getCommand()).addReadBitField(BitFieldId.DISTANCE);
+        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
+       Thread.sleep(1000);
+       distanceResults += "The status of setting reading distance command: " + modeCommand.getCommand().getStatus().getStsId().getDescription() + "\n";
+       distanceResults += "Current Mode is: " + hCmd.getMode() + "\n";
+        //wait for command
+
+        int distance = hCmd.getDistance();
+        distanceResults += "The distance was " + distance + "\n";
+        distanceResults += "The status of reading the distance is: " + modeCommand.getCommand().getStatus().getStsId().getDescription() + "\n";
+
+        //set mode to back to idle to end the test.
+        ((WriteReadDataCmd) modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.IDLE);
+        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
+        Thread.sleep(1000);
+        distanceResults += "The status of changing mode to IDLE is: " + modeCommand.getCommand().getStatus().getStsId().getDescription() + "\n";
+        distanceResults += "Current Mode is: " + hCmd.getMode() + "\n";
+
+        //5% tolerance for passing: 250 meters = +/- 12.5
+        if ((distance < 234.5) || (distance > 272.5)) {
+            distanceResults += "\n * FAIL * \n\nThe distance was off by " + (distance - 250) + "\n\n";
+        } else
+            distanceResults += "\n * PASS * \n\nThe distance should be 250 and is " + distance + " which is within 5%\n\n";
+
+        //Remove all commands from the device that have a command ID = "WRITE_READ_DATA"
+        mSFitSysCntrl.getFitProCntrl().removeCmd(MainDevice.getInfo().getDevId(), CommandId.WRITE_READ_DATA);
+
+        return distanceResults;
+    }
+
     public void runMotor() {
         try {
             FecpCommand modeCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA));
