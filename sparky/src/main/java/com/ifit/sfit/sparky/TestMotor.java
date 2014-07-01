@@ -123,7 +123,7 @@ public class TestMotor {
 
         startResults += "The current mode is " + hCmd.getMode() + "\n";
 
-        Thread.sleep(5000);
+        Thread.sleep(5000); // Give the motor 5 secs to reach the desired speed
 
         ((WriteReadDataCmd) modeCommand.getCommand()).addReadBitField(BitFieldId.KPH);
         mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
