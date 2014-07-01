@@ -698,7 +698,8 @@ public class TestApp extends Activity implements View.OnClickListener, SystemSta
                TestMotor t = new TestMotor(this.fecpController,this,this.mSFitSysCntrl);
                //configString = t.testStartSpeed();
                //configString= t.testSpeedController();
-                configString= t.testDistance();
+               // configString= t.testDistance();
+                configString= t.testModeChange();
 
             } catch(Exception e){
                 e.printStackTrace();

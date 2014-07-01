@@ -233,6 +233,53 @@ public class TestMotor {
         return distanceResults;
     }
 
+
+    //--------------------------------------------//
+    //                                            //
+    //                Testing Mode                //
+    //                                            //
+    //--------------------------------------------//
+    public String testModeChange() throws Exception{
+        //outline for code support #926 in redmine
+        //change to mode 1
+        //read mode status to verify mode 1
+        //change to mode 2
+        //read mode status to verify mode 2
+        //go through all modes in above manner to validate mode changes have occurred
+        String modeResults;
+
+        modeResults = "\n\n----------------------------MODE TEST RESULTS----------------------------\n\n";
+        modeResults += Calendar.getInstance().getTime() + "\n\n";
+
+        FecpCommand modeCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
+        //FecpCommand readModeCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA), handleInfoCmd, 100, 1000);//every 1 second
+
+        // Set to command to read WORKOUT_MODE value
+        ((WriteReadDataCmd)modeCommand.getCommand()).addReadBitField(BitFieldId.WORKOUT_MODE);
+        //Loop through all modes and confirm they are matched up with what is recorded on Redmine
+        for(int i = 0; i < 9; i++)
+        {
+            try
+            {
+                ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, i);
+                mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
+                Thread.sleep(1000);
+
+                modeResults += "Status of changing mode: " + (modeCommand.getCommand()).getStatus().getStsId().getDescription() + "\n";
+                modeResults += "Current Mode is: " + hCmd.getMode() + "  and its value is  " + hCmd.getMode().getValue() +  "\n\n";
+                if(hCmd.getMode().getValue() == i)
+                    modeResults += "This mode matches : * PASS *\n\n";
+                else modeResults += "This mode does not match : * FAIL *\n\n";
+            }
+            catch (Exception ex)
+            {
+                ex.printStackTrace();
+            }
+
+        }
+
+        return modeResults;
+    }
     public void runMotor() {
         try {
             FecpCommand modeCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA));
