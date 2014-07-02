@@ -687,6 +687,7 @@ public class TestApp extends Activity implements View.OnClickListener, SystemSta
         if(v == checkValsButton){
 
             configString = "";      //clear out Configuration results for each time the Check Values button is pressed
+            //This is on TestIntegration class in SystemConfiguration method
 
             systemString += "Console Name: \""+consoleName+"\"\nModel Number: \""+model+"\"\nPart Number: \""+
                     partNumber+"\"\nSoftware Version: \""+swVersion+"\"\nHardware Version: \""+hwVersion+
@@ -698,8 +699,11 @@ public class TestApp extends Activity implements View.OnClickListener, SystemSta
                TestMotor t = new TestMotor(this.fecpController,this,this.mSFitSysCntrl);
                //configString = t.testStartSpeed();
                //configString= t.testSpeedController();
-               // configString= t.testDistance();
-                configString= t.testModeChange();
+               //configString= t.testDistance();
+               //configString= t.testModeChange();
+               // configString= t.testPauseResume();
+               TestIntegration ti = new TestIntegration(this.fecpController,this,this.mSFitSysCntrl);
+               configString = ti.testAge();
 
             } catch(Exception e){
                 e.printStackTrace();
