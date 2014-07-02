@@ -38,6 +38,10 @@ public class TestIntegration {
     //Testing Age
     //
     //--------------------------------------------//
+    /*
+    TODO: Future test can include input invalid ages. Valid age range is 5-95 years, validate default age
+    TODO: Also check for conversions when changing untis from Metric to English
+    */
     public String testAge() throws Exception {
         //Redmine Support #937
         //Read the default Age
@@ -86,5 +90,61 @@ public class TestIntegration {
 
         return ageResults;
     }
+    //--------------------------------------------//
+    //
+    //Testing Weight
+    //
+    //--------------------------------------------//
+
+    /*
+    TODO: Future test can include testing invalid weights (MAX_WEIGHT< weight < MIN_WEIGHT) and validating default weight
+    TODO: Also check for conversions when changing untis from Metric to English
+    */
+    public String testWeight() throws Exception {
+        //Weight is implemented in kilograms with a default weight of 185 lbs =84 kg
+        //Redmine Support #942
+        //Read the default Weight
+        //Set a Weight
+        //Read the Weight
+        //Validate the Weight
+        //Repeat 6 times with different values
+        String weightResults;
+
+        weightResults = "\n\n------------------------WEIGHT TEST RESULTS------------------------\n\n";
+        weightResults += Calendar.getInstance().getTime() + "\n\n";
+
+        double weight;
+
+        FecpCommand weightCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
+        ((WriteReadDataCmd)weightCommand.getCommand()).addReadBitField(BitFieldId.WEIGHT);
+        mSFitSysCntrl.getFitProCntrl().addCmd(weightCommand);
+        Thread.sleep(1000);
+
+        weight = hCmd.getWeight();
+        weightResults += "The default weight is set to " + weight + " kilograms\n";
+
+        //Set weight to 50 kg and increment by 25 up to 175 kg (max is 400lbs = 181 kg)
+        for(int i = 50; i <=175; i+=25) {
+            ((WriteReadDataCmd) weightCommand.getCommand()).addWriteData(BitFieldId.WEIGHT, i);
+            mSFitSysCntrl.getFitProCntrl().addCmd(weightCommand);
+            //need more time for weight controller
+            Thread.sleep(1000);
+
+            weightResults += "Status of setting the Weight to " + i + ": " + (weightCommand.getCommand()).getStatus().getStsId().getDescription() + "\n";
+
+            weight = hCmd.getWeight();
+            if(weight == i){
+                weightResults += "\n* PASS *\n\n";
+                weightResults += "Current Weight is set to: " + weight + " kilograms should be set to: " + i + " kilograms\n";
+            }
+            else{
+                weightResults += "\n* FAIL *\n\n";
+                weightResults += "Current Weight is set to: " + weight + " kilograms, but should be set to: " + i + " kilograms\n";
+            }
+        }
+
+        return weightResults;
+    }
+
 
 }

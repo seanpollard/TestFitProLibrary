@@ -703,7 +703,9 @@ public class TestApp extends Activity implements View.OnClickListener, SystemSta
                //configString= t.testModeChange();
                // configString= t.testPauseResume();
                TestIntegration ti = new TestIntegration(this.fecpController,this,this.mSFitSysCntrl);
-               configString = ti.testAge();
+               //configString = ti.testAge();
+                configString = ti.testWeight();
+
 
             } catch(Exception e){
                 e.printStackTrace();
