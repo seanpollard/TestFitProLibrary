@@ -225,7 +225,7 @@ public class TestMotor {
         if ((distance < 234.5) || (distance > 272.5)) {
             distanceResults += "\n * FAIL * \n\nThe distance was off by " + (distance - 250) + "\n\n";
         } else
-            distanceResults += "\n * PASS * \n\nThe distance should be 250 and is " + distance + " which is within 5%\n\n";
+            distanceResults += "\n * PASS * \n\nThe distance should be 250 meters and is " + distance + " meters which is within 5%\n\n";
 
         //Remove all commands from the device that have a command ID = "WRITE_READ_DATA"
         mSFitSysCntrl.getFitProCntrl().removeCmd(MainDevice.getInfo().getDevId(), CommandId.WRITE_READ_DATA);
@@ -239,6 +239,11 @@ public class TestMotor {
     //                Testing Mode                //
     //                                            //
     //--------------------------------------------//
+    /*
+    Future tests include
+  * TODO: Testing commands supported on each mode
+  * TODO: Testing transitions between modes
+  * */
     public String testModeChange() throws Exception{
         //outline for code support #926 in redmine
         //change to mode 1
@@ -279,6 +284,110 @@ public class TestMotor {
         }
 
         return modeResults;
+    }
+
+    //--------------------------------------------//
+    //                                            //
+    //          Testing Pause/Resume Speed        //
+    //                                            //
+    //--------------------------------------------//
+    /*
+        Future tests include
+    * TODO: Testing with different speeds
+    * TODO: Test with English units and verify it does proper conversion
+    * */
+
+    public String testPauseResume() throws Exception{
+        //Support #954 in Redmine
+        //Turn mode to Running (mimics Start button press)
+        //Set speed to 5 kph
+        //set mode to Pause
+        //Set mode to Running
+        //Verify actual speed is 1.0 mph/2.0 kph (as of 3/12/14, the resume speed is 1.0 kph)
+        String pauseResumeResults;
+
+        pauseResumeResults = "\n\n----------------------PAUSE/RESUME SPEED TEST RESULTS----------------------\n\n";
+        pauseResumeResults += Calendar.getInstance().getTime() + "\n\n";
+
+        FecpCommand modeCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
+
+        //Set Mode to Running
+        ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.RUNNING);
+        //Set command to read WORKOUT_MODE value
+        ((WriteReadDataCmd)modeCommand.getCommand()).addReadBitField(BitFieldId.WORKOUT_MODE);
+        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
+        Thread.sleep(1000);
+
+        pauseResumeResults += "Status of changing mode to Running: " + (modeCommand.getCommand()).getStatus().getStsId().getDescription() + "\n";
+        pauseResumeResults += "The current mode is " + hCmd.getMode() + "\n";
+
+
+        ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.KPH, 5);
+        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
+        Thread.sleep(10000);// Give it time to motor to reach speed of 5 KPH
+        pauseResumeResults += "Status of changing speed to 5 KPH: " + (modeCommand.getCommand()).getStatus().getStsId().getDescription() + "\n";
+        //Set command to read speed and verify its at 5 kph
+        ((WriteReadDataCmd)modeCommand.getCommand()).addReadBitField(BitFieldId.KPH);
+        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
+        Thread.sleep(1000);
+
+        currentSpeed = hCmd.getSpeed(); //read current speed
+        pauseResumeResults += "The speed is currently set at: " + currentSpeed + " kph\n";
+
+        //Set Mode to Pause
+        ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.PAUSE);
+        //Set command to read WORKOUT_MODE
+        // ((WriteReadDataCmd)modeCommand.getCommand()).addReadBitField(BitFieldId.WORKOUT_MODE);
+        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
+        Thread.sleep(10000); // Give time for motor to stop seconds
+
+
+        pauseResumeResults += "Status of changing mode to Pause: " + (modeCommand.getCommand()).getStatus().getStsId().getDescription() + "\n";
+        //print out the current mode
+        pauseResumeResults += "The current mode is " + hCmd.getMode() + "\n";
+        //set command to read speed value (KPH)
+        ((WriteReadDataCmd)modeCommand.getCommand()).addReadBitField(BitFieldId.KPH);
+        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
+        Thread.sleep(1000); // Give time for motor to stop seconds
+        currentSpeed = hCmd.getSpeed(); //read current speed
+
+        pauseResumeResults += "The speed during PAUSE is: " + currentSpeed + " kph\n";
+
+        //Set Mode to Running
+        ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.RUNNING);
+        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
+        Thread.sleep(5000); // Run for 5 seconds
+
+        pauseResumeResults += "Status of changing mode to Running: " + (modeCommand.getCommand()).getStatus().getStsId().getDescription() + "\n";
+
+        //print out the current mode
+        pauseResumeResults += "The current mode is " + hCmd.getMode() + "\n";
+
+        ((WriteReadDataCmd)modeCommand.getCommand()).addReadBitField(BitFieldId.KPH);
+        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
+        Thread.sleep(1000);
+
+        currentSpeed = hCmd.getSpeed();// Read speed again
+
+        if(currentSpeed == 1.0){
+            pauseResumeResults += "\n* PASS *\n\n";
+            pauseResumeResults += "The speed should be 1.0 kph and it is currently set at: " + currentSpeed + " kph\n";
+        }
+        else{
+            pauseResumeResults += "\n* FAIL *\n\n";
+            pauseResumeResults += "The speed should be 1.0 kph, but it is currently set at: " + currentSpeed + " kph\n";
+        }
+
+        //Set Mode to Idle
+        ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.IDLE);
+        //Set command to read WORKOUT_MODE
+        // ((WriteReadDataCmd)modeCommand.getCommand()).addReadBitField(BitFieldId.WORKOUT_MODE);
+        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
+        Thread.sleep(1000);
+
+        pauseResumeResults += "\nThe current mode is " + hCmd.getMode() + "\n";
+
+        return pauseResumeResults;
     }
     public void runMotor() {
         try {

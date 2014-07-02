@@ -40,7 +40,7 @@ public class TestIntegration {
     //--------------------------------------------//
     /*
     TODO: Future test can include input invalid ages. Valid age range is 5-95 years, validate default age
-    TODO: Also check for conversions when changing untis from Metric to English
+    TODO: Also check that test still work when changing units from Metric to English
     */
     public String testAge() throws Exception {
         //Redmine Support #937
