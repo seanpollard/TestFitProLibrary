@@ -13,7 +13,6 @@ import android.widget.Toast;
 
 import com.ifit.sparky.fecp.FecpCommand;
 import com.ifit.sparky.fecp.FitProUsb;
-import com.ifit.sparky.fecp.OnCommandReceivedListener;
 import com.ifit.sparky.fecp.SystemDevice;
 import com.ifit.sparky.fecp.communication.FecpController;
 import com.ifit.sparky.fecp.communication.SystemStatusListener;
@@ -696,21 +695,21 @@ public class TestApp extends Activity implements View.OnClickListener, SystemSta
                     "Min Speed: \""+minSpeed+"\"\n";
 
             try{
-               TestMotor t = new TestMotor(this.fecpController,this,this.mSFitSysCntrl);
+               //TestMotor t = new TestMotor(this.fecpController,this,this.mSFitSysCntrl);
                //configString = t.testStartSpeed();
-               configString= t.testSpeedController();
-               //configString= t.testDistance();
+              // configString= t.testSpeedController();
+                //configString= t.testPwmOvershoot();
+                //configString= t.testDistance();
                //configString= t.testModeChange();
                //configString= t.testPauseResume();
                //TestIntegration ti = new TestIntegration(this.fecpController,this,this.mSFitSysCntrl);
                //configString = ti.testAge();
                //configString = ti.testWeight();
-
-
+                TestBitfields tc = new TestBitfields(this.fecpController,this,this.mSFitSysCntrl);
+                configString = tc.testBitfieldRdWr();
             } catch(Exception e){
                 e.printStackTrace();
             }
-
 
             testingView.setText(configString);
 
