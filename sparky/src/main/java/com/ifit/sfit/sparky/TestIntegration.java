@@ -54,7 +54,7 @@ public class TestIntegration {
         ageResults = "\n\n------------------------AGE TEST RESULTS------------------------\n\n";
         ageResults += Calendar.getInstance().getTime() + "\n\n";
 
-        int age;
+        double age;
 
         FecpCommand ageCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
 
@@ -87,7 +87,7 @@ public class TestIntegration {
                 ageResults += "Current Age is set to: " + age + " years old, but should be set to: " + i + " years old\n";
             }
         }
-
+        mSFitSysCntrl.getFitProCntrl().removeCmd(ageCommand);
         return ageResults;
     }
     //--------------------------------------------//
@@ -142,7 +142,7 @@ public class TestIntegration {
                 weightResults += "Current Weight is set to: " + weight + " kilograms, but should be set to: " + i + " kilograms\n";
             }
         }
-
+        mSFitSysCntrl.getFitProCntrl().removeCmd(weightCommand);
         return weightResults;
     }
 
