@@ -40,7 +40,8 @@ public class TestIntegration {
     //--------------------------------------------//
     /*
     TODO: Future test can include input invalid ages. Valid age range is 5-95 years, validate default age
-    TODO: Also check that test still work when changing units from Metric to English
+    TODO: Also check that test still work when changing units from Metric to English\
+    TODO: Is minimum age 18?
     */
     public String testAge() throws Exception {
         //Redmine Support #937
@@ -68,7 +69,7 @@ public class TestIntegration {
         ageResults += "The default age is set to " + age + " years old\n";
 
         //Set age to 20 and increment by 5 up to age 45
-        for(int i = 20; i <=45; i+=5) {
+        for(int i = 5; i <=95; i+=1) {
             ((WriteReadDataCmd) ageCommand.getCommand()).addWriteData(BitFieldId.AGE, i);
             mSFitSysCntrl.getFitProCntrl().addCmd(ageCommand);
             Thread.sleep(2000);
@@ -99,6 +100,7 @@ public class TestIntegration {
     /*
     TODO: Future test can include testing invalid weights (MAX_WEIGHT< weight < MIN_WEIGHT) and validating default weight
     TODO: Also check for conversions when changing untis from Metric to English
+    TODO: Put tolerance range to avoid rounding issues
     */
     public String testWeight() throws Exception {
         //Weight is implemented in kilograms with a default weight of 185 lbs =84 kg
@@ -123,8 +125,8 @@ public class TestIntegration {
         weight = hCmd.getWeight();
         weightResults += "The default weight is set to " + weight + " kilograms\n";
 
-        //Set weight to 50 kg and increment by 25 up to 175 kg (max is 400lbs = 181 kg)
-        for(int i = 50; i <=175; i+=25) {
+        //Set weight to 50 kg and increment by 10 up to 175 kg (max is 400lbs = 181 kg)
+        for(double i = 45.35; i <=175; i+=10) {
             ((WriteReadDataCmd) weightCommand.getCommand()).addWriteData(BitFieldId.WEIGHT, i);
             mSFitSysCntrl.getFitProCntrl().addCmd(weightCommand);
             //need more time for weight controller

@@ -24,8 +24,7 @@ import java.util.Collection;
  * Tests to perform:                                                                   *
  *      1. Test read/write operation on each bitfield - testBitfieldRdWr()             *
  *                                                                                     *
- *          - Send valid values to write to all the bitfields                          *
- *          - Read values written to verify them                                       *
+ *                                               *
  *          - If read only, verify writing operation to bitfield fails                 *
  *          - If bitfield is not supported, verify exception is thrown                 *
  *                                                                                     *

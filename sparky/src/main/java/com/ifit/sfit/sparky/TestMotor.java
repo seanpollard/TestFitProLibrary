@@ -47,7 +47,7 @@ import java.util.concurrent.ExecutionException;
  * Used sean's TestMotor code and adapted it to work with SparkyAndroidLib 0.0.9
  */
 public class TestMotor {
-    private final double MAX_SPEED = 16; //hardcode the value until we can read it
+    private final double MAX_SPEED = 3; //hardcode the value until we can read it
     //Variables needed to initialize connection with Brainboard
     private FecpController mFecpController;
     private TestApp mAct;
