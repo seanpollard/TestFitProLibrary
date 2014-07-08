@@ -695,7 +695,7 @@ public class TestApp extends Activity implements View.OnClickListener, SystemSta
                     "Min Speed: \""+minSpeed+"\"\n";
 
             try{
-               //TestMotor t = new TestMotor(this.fecpController,this,this.mSFitSysCntrl);
+             //  TestMotor t = new TestMotor(this.fecpController,this,this.mSFitSysCntrl);
                //configString = t.testStartSpeed();
               // configString= t.testSpeedController();
                 //configString= t.testPwmOvershoot();
@@ -706,7 +706,9 @@ public class TestApp extends Activity implements View.OnClickListener, SystemSta
                //configString = ti.testAge();
                //configString = ti.testWeight();
                 TestBitfields tc = new TestBitfields(this.fecpController,this,this.mSFitSysCntrl);
-                configString = tc.testBitfieldRdWr();
+                //configString = tc.testBitfieldRdWr();
+                configString = tc.testBitfieldValuesValidation();
+
             } catch(Exception e){
                 e.printStackTrace();
             }

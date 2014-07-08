@@ -22,7 +22,7 @@ import java.util.Collection;
  * Created by jc.almonte on 7/2/14.                                                    *
  * Test class for the BitFields                                                        *
  * Tests to perform:                                                                   *
- *      1. Test read/write operation on each bitfield - testBitfieldRdWr()              *
+ *      1. Test read/write operation on each bitfield - testBitfieldRdWr()             *
  *                                                                                     *
  *          - Send valid values to write to all the bitfields                          *
  *          - Read values written to verify them                                       *
@@ -31,7 +31,7 @@ import java.util.Collection;
  *                                                                                     *
  *      2. Test valid input values for each bitfield - testBitfieldValuesValidation()  *
  *          - Send invalid values to each bitfield and verify exception is thrown      *
- *                                                                                     *
+ *          - Send valid values                                                                            *
  *                                                                                     *
  **************************************************************************************/
 
@@ -140,6 +140,7 @@ public class TestBitfields {
     //-------------------------------------------------------------------------------//
 //Future tests Include
     //TODO: Add validation for new and future supported commands
+    //TODO: Test max and min limits and check out of range values
     public String testBitfieldValuesValidation() throws Exception
     {
         bitfieldRdWrResults+= "------Testing Read/Write Access with valid values for Supported WRITE/READ Bitfields------\n\n"; //to store results of test
@@ -152,35 +153,16 @@ public class TestBitfields {
         FecpCommand weightCmd = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
         FecpCommand gradeCmd = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
         FecpCommand workoutModeCmd = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
+        FecpCommand idleTimeOutCmd = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
+        FecpCommand pauseTimeOutCmd = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
 
 
         Object valueToWrite;
+        Object defaultValue;
         Object temp;
-/*
-            ((WriteReadDataCmd) cmd.getCommand()).addReadBitField(bf);
-            mSFitSysCntrl.getFitProCntrl().addCmd(cmd);
-            Thread.sleep(1000);
 
-
-            ((WriteReadDataCmd) cmd.getCommand()).addWriteData(bf,valueToWrite );
-            mSFitSysCntrl.getFitProCntrl().addCmd(cmd);
-            Thread.sleep(2000);
-
-            bitfieldRdWrResults += "Status of setting the Age to " + valueToWrite + ": " + (cmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
-
-            temp = hCmd.toString();
-
-            //temp = ((ByteConverter) this.mSFitSysCntrl.getFitProCntrl().getSysDev().getCurrentSystemData().get(BitFieldId.AGE).getData()).getValue();
-
-            if (hCmd.toString().equals(String.valueOf(valueToWrite))) {
-                bitfieldRdWrResults += "\n* PASS * value " + hCmd.toString() + " read from brainboard matches value " + valueToWrite + " written to bitfield " + bf.name() + "\n";
-            } else {
-                bitfieldRdWrResults += "\n* FAIL * value " + hCmd.toString() + " read from brainboard DOESN'T match value " + valueToWrite + " written to bitfield " + bf.name() + "\n";
-            }
-            valueToWrite++;
-*/
-        //Loop through all read/write supported fields, write a value and verify it by reading it from brainbaord
-    try {
+        //Loop through all read/write supported fields, write invalid value and verify read value from brainboard is the default value
+        // Then write a valid value and verify it by reading it from brainboard
 
         for (BitFieldId bf : supportedWrBitFields) {
             //All Write/Read bitfields are: KPH, GRADE, RESISTANCE, FAN_SPEED,VOLUME, WORKOUT_MODE, AUDIO_SOURCE, WORKOUT, AGE, WEIGHT, GEARS
@@ -189,36 +171,57 @@ public class TestBitfields {
 
             switch (bf.name()) {
                 case "KPH":
+                    valueToWrite = -5.0;//Invalid value
+                    defaultValue = 1.0;
+                    verifyBitfield(kphCmd,ModeId.RUNNING,bf,valueToWrite,false,defaultValue);
                     valueToWrite = 3.0;
-                    verifyBitfield(kphCmd,ModeId.RUNNING,bf,valueToWrite);
+                    verifyBitfield(kphCmd,ModeId.RUNNING,bf,valueToWrite,true,defaultValue);
                     break;
                 case "GRADE":
+                    defaultValue = 0.0;
+                    valueToWrite = -32770;//Invalid value
+                    verifyBitfield(gradeCmd,ModeId.IDLE,bf,valueToWrite,false,defaultValue);
                     valueToWrite = 5.0;
-                    verifyBitfield(gradeCmd,ModeId.IDLE,bf,valueToWrite);
+                    verifyBitfield(gradeCmd,ModeId.IDLE,bf,valueToWrite,true,defaultValue);
                     break;
                 case "RESISTANCE":
                     break;
                 case "FAN_SPEED":
+                    defaultValue = 0.0;
+                    valueToWrite = -3;//Invalid value
+                    verifyBitfield(fanSpeedcmd,ModeId.RUNNING,bf,valueToWrite,false,defaultValue);
                     valueToWrite = 12.0; //set fan speed to 15% of max
-                    verifyBitfield(fanSpeedcmd,ModeId.RUNNING,bf,valueToWrite);
+                    verifyBitfield(fanSpeedcmd,ModeId.RUNNING,bf,valueToWrite,true,defaultValue);
                     break;
                 case "VOLUME":
                     break;
                 case "WORKOUT_MODE":
+                    ((WriteReadDataCmd) workoutModeCmd.getCommand()).addReadBitField(BitFieldId.WORKOUT_MODE);
+                    mSFitSysCntrl.getFitProCntrl().addCmd(workoutModeCmd);
+                    Thread.sleep(1000);
+                    defaultValue = hCmd.getMode();//In this case the default is last mode
+                    valueToWrite = 15.0;
+                    verifyBitfield(workoutModeCmd,ModeId.RUNNING,bf,valueToWrite,false,defaultValue);
                     valueToWrite = ModeId.PAUSE; //Pause Mode
-                    verifyBitfield(workoutModeCmd,ModeId.RUNNING,bf,valueToWrite);
+                    verifyBitfield(workoutModeCmd,ModeId.RUNNING,bf,valueToWrite,true,defaultValue);
                     break;
                 case "AUDIO_SOURCE":
                     break;
                 case "WORKOUT":
                     break;
                 case "AGE":
+                    valueToWrite = 2.0; //invalid value
+                    defaultValue = 35.0;
+                    verifyBitfield(ageCmd,ModeId.IDLE,bf,valueToWrite,false,defaultValue);
                     valueToWrite = 18.0; //set age to 20 years old
-                    verifyBitfield(ageCmd,ModeId.IDLE,bf,valueToWrite);
+                    verifyBitfield(ageCmd,ModeId.IDLE,bf,valueToWrite,true,defaultValue);
                     break;
                 case "WEIGHT":
-                    valueToWrite = 50.0; //set weight to 20 years old
-                    verifyBitfield(weightCmd,ModeId.IDLE,bf,valueToWrite);
+                    valueToWrite = 20.0; //invalid value
+                    defaultValue = 83.91;
+                    verifyBitfield(weightCmd,ModeId.IDLE,bf,valueToWrite,false,defaultValue);
+                    valueToWrite = 68.0; //set weight to 20 years old
+                    verifyBitfield(weightCmd,ModeId.IDLE,bf,valueToWrite,true,defaultValue);
                     break;
                 case "GEARS":
                     break;
@@ -229,46 +232,19 @@ public class TestBitfields {
                 case "BV_FREQUENCY":
                     break;
                 case "IDLE_TIMEOUT":
-                    /*
-                    valueToWrite = 9; //set timeout to 9secs to go from pause to IDLE
-                    ((WriteReadDataCmd)cmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE,ModeId.IDLE);
-                    mSFitSysCntrl.getFitProCntrl().addCmd(cmd);
-                    Thread.sleep(1000);
-                    ((WriteReadDataCmd)cmd.getCommand()).addWriteData(bf,valueToWrite); //set workout to valueToWrite
-                    mSFitSysCntrl.getFitProCntrl().addCmd(cmd);
-                    Thread.sleep(1000);
-                    ((WriteReadDataCmd)cmd.getCommand()).addReadBitField(bf);
-                    mSFitSysCntrl.getFitProCntrl().addCmd(cmd);
-                    Thread.sleep(1000);
-                    if(hCmd.toString().equals(String.valueOf(valueToWrite)))
-                    {
-                        bitfieldRdWrResults+="\n* PASS * value " + hCmd.toString() + " read from brainboard matches value "+ valueToWrite + " written to bitfield "+bf.name()+ "\n";
-                    }
-                    else
-                    {
-                        bitfieldRdWrResults+="\n* FAIL * value " + hCmd.toString() + " read from brainboard DOESN'T match value "+ valueToWrite + " written to bitfield "+bf.name()+ "\n";
-                    }*/
+                    valueToWrite = -8.0; //set timeout to 9secs to go from pause to IDLE
+                    defaultValue = 65530.0;
+                    verifyBitfield(idleTimeOutCmd,ModeId.IDLE,bf,valueToWrite,false,defaultValue);
+                    valueToWrite = 9.0; //set timeout to 9 secs to go from pause to IDLE
+                    verifyBitfield(idleTimeOutCmd,ModeId.IDLE,bf,valueToWrite,true,defaultValue);
                     break;
                 case "PAUSE_TIMEOUT":
-                    /*
-                    valueToWrite = 10; //set timeout to 5secs to go from pause to IDLE
-                    ((WriteReadDataCmd)cmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE,ModeId.PAUSE);
-                    mSFitSysCntrl.getFitProCntrl().addCmd(cmd);
-                    Thread.sleep(1000);
-                    ((WriteReadDataCmd)cmd.getCommand()).addWriteData(bf,valueToWrite); //set workout to valueToWrite
-                    mSFitSysCntrl.getFitProCntrl().addCmd(cmd);
-                    Thread.sleep(1000);
-                    ((WriteReadDataCmd)cmd.getCommand()).addReadBitField(bf);
-                    mSFitSysCntrl.getFitProCntrl().addCmd(cmd);
-                    Thread.sleep(1000);
-                    if(hCmd.toString().equals(String.valueOf(valueToWrite)))
-                    {
-                        bitfieldRdWrResults+="\n* PASS * value " + hCmd.toString() + " read from brainboard matches value "+ valueToWrite + " written to bitfield "+bf.name()+ "\n";
-                    }
-                    else
-                    {
-                        bitfieldRdWrResults+="\n* FAIL * value " + hCmd.toString() + " read from brainboard DOESN'T match value "+ valueToWrite + " written to bitfield "+bf.name()+ "\n";
-                    }*/
+                    valueToWrite = -6.0; //set timeout to 9secs to go from pause to IDLE
+                    defaultValue = 65530.0;
+                    verifyBitfield(pauseTimeOutCmd,ModeId.IDLE,bf,valueToWrite,false,defaultValue);
+                    valueToWrite = 10.0; //set timeout to 5secs to go from pause to IDLE
+                    defaultValue = 0.0;
+                    verifyBitfield(pauseTimeOutCmd,ModeId.PAUSE,bf,valueToWrite,true,defaultValue);
                     break;
                 case "SYSTEM_UNITS":
                     break;
@@ -301,15 +277,11 @@ public class TestBitfields {
            // mSFitSysCntrl.getFitProCntrl().removeCmd(cmd);
            // Thread.sleep(1000);
         }
-    }
-catch (Exception ex)
-{
-    ex.printStackTrace();
-}
 
         return bitfieldRdWrResults;
     }
-public void verifyBitfield(FecpCommand cmd, ModeId modeId,BitFieldId bitFieldId, Object valueToWrite) throws InvalidCommandException, InvalidBitFieldException {
+    //Helper function to test bitfields
+public void verifyBitfield(FecpCommand cmd, ModeId modeId,BitFieldId bitFieldId, Object valueToWrite, boolean validValue,Object defaultVal) throws InvalidCommandException, InvalidBitFieldException {
     long time=1000;
     if(modeId.name() =="KPH" || modeId.name() =="GRADE")
     {
@@ -330,10 +302,22 @@ public void verifyBitfield(FecpCommand cmd, ModeId modeId,BitFieldId bitFieldId,
     {
         ex.printStackTrace();
     }
-    if (hCmd.toString().equals(String.valueOf(valueToWrite))) {
-        bitfieldRdWrResults += "\n* PASS * value " + hCmd.toString() + " read from brainboard matches value " + valueToWrite + " written to bitfield " + bitFieldId.name() + "\n";
-    } else {
-        bitfieldRdWrResults += "\n* FAIL * value " + hCmd.toString() + " read from brainboard DOESN'T match value " + valueToWrite + " written to bitfield " + bitFieldId.name() + "\n";
+    if(validValue) {
+        bitfieldRdWrResults += "\nusing VALID value "+ valueToWrite;
+        if (hCmd.toString().equals(String.valueOf(valueToWrite))) {
+            bitfieldRdWrResults += "\n* PASS * value " + hCmd.toString() + " read from brainboard matches value " + valueToWrite + " written to bitfield " + bitFieldId.name() + "\n";
+        } else {
+            bitfieldRdWrResults += "\n* FAIL * value " + hCmd.toString() + " read from brainboard DOESN'T match value " + valueToWrite + " written to bitfield " + bitFieldId.name() + "\n";
+        }
+    }
+    else
+    { bitfieldRdWrResults += "\nusing INVALID value "+ valueToWrite;
+
+        if (hCmd.toString().equals(String.valueOf(defaultVal))) {
+            bitfieldRdWrResults += "\n* PASS * value " + hCmd.toString() + " read from brainboard matches value default value" + defaultVal + " for bitfield " + bitFieldId.name() + "\n";
+        } else {
+            bitfieldRdWrResults += "\n* FAIL * value " + hCmd.toString() + " read from brainboard DOESN'T match value " + defaultVal + " for bitfield " + bitFieldId.name() + "\n";
+        }
     }
 }
 
