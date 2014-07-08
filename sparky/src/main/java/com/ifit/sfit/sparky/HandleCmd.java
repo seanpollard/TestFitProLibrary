@@ -42,15 +42,15 @@ public class HandleCmd implements OnCommandReceivedListener
     private  double mActualIncline = 0.0;
     private  double mMaxIncline = 0.0;
     private  double mMinIncline = 0.0;
-    private  int mTransMax = 0;
-    private  int mDistance = 0;
-    private  int mRunTime = 0;
+    private  double mTransMax = 0;
+    private  double mDistance = 0;
+    private  double mRunTime = 0;
     private  double mCalories = 0;
     private  double mWeight = 0;
-    private  int mAge = 0;
-    private  int mFanSpeed = 0;
-    private  int mIdleTimeout = 0;
-    private  int mPauseTimeout = 0;
+    private  double mAge = 0;
+    private  double mFanSpeed = 0;
+    private  double mIdleTimeout = 0;
+    private  double mPauseTimeout = 0;
     private KeyObject mKey;
     private String valueToString="none";
 
@@ -304,16 +304,16 @@ public class HandleCmd implements OnCommandReceivedListener
     public double getActualIncline(){ return this.mActualIncline; }
     public double getMaxIncline(){ return this.mMaxIncline; }
     public double getMinIncline(){ return this.mMinIncline; }
-    public int getTransMax(){ return this.mTransMax; }
+    public double getTransMax(){ return this.mTransMax; }
     public ModeId getMode(){ return this.mResultMode; }
-    public int getDistance() { return this.mDistance; }
-    public int getRunTime() { return this.mRunTime; }
+    public double getDistance() { return this.mDistance; }
+    public double getRunTime() { return this.mRunTime; }
     public double getCalories() { return this.mCalories; }
     public double  getWeight() { return  this.mWeight; }
-    public int getAge() { return this.mAge; }
-    public int getFanSpeed() { return this.mFanSpeed; }
-    public int getIdleTimeout() { return this.mIdleTimeout; }
-    public int getPauseTimeout() { return this.mPauseTimeout; }
+    public double getAge() { return this.mAge; }
+    public double getFanSpeed() { return this.mFanSpeed; }
+    public double getIdleTimeout() { return this.mIdleTimeout; }
+    public double getPauseTimeout() { return this.mPauseTimeout; }
     public KeyObject getKey() { return this.mKey; }
 
     }

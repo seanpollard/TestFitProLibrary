@@ -11,7 +11,10 @@ import com.ifit.sparky.fecp.interpreter.bitField.converter.ShortConverter;
 import com.ifit.sparky.fecp.interpreter.bitField.converter.SpeedConverter;
 import com.ifit.sparky.fecp.interpreter.bitField.converter.WeightConverter;
 import com.ifit.sparky.fecp.interpreter.bitField.converter.BitfieldDataConverter;
+import com.ifit.sparky.fecp.interpreter.command.SetTestingKeyCmd;
+import com.ifit.sparky.fecp.interpreter.device.Device;
 import com.ifit.sparky.fecp.interpreter.device.DeviceId;
+import com.ifit.sparky.fecp.interpreter.key.KeyCodes;
 import com.ifit.sparky.fecp.interpreter.key.KeyObject;
 import com.ifit.sparky.fecp.FitProUsb;
 import com.ifit.sparky.fecp.OnCommandReceivedListener;
@@ -32,6 +35,7 @@ import android.content.Intent;
 
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 
+import java.net.IDN;
 import java.util.Calendar;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
@@ -57,11 +61,12 @@ public class TestMotor {
     private long startTimer = 0;
 
     private FecpCommand sendKeyCmd;
+    private SetTestingKeyCmd stkCmd;
 
     //TestMotor constructor. Receive needed parameters from main activity(TestApp) to initialize controller
     public TestMotor(FecpController fecpController, TestApp act, SFitSysCntrl ctrl) {
         //Get controller sent from the main activity (TestApp)
-        try {
+            try {
             this.mFecpController = fecpController;
             this.mAct = act;
             this.mSFitSysCntrl = ctrl;
@@ -150,7 +155,8 @@ public class TestMotor {
         Thread.sleep(1000);
 
         //Remove all commands from the device that have a command ID = "WRITE_READ_DATA"
-//        mSFitSysCntrl.getFitProCntrl().removeCmd(MainDevice.getInfo().getDevId(), CommandId.WRITE_READ_DATA);
+        mSFitSysCntrl.getFitProCntrl().removeCmd(modeCommand);
+        Thread.sleep(1000);
 
 
         return startResults;
@@ -210,7 +216,7 @@ public class TestMotor {
        distanceResults += "Current Mode is: " + hCmd.getMode() + "\n";
         //wait for command
 
-        int distance = hCmd.getDistance();
+        double distance = hCmd.getDistance();
         distanceResults += "The distance was " + distance + "\n";
         distanceResults += "The status of reading the distance is: " + modeCommand.getCommand().getStatus().getStsId().getDescription() + "\n";
 
@@ -228,7 +234,8 @@ public class TestMotor {
             distanceResults += "\n * PASS * \n\nThe distance should be 250 meters and is " + distance + " meters which is within 5%\n\n";
 
         //Remove all commands from the device that have a command ID = "WRITE_READ_DATA"
-        mSFitSysCntrl.getFitProCntrl().removeCmd(MainDevice.getInfo().getDevId(), CommandId.WRITE_READ_DATA);
+        mSFitSysCntrl.getFitProCntrl().removeCmd(modeCommand);
+        Thread.sleep(1000);
 
         return distanceResults;
     }
@@ -282,7 +289,8 @@ public class TestMotor {
             }
 
         }
-
+        mSFitSysCntrl.getFitProCntrl().removeCmd(modeCommand);
+        Thread.sleep(1000);
         return modeResults;
     }
 
@@ -386,6 +394,8 @@ public class TestMotor {
         Thread.sleep(1000);
 
         pauseResumeResults += "\nThe current mode is " + hCmd.getMode() + "\n";
+        mSFitSysCntrl.getFitProCntrl().removeCmd(modeCommand);
+        Thread.sleep(1000);
 
         return pauseResumeResults;
     }
@@ -473,9 +483,6 @@ public class TestMotor {
                 ((WriteReadDataCmd) modeCommand.getCommand()).addWriteData(BitFieldId.KPH, roundedJ);
                 mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
                 Thread.sleep(1000);
-                //Set command to read the speed off of device
-                ((WriteReadDataCmd) modeCommand.getCommand()).addReadBitField(BitFieldId.KPH);
-                mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
 
                 if (roundedJ == 0) {
                     Thread.sleep(3000);
@@ -493,7 +500,10 @@ public class TestMotor {
 
                 //((ModeConverter)(((WriteReadDataSts)readModeCommand.getCommand().getStatus()).getResultData().get(BitFieldId.WORKOUT_MODE))).getMode()
                 testResults += currentWorkoutMode;
-
+                //Set command to read the speed off of device
+                ((WriteReadDataCmd) modeCommand.getCommand()).addReadBitField(BitFieldId.KPH);
+                mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
+                Thread.sleep(1000);
                 currentSpeed = hCmd.getSpeed();
                 testResults+= "Current speed is: " + currentSpeed;
 
@@ -525,14 +535,150 @@ public class TestMotor {
             //Set the mode to idle
             ((WriteReadDataCmd) modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.IDLE);
             mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
-
+            Thread.sleep(1000);
             //Remove all commands from the device that have a command ID = "WRITE_READ_DATA"
-            mSFitSysCntrl.getFitProCntrl().removeCmd(MainDevice.getInfo().getDevId(), CommandId.WRITE_READ_DATA);
+            mSFitSysCntrl.getFitProCntrl().removeCmd(modeCommand);
+            Thread.sleep(1000);
 
 
         }
 
         return testResults;
+    }
+
+    //--------------------------------------------//
+    //                                            //
+    //           Testing PWM Overshoot            //
+    //                                            //
+    //--------------------------------------------//
+    /*Futures test includes
+    * TODO: Test with different speeds and use other non-running modes (PAUSE, RESULTS, etc...) before pressing start again
+    * */
+    public String testPwmOvershoot() throws Exception {
+        //RedMine Support #956
+        //Checklist item #39
+        //Set Speed to Max Speed
+        //Simulate Stop button press
+        //Simulate Start button press
+        //Read Actual Speed to verify does not speed up and then come down
+        String pwmResults;
+        double maxSpeed = 16.0; //TODO: Hardcoded Max Speed until it is implemented on the Brainboard (3/25/14)
+        double[] currentSpeeds = new double[30];
+        boolean alwaysLess = true;
+
+        pwmResults = "\n\n----------------------PWM OVERSHOOT TEST RESULTS----------------------\n\n";
+        pwmResults += Calendar.getInstance().getTime() + "\n\n";
+
+        FecpCommand modeCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA));
+
+        //Set Mode to Idle
+        ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.IDLE);
+        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
+        Thread.sleep(1000);
+
+        pwmResults += "Status of changing mode to Idle: " + (modeCommand.getCommand()).getStatus().getStsId().getDescription() + "\n";
+        pwmResults+= "Current Mode is: " + hCmd.getMode() + "\n";
+        //Set Mode to Running
+        ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.RUNNING);
+        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
+        Thread.sleep(1000);
+
+        pwmResults += "Status of changing mode to Running: " + (modeCommand.getCommand()).getStatus().getStsId().getDescription() + "\n";
+        pwmResults+= "Current Mode is: " + hCmd.getMode() + "\n";
+
+        //Set speed to Max Speed
+        ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.KPH, maxSpeed);
+        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
+        Thread.sleep(23000);    //Wait for Max Speed
+
+        Device keyPressTemp = this.MainDevice.getSubDevice(DeviceId.KEY_PRESS);
+
+        //Send Stop Key Command
+        if(keyPressTemp != null){
+           // Command writeKeyPressCmd = keyPressTemp.getCommand(CommandId.SET_TESTING_KEY);
+           // if(writeKeyPressCmd != null){ //TODO: Check why KeyPressTemp does not contain CommandId = SET_TESTING_KEY  because it makes writeKeyPressCmd be NULL!)
+                //sendKeyCmd = new FecpCommand(writeKeyPressCmd, hCmd);
+                stkCmd = new SetTestingKeyCmd();
+                stkCmd.setKeyCode(KeyCodes.STOP);
+                stkCmd.setKeyOverride(true);
+                stkCmd.setTimeHeld(1000);
+                stkCmd.setIsSingleClick(true);
+            //}
+            sendKeyCmd = new FecpCommand(stkCmd,hCmd);
+        }
+
+        mSFitSysCntrl.getFitProCntrl().addCmd(sendKeyCmd);
+        Thread.sleep(1000);
+
+        pwmResults += "Status of sending Stop key command: " + sendKeyCmd.getCommand().getStatus().getStsId().getDescription() + "\n";
+
+        mSFitSysCntrl.getFitProCntrl().removeCmd(sendKeyCmd);
+        Thread.sleep(1000);
+
+        //Send Start Key Command
+        if(keyPressTemp != null){
+            Command writeKeyPressCmd = keyPressTemp.getCommand(CommandId.SET_TESTING_KEY);
+            if(writeKeyPressCmd != null){
+                sendKeyCmd = new FecpCommand(writeKeyPressCmd, hCmd);
+                ((SetTestingKeyCmd)sendKeyCmd.getCommand()).setKeyCode(KeyCodes.START);
+                ((SetTestingKeyCmd)sendKeyCmd.getCommand()).setKeyOverride(true);
+                ((SetTestingKeyCmd)sendKeyCmd.getCommand()).setTimeHeld(1000);
+                ((SetTestingKeyCmd)sendKeyCmd.getCommand()).setIsSingleClick(true);
+            }
+        }
+
+        mSFitSysCntrl.getFitProCntrl().addCmd(sendKeyCmd);
+        Thread.sleep(1000);
+
+        pwmResults += "Status of sending Start key command: " + sendKeyCmd.getCommand().getStatus().getStsId().getDescription() + "\n";
+
+        mFecpController.removeCmd(sendKeyCmd);
+        Thread.sleep(1000);
+
+        //Read the speed off of device (Actual Speed, once implemented)
+        ((WriteReadDataCmd)modeCommand.getCommand()).addReadBitField(BitFieldId.KPH);
+//        ((WriteReadDataCmd)readSpeedCommand.getCommand()).addReadBitField(BitFieldId.ACTUAL_KPH);
+        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
+        Thread.sleep(1000);
+
+        //Check status of the command to receive the speed
+        pwmResults += "Status of reading Speed: " + (modeCommand.getCommand()).getStatus().getStsId().getDescription() + "\n";
+
+        //TODO: Actual Speed is not yet implemented (as of 3/25/14)
+        for(int i = 0; i < 30; i++){
+            currentSpeeds[i] = hCmd.getSpeed();
+//            currentSpeeds[i] = handleInfoCmd.getActualSpeed();
+            Thread.sleep(100);
+        }
+        //TODO: This logic on the if statement needs testing for this loop with actual speed
+        for(int i = 0; i < currentSpeeds.length-1; i++){
+            if(currentSpeeds[i] >= currentSpeeds[i+1]){
+                alwaysLess = true;
+            }
+            else{
+                alwaysLess = false;
+                pwmResults += "The current speed is more than the previous " + currentSpeeds[i+1] + " with " + currentSpeeds[i] + "\n";
+                break;
+            }
+        }
+
+        if(alwaysLess){
+            pwmResults += "\n* PASS *\n\n";
+            pwmResults += "The Speed did not increase once the Start button was pressed\n";
+        }
+        else{
+            pwmResults += "\n* FAIL *\n\n";
+            pwmResults += "The Speed increased or the Speed never changed from zero\n";
+        }
+
+        //Set Mode to Idle
+        ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.IDLE);
+        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
+        Thread.sleep(1000);
+        mSFitSysCntrl.getFitProCntrl().removeCmd(modeCommand);
+        Thread.sleep(1000);
+
+        return pwmResults;
     }
 
     public void runMotor() {
