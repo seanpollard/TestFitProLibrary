@@ -73,5 +73,31 @@ public class TestPhysicalKeyCodes {
 
         return startKeyResults;
     }
+    public String testStopKey() throws Exception {
+        //
+        String stopKeyResults;
+        String currentKey;
+        int timeHeld;
+
+        stopKeyResults = "\n\nPHYSICAL STOP KEY TEST\n";
+
+        ((WriteReadDataCmd)readKeyObjectCommand.getCommand()).addReadBitField(BitFieldId.KEY_OBJECT);
+        mFecpController.addCmd(readKeyObjectCommand);
+        Thread.sleep(14000);
+
+        currentKey = hCmd.getKey().getCookedKeyCode().toString();
+        timeHeld = hCmd.getKey().getTimeHeld();
+
+        if(currentKey.equals("STOP")){
+            stopKeyResults += "\n* PASS *\n\n";
+            stopKeyResults += "The " + currentKey + " key was pressed and held for " + timeHeld + " ms\n";
+        }
+        else{
+            stopKeyResults += "\n* FAIL *\n\n";
+            stopKeyResults += "The " + currentKey + " key was pressed and held for " + timeHeld + " ms (should have been STOP key)\n";
+        }
+
+        return stopKeyResults;
+    }
 
 }

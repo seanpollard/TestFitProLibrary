@@ -709,7 +709,9 @@ public class TestApp extends Activity implements View.OnClickListener, SystemSta
                // configString = tc.testBitfieldRdWr();
                // configString = tc.testBitfieldValuesValidation();
                TestPhysicalKeyCodes tpk = new TestPhysicalKeyCodes(this.fecpController,this,this.mSFitSysCntrl);
-               configString = tpk.testStartKey();
+              // configString = tpk.testStartKey();
+                configString = tpk.testStopKey();
+
             } catch(Exception e){
                 e.printStackTrace();
             }
