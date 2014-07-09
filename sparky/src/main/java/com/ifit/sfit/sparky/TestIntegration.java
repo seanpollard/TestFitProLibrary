@@ -100,7 +100,7 @@ public class TestIntegration {
     /*
     TODO: Future test can include testing invalid weights (MAX_WEIGHT< weight < MIN_WEIGHT) and validating default weight
     TODO: Also check for conversions when changing untis from Metric to English
-    TODO: Put tolerance range to avoid rounding issues
+    TODO: Put tolerance range to avoid rounding issues --- DONE!
     */
     public String testWeight() throws Exception {
         //Weight is implemented in kilograms with a default weight of 185 lbs =84 kg
@@ -124,25 +124,33 @@ public class TestIntegration {
 
         weight = hCmd.getWeight();
         weightResults += "The default weight is set to " + weight + " kilograms\n";
+        double diff;
 
         //Set weight to 50 kg and increment by 10 up to 175 kg (max is 400lbs = 181 kg)
         for(double i = 45.35; i <=175; i+=10) {
+
             ((WriteReadDataCmd) weightCommand.getCommand()).addWriteData(BitFieldId.WEIGHT, i);
             mSFitSysCntrl.getFitProCntrl().addCmd(weightCommand);
             //need more time for weight controller
             Thread.sleep(1000);
 
-            weightResults += "Status of setting the Weight to " + i + ": " + (weightCommand.getCommand()).getStatus().getStsId().getDescription() + "\n";
+            weightResults += "\nStatus of setting the Weight to " + i + ": " + (weightCommand.getCommand()).getStatus().getStsId().getDescription() + "\n";
 
             weight = hCmd.getWeight();
-            if(weight == i){
+            diff = Math.abs(weight - i);
+
+          if(diff < i*.01) // if values are within 1% of each other
+          {
                 weightResults += "\n* PASS *\n\n";
                 weightResults += "Current Weight is set to: " + weight + " kilograms should be set to: " + i + " kilograms\n";
+                weightResults+="set and read values have a difference of "+diff+" which is within 1% tolerance\n";
             }
             else{
                 weightResults += "\n* FAIL *\n\n";
                 weightResults += "Current Weight is set to: " + weight + " kilograms, but should be set to: " + i + " kilograms\n";
-            }
+                weightResults+="set and read values have a difference of "+diff+" which is outside the 1% tolerance\n";
+
+          }
         }
         mSFitSysCntrl.getFitProCntrl().removeCmd(weightCommand);
         return weightResults;
