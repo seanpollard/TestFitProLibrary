@@ -6,6 +6,7 @@ import com.ifit.sparky.fecp.communication.FecpController;
 import com.ifit.sparky.fecp.interpreter.bitField.BitFieldId;
 import com.ifit.sparky.fecp.interpreter.command.CommandId;
 import com.ifit.sparky.fecp.interpreter.command.WriteReadDataCmd;
+import com.ifit.sparky.fecp.interpreter.status.StatusId;
 
 import java.util.Calendar;
 
@@ -56,39 +57,59 @@ public class TestIntegration {
         ageResults += Calendar.getInstance().getTime() + "\n\n";
 
         double age;
+        double prevAge;
 
         FecpCommand ageCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
 
         ((WriteReadDataCmd)ageCommand.getCommand()).addReadBitField(BitFieldId.AGE);
        mSFitSysCntrl.getFitProCntrl().addCmd(ageCommand);
-        Thread.sleep(1000);
+        Thread.sleep(25);
 
         ageCommand.getCommand().getDevId().getDescription();
 
         age = hCmd.getAge();
         ageResults += "The default age is set to " + age + " years old\n";
 
-        //Set age to 20 and increment by 5 up to age 45
-        for(int i = 5; i <=95; i+=1) {
+        //Set age to min=18 and increment by 1 up to maxage= 95
+
+        int failureCounter = 0;
+        long elapsedTime = 0;
+        int i;
+        long startTime;
+        for(i = 18; i <=95; i+=1) {
             ((WriteReadDataCmd) ageCommand.getCommand()).addWriteData(BitFieldId.AGE, i);
             mSFitSysCntrl.getFitProCntrl().addCmd(ageCommand);
-            Thread.sleep(2000);
+            age = hCmd.getAge();
+            startTime = System.currentTimeMillis();
+            //Keep reading the value until is the on you set it too or until it has try for long enough (25ms) that
+            // we can conclude the reading has failed
+            while(age!=i && elapsedTime < 25){
+                age = hCmd.getAge();
+                elapsedTime = System.currentTimeMillis() - startTime;
+                }
+            System.out.println(elapsedTime);
 
             ageResults += "Status of setting the Age to " + i + ": " + (ageCommand.getCommand()).getStatus().getStsId().getDescription() + "\n";
 
-            age = hCmd.getAge();
-
+           /*
+            if(age == 80)
+            {
+                long elapsedTime = System.currentTimeMillis() - startTime;
+                System.out.println(elapsedTime);
+            }
+    */
             if(age == i){
 //            if(age == 13){
                 ageResults += "\n* PASS *\n\n";
                 ageResults += "Current Age is set to: " + age + " years old (age should really be " + i + ")\n";
+                failureCounter++;
             }
             else{
                 ageResults += "\n* FAIL *\n\n";
                 ageResults += "Current Age is set to: " + age + " years old, but should be set to: " + i + " years old\n";
             }
+            mSFitSysCntrl.getFitProCntrl().removeCmd(ageCommand);
         }
-        mSFitSysCntrl.getFitProCntrl().removeCmd(ageCommand);
         return ageResults;
     }
     //--------------------------------------------//
