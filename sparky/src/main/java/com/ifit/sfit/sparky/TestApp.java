@@ -688,45 +688,60 @@ public class TestApp extends Activity implements View.OnClickListener, SystemSta
             configString = "";      //clear out Configuration results for each time the Check Values button is pressed
             //This is on TestIntegration class in SystemConfiguration method
 
-            systemString += "Console Name: \""+consoleName+"\"\nModel Number: \""+model+"\"\nPart Number: \""+
+            systemString = "Console Name: \""+consoleName+"\"\nModel Number: \""+model+"\"\nPart Number: \""+
                     partNumber+"\"\nSoftware Version: \""+swVersion+"\"\nHardware Version: \""+hwVersion+
                     "\"\nSerial Number: \""+ serialNumber+"\"\nManufacturing Number: \""+manufactureNumber+
                     "\"\nMax Incline: \""+maxIncline+"\"\nMin. Incline: \""+minIncline+"\"\nMax Speed: \""+maxSpeed+"\"\n" +
                     "Min Speed: \""+minSpeed+"\"\n";
 
             try{
-            // TestMotor t = new TestMotor(this.fecpController,this,this.mSFitSysCntrl);
-               //configString = t.testStartSpeed();
-              //configString= t.testSpeedController();
+                TestIntegration system = new TestIntegration(this.fecpController,this,this.mSFitSysCntrl);
+                configString += system.testSystemConfiguration(systemString);
+                //try to write to the file in main from the machine control structure
+                //outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
+               // outputStream.write((configString).getBytes());
+               // outputStream.close();
+            } catch(Exception e){
+                e.printStackTrace();
+            }
+        }
+        else if(v==allTestsButton)
+        {
+
+            try{
+                // TestMotor t = new TestMotor(this.fecpController,this,this.mSFitSysCntrl);
+                //configString = t.testStartSpeed();
+                //configString= t.testSpeedController();
                 //configString= t.testPwmOvershoot();
                 //configString= t.testDistance();
-               //configString= t.testModeChange();
-               //configString= t.testPauseResume();
-              // TestIntegration ti = new TestIntegration(this.fecpController,this,this.mSFitSysCntrl);
+                //configString= t.testModeChange();
+                //configString= t.testPauseResume();
+                // TestIntegration ti = new TestIntegration(this.fecpController,this,this.mSFitSysCntrl);
                 //configString = ti.testAge();
-               //configString = ti.testWeight();
-              //TestBitfields tc = new TestBitfields(this.fecpController,this,this.mSFitSysCntrl);
-               // configString = tc.testBitfieldRdWr();
-               // configString = tc.testBitfieldValuesValidation();
-               TestPhysicalKeyCodes tpk = new TestPhysicalKeyCodes(this.fecpController,this,this.mSFitSysCntrl);
-              // configString = tpk.testStartKey();
+                //configString = ti.testWeight();
+                //TestBitfields tc = new TestBitfields(this.fecpController,this,this.mSFitSysCntrl);
+                // configString = tc.testBitfieldRdWr();
+                // configString = tc.testBitfieldValuesValidation();
+                //TestPhysicalKeyCodes tpk = new TestPhysicalKeyCodes(this.fecpController,this,this.mSFitSysCntrl);
+                // configString = tpk.testStartKey();
                 //configString = tpk.testStopKey();
-                configString = tpk.testQuickInclineKeys();
+                // configString = tpk.testQuickInclineKeys();
+                //TestTreadmillKeyCodes ttk = new TestTreadmillKeyCodes(this.fecpController,this,this.mSFitSysCntrl);
+                //configString = ttk.testAllKeys();
 
             } catch(Exception e){
                 e.printStackTrace();
             }
-
-            testingView.setText(configString);
-
-            if(configString.contains("FAIL")) {
-                passFail = "<font color = #ff0000>FAIL </font>";
-            }
-            else {
-                passFail = "<font color = #00ff00>PASS </font>";
-            }
-            resultView.setText(Html.fromHtml(passFail));
         }
+        testingView.setText(configString);
+
+        if(configString.contains("FAIL")) {
+            passFail = "<font color = #ff0000>FAIL </font>";
+        }
+        else {
+            passFail = "<font color = #00ff00>PASS </font>";
+        }
+        resultView.setText(Html.fromHtml(passFail));
     }
 
 

@@ -6,6 +6,7 @@ import com.ifit.sparky.fecp.communication.FecpController;
 import com.ifit.sparky.fecp.interpreter.bitField.BitFieldId;
 import com.ifit.sparky.fecp.interpreter.command.CommandId;
 import com.ifit.sparky.fecp.interpreter.command.WriteReadDataCmd;
+import com.ifit.sparky.fecp.interpreter.device.Device;
 import com.ifit.sparky.fecp.interpreter.status.StatusId;
 
 import java.util.Calendar;
@@ -177,5 +178,92 @@ public class TestIntegration {
         return weightResults;
     }
 
+    //--------------------------------------------//
+    //
+    //Testing System Configuration
+    //
+    //--------------------------------------------//
+    public String testSystemConfiguration(String inputString) throws Exception{
+        //outline for code support #951
+        //read System Config data from Brainboard
+        //try to output all values from System Device and Device Info
+        String titleString;
+        String systemString = null;
+
+        titleString = "\n----------------------SYSTEM CONFIGURATION TEST----------------------\n\n";
+        titleString += Calendar.getInstance().getTime() + "\n\n";
+
+        double maxIncline;
+        double minIncline;
+        double maxSpeed;
+        double minSpeed;
+
+        FecpCommand readMaxIncline = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA), hCmd);//every 1 second
+        ((WriteReadDataCmd)readMaxIncline.getCommand()).addReadBitField(BitFieldId.MAX_GRADE);
+        mSFitSysCntrl.getFitProCntrl().addCmd(readMaxIncline);
+        Thread.sleep(1000);
+
+        //Check status of the command to receive the incline
+        titleString += "Status of reading max incline: " + (readMaxIncline.getCommand()).getStatus().getStsId().getDescription() + "\n";
+
+        maxIncline = hCmd.getMaxIncline();
+
+        FecpCommand readMinIncline = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);//every 1 second
+        ((WriteReadDataCmd)readMinIncline.getCommand()).addReadBitField(BitFieldId.MIN_GRADE);
+        mSFitSysCntrl.getFitProCntrl().addCmd(readMinIncline);
+        Thread.sleep(1000);
+
+        //Check status of the command to receive the incline
+        titleString += "Status of reading min incline: " + (readMaxIncline.getCommand()).getStatus().getStsId().getDescription() + "\n";
+
+        minIncline = hCmd.getMinIncline();
+
+        FecpCommand readMaxSpeed = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);//every 1 second
+        ((WriteReadDataCmd)readMaxSpeed.getCommand()).addReadBitField(BitFieldId.MIN_GRADE);
+        mSFitSysCntrl.getFitProCntrl().addCmd(readMaxSpeed);
+        Thread.sleep(1000);
+
+        //Check status of the command to receive the incline
+        titleString += "Status of reading max speed: " + (readMaxSpeed.getCommand()).getStatus().getStsId().getDescription() + "\n";
+
+        maxSpeed = hCmd.getMaxSpeed();
+        minSpeed = hCmd.getMinSpeed();
+        Thread.sleep(1000);
+
+        //Need a new Device object for some of the device info
+        Device device = new Device();
+        String brainboardLines[] = new String[11];
+        //Split the user's input string into separate strings to be compared, line by line ("\n" is the delimiter)
+        String inputLines[] = inputString.split("\r?\n|\r");
+
+        brainboardLines[0] = "Console Name: \"" + MainDevice.getSysDevInfo().getConsoleName() + "\"";
+        brainboardLines[1] = "Model Number: \"" + MainDevice.getSysDevInfo().getModel() + "\"";
+        brainboardLines[2] = "Part Number: \"" + MainDevice.getSysDevInfo().getPartNumber() + "\"";
+        brainboardLines[3] = "Software Version: \"" + device.getInfo().getSWVersion() + "\"";
+        brainboardLines[4] = "Hardware Version: \"" + device.getInfo().getHWVersion() + "\"";
+        brainboardLines[5] = "Serial Number: \"" + device.getInfo().getSerialNumber() + "\"";
+        brainboardLines[6] = "Manufacturing Number: \"" + device.getInfo().getManufactureNumber() + "\"";
+        brainboardLines[7] = "Max Incline: \"" + maxIncline + "\"";
+        brainboardLines[8] = "Min. Incline: \"" + minIncline + "\"";
+        brainboardLines[9] = "Max Speed: \"" + maxSpeed + "\"";
+        brainboardLines[10] = "Min Speed: \"" + minSpeed + "\"";
+
+        //Comparing the User-entered configuration values (from PDM?) with what is stored on the Brainboard
+        for(int i = 0; i < brainboardLines.length; i++)
+        {
+            if(brainboardLines[i].equals(inputLines[i]))
+            {
+                systemString += "\nBrainboard " + brainboardLines[i] + "\nKeyboard Input " + inputLines[i] + "\n\n* PASS *\n\n";
+            }
+            else
+            {
+                systemString += "\nBrainboard " + brainboardLines[i] + "\n Keyboard Input " + inputLines[i] + "\n\n* FAIL *\n\n";
+            }
+        }
+
+        systemString = titleString + systemString;
+
+        return systemString;
+    }
 
 }
