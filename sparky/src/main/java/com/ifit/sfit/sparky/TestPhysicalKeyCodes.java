@@ -11,6 +11,9 @@ import com.ifit.sparky.fecp.interpreter.command.WriteReadDataCmd;
  * Created by jc.almonte on 7/9/14.
  */
 
+//This class tests that the program recognizes the physical key pressed
+// and it tells for how long it was pressed (in milliseconds)
+
 public class TestPhysicalKeyCodes {
     //Variables needed to initialize connection with Brainboard
     private FecpController mFecpController;
@@ -43,10 +46,13 @@ public class TestPhysicalKeyCodes {
             speedCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
 
             readKeyObjectCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA), hCmd);
+
+
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
+    //Test the Start Key
     public String testStartKey() throws Exception {
         //
         String startKeyResults;
@@ -54,10 +60,6 @@ public class TestPhysicalKeyCodes {
         int timeHeld;
 
         startKeyResults = "PHYSICAL START KEY TEST\n";
-
-        ((WriteReadDataCmd)readKeyObjectCommand.getCommand()).addReadBitField(BitFieldId.KEY_OBJECT);
-        mSFitSysCntrl.getFitProCntrl().addCmd(readKeyObjectCommand);
-        Thread.sleep(5000);
 
         currentKey = hCmd.getKey().getCookedKeyCode().toString();
         timeHeld = hCmd.getKey().getTimeHeld();
@@ -73,6 +75,7 @@ public class TestPhysicalKeyCodes {
 
         return startKeyResults;
     }
+    //Test the stop key
     public String testStopKey() throws Exception {
         //
         String stopKeyResults;
@@ -80,10 +83,6 @@ public class TestPhysicalKeyCodes {
         int timeHeld;
 
         stopKeyResults = "\n\nPHYSICAL STOP KEY TEST\n";
-
-        ((WriteReadDataCmd)readKeyObjectCommand.getCommand()).addReadBitField(BitFieldId.KEY_OBJECT);
-        mFecpController.addCmd(readKeyObjectCommand);
-        Thread.sleep(14000);
 
         currentKey = hCmd.getKey().getCookedKeyCode().toString();
         timeHeld = hCmd.getKey().getTimeHeld();
@@ -98,6 +97,57 @@ public class TestPhysicalKeyCodes {
         }
 
         return stopKeyResults;
+    }
+
+    public String testQuickInclineKeys() throws Exception {
+        //
+        String quickInclineKeyResults;
+        String currentKey;
+        int timeHeld;
+        //max and min incline should eventually be read from the brainboard, but the max incline is currently set at 15%,
+        //which is the max of the incline motor - not the console buttons
+        int maxIncline = 40;
+        int minIncline = -6;
+
+        quickInclineKeyResults = "PHYSICAL QUICK INCLINE KEYS TEST\n";
+
+
+        for(int i = maxIncline; i >= 0; i-=5) {
+            ((WriteReadDataCmd)readKeyObjectCommand.getCommand()).addReadBitField(BitFieldId.KEY_OBJECT);
+            mSFitSysCntrl.getFitProCntrl().addCmd(readKeyObjectCommand);
+            Thread.sleep(1000);
+            System.out.println("Press the "+ i +" key");
+            Thread.sleep(5000);
+            currentKey = hCmd.getKey().getCookedKeyCode().toString();
+            timeHeld = hCmd.getKey().getTimeHeld();
+            System.out.println(currentKey);
+            if (currentKey.equals("INCLINE_" + i)) {
+                quickInclineKeyResults += "\n* PASS *\n\n";
+                quickInclineKeyResults += "The " + currentKey + " key was pressed and held for " + timeHeld + " ms\n";
+            } else {
+                quickInclineKeyResults += "\n* FAIL *\n\n";
+                quickInclineKeyResults += "The " + currentKey + " key was pressed and held for " + timeHeld + " ms (should have been INCLINE_"+i+" key)\n";
+            }
+            mSFitSysCntrl.getFitProCntrl().removeCmd(readKeyObjectCommand);
+            Thread.sleep(1000);
+        }
+        for(int i = -2; i >= minIncline; i-=2){
+            System.out.println("Press the "+ i +" key");
+            Thread.sleep(5000);
+            currentKey = hCmd.getKey().getCookedKeyCode().toString();
+            timeHeld = hCmd.getKey().getTimeHeld();
+            System.out.println(currentKey);
+            if(currentKey.equals("INCLINE_NEG_"+Math.abs(i))){
+                quickInclineKeyResults += "\n* PASS *\n\n";
+                quickInclineKeyResults += "The " + currentKey + " key was pressed and held for " + timeHeld + " ms\n";
+            }
+            else{
+                quickInclineKeyResults += "\n* FAIL *\n\n";
+                quickInclineKeyResults += "The " + currentKey + " key was pressed and held for " + timeHeld + " ms (should have been INCLINE_NEG_"+Math.abs(i)+" key)\n";
+            }
+        }
+
+        return quickInclineKeyResults;
     }
 
 }

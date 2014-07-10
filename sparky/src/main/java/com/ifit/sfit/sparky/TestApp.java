@@ -710,7 +710,8 @@ public class TestApp extends Activity implements View.OnClickListener, SystemSta
                // configString = tc.testBitfieldValuesValidation();
                TestPhysicalKeyCodes tpk = new TestPhysicalKeyCodes(this.fecpController,this,this.mSFitSysCntrl);
               // configString = tpk.testStartKey();
-                configString = tpk.testStopKey();
+                //configString = tpk.testStopKey();
+                configString = tpk.testQuickInclineKeys();
 
             } catch(Exception e){
                 e.printStackTrace();
