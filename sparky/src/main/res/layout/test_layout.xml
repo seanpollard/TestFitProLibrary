@@ -273,17 +273,18 @@
         android:layout_height="wrap_content"
         android:text="Email Results"
         android:id="@+id/emailButton"
-        android:layout_below="@+id/findFailButton"
-        android:layout_alignEnd="@+id/findFailButton"
-        android:layout_toRightOf="@+id/scrollView" />
+        android:layout_alignEnd="@+id/clearButton"
+        android:layout_alignStart="@+id/clearButton"
+        android:layout_alignTop="@+id/scrollView"
+        android:layout_alignBottom="@+id/findFailButton" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Enter Email Address:"
         android:id="@+id/textView11"
-        android:layout_below="@+id/emailButton"
-        android:layout_toRightOf="@+id/scrollView" />
+        android:layout_alignBottom="@+id/clearButton"
+        android:layout_toLeftOf="@+id/editEmail" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -291,10 +292,9 @@
         android:inputType="textEmailAddress"
         android:ems="10"
         android:id="@+id/editEmail"
-        android:layout_below="@+id/textView11"
-        android:layout_toRightOf="@+id/scrollView"
-        android:layout_alignEnd="@+id/emailButton"
-        android:textSize="12dp" />
+        android:textSize="12dp"
+        android:layout_above="@+id/scrollView"
+        android:layout_toRightOf="@+id/textView5" />
 
     <Button
         style="?android:attr/buttonStyleSmall"
@@ -302,8 +302,8 @@
         android:layout_height="wrap_content"
         android:text="Clear Email"
         android:id="@+id/clearButton"
-        android:layout_below="@+id/editEmail"
-        android:layout_alignEnd="@+id/editEmail" />
+        android:layout_above="@+id/scrollView"
+        android:layout_alignEnd="@+id/editManNumber" />
 
     <TextView
         android:layout_width="wrap_content"

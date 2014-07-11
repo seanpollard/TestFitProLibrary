@@ -129,35 +129,7 @@ public class TestApp extends Activity implements View.OnClickListener, SystemSta
             e.printStackTrace();
 
         }
-       /*
 
-        mScanButton = (Button) findViewById(R.id.buttonScan);
-        this.deviceListView = (ListView)findViewById(R.id.deviceListView);
-        mScanButton.setEnabled(false);
-        mScanButton.setOnClickListener(this);
-
-        this.mListViewAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
-        deviceListView.setAdapter(this.mListViewAdapter);
-        deviceListView.setOnItemSelectedListener(this);
-        deviceListView.setOnItemClickListener(this);
-        deviceListView.setVisibility(View.VISIBLE);//enable the view of the list
-        this.currentTabletMode = ModeId.UNKNOWN;
-
-//        this.mScannerFitPro = new TcpComm();
-     //   FitProTcp.scanForSystems(this);
-//        this.mScannerFitPro.scanForSystems(this);
-
-        try {
-            FecpController fecpController;
-            fecpController = new FitProUsb(getApplicationContext(), getIntent());
-            this.mSFitSysCntrl = new SFitSysCntrl(fecpController);
-            fecpController.initializeConnection(this);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-
-        }
-    */
     }
 
    //To return application context
@@ -683,27 +655,31 @@ public class TestApp extends Activity implements View.OnClickListener, SystemSta
     @Override
     public void onClick(View v)
     {
+        testingView = (TextView) findViewById(R.id.testView);
+        resultView = (TextView)findViewById(R.id.passFailView);
         //Press this button to check the values entered by the user
         if(v == checkValsButton){
-            configString = "";      //clear out Configuration results for each time the Check Values button is pressed
 
-            systemString += "Console Name: \""+consoleName+"\"\nModel Number: \""+model+"\"\nPart Number: \""+
+            configString = "";      //clear out Configuration results for each time the Check Values button is pressed
+            //This is on TestIntegration class in SystemConfiguration method
+
+            systemString = "Console Name: \""+consoleName+"\"\nModel Number: \""+model+"\"\nPart Number: \""+
                     partNumber+"\"\nSoftware Version: \""+swVersion+"\"\nHardware Version: \""+hwVersion+
                     "\"\nSerial Number: \""+ serialNumber+"\"\nManufacturing Number: \""+manufactureNumber+
                     "\"\nMax Incline: \""+maxIncline+"\"\nMin. Incline: \""+minIncline+"\"\nMax Speed: \""+maxSpeed+"\"\n" +
                     "Min Speed: \""+minSpeed+"\"\n";
 
             try{
-                TestRunMotor t = new TestRunMotor(this.fecpController,this,this.mSFitSysCntrl);
-                t.runMotor();
+                TestIntegration system = new TestIntegration(this.fecpController,this,this.mSFitSysCntrl);
+                configString += system.testSystemConfiguration(systemString);
+                //try to write to the file in main from the machine control structure
+                outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
+               outputStream.write((configString).getBytes());
+               outputStream.close();
             } catch(Exception e){
                 e.printStackTrace();
             }
-
-            testingView = (TextView) findViewById(R.id.testView);
             testingView.setText(configString);
-            resultView = (TextView)findViewById(R.id.passFailView);
-
             if(configString.contains("FAIL")) {
                 passFail = "<font color = #ff0000>FAIL </font>";
             }
@@ -712,6 +688,102 @@ public class TestApp extends Activity implements View.OnClickListener, SystemSta
             }
             resultView.setText(Html.fromHtml(passFail));
         }
+        else if(v==allTestsButton)
+        {
+
+            try{
+                TestMotor t = new TestMotor(this.fecpController,this,this.mSFitSysCntrl);
+                returnString = t.testStartSpeed();
+                // returnString= t.testSpeedController();
+                // returnString= t.testPwmOvershoot();
+                // returnString= t.testDistance();
+                // returnString= t.testModeChange();
+                // returnString= t.testPauseResume();
+                // TestIntegration ti = new TestIntegration(this.fecpController,this,this.mSFitSysCntrl);
+                // returnString = ti.testAge();
+                // returnString = ti.testWeight();
+                //TestBitfields tc = new TestBitfields(this.fecpController,this,this.mSFitSysCntrl);
+                //  returnString = tc.testBitfieldRdWr();
+                //  returnString = tc.testBitfieldValuesValidation();
+                //TestPhysicalKeyCodes tpk = new TestPhysicalKeyCodes(this.fecpController,this,this.mSFitSysCntrl);
+                //  returnString = tpk.testStartKey();
+                // returnString = tpk.testStopKey();
+                //  returnString = tpk.testQuickInclineKeys();
+                //TestTreadmillKeyCodes ttk = new TestTreadmillKeyCodes(this.fecpController,this,this.mSFitSysCntrl);
+                // returnString = ttk.testAllKeys();
+                returnString += "\n" + systemString;
+                //try to write to the file in main from the machine control structure
+                outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
+                outputStream.write((returnString).getBytes());
+                outputStream.close();
+
+            } catch(Exception e){
+                e.printStackTrace();
+            }
+
+            testingView.setText(returnString);
+            if(returnString.isEmpty()){
+                passFail = "<font color = #ff0000>ERROR</font>";
+            }
+            else if(returnString.contains("FAIL")) {
+                passFail = "<font color = #ff0000>FAIL</font>";
+            }
+            else {
+                passFail = "<font color = #00ff00>PASS</font>";
+            }
+            resultView.setText(Html.fromHtml(passFail));
+        }
+        if(v == findFailButton) {
+            try{
+                String resultsString = testingView.getText().toString();
+                final String FAIL = "* FAIL *";
+                int failIndex = resultsString.indexOf(FAIL, 0);
+                Spannable WordToSpan = new SpannableString(testingView.getText());
+
+                for(int i = 0; i < resultsString.length() && failIndex != -1; i = failIndex+1) {
+                    failIndex = resultsString.indexOf(FAIL, i);
+                    if(failIndex == -1){
+                        break;
+                    }
+                    else{
+                        WordToSpan.setSpan(new BackgroundColorSpan(0xFFFFFF00), failIndex, failIndex+FAIL.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        testingView.setText(WordToSpan, TextView.BufferType.SPANNABLE);
+                    }
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        if(v == emailButton) {
+            try {
+                if(editEmail.getText().toString().isEmpty()){
+                    Toast.makeText(this, "Please enter an email!", Toast.LENGTH_LONG).show();
+                }
+                else {
+                    new SendEmailAsyncTask(emailAddress).execute();
+                }
+            }catch(Exception e){
+                Toast.makeText(this, "Email was not sent.", Toast.LENGTH_LONG).show();
+                e.printStackTrace();
+            }
+
+        }
+
+        if(v == clearButton) {
+            try {
+                editEmail.setText("");
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+
+        }
+
+        //Clear out the system device string to re-enter new values for next test
+        systemString = "";
+        //clear out print string to recheck values if needed from a typo
+        returnString = "";
     }
 
 

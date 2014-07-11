@@ -3,7 +3,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.11.+'
+        classpath 'com.android.tools.build:gradle:0.12.+'
     }
 }
 apply plugin: 'android-library'
@@ -21,6 +21,11 @@ android {
         minSdkVersion 17
         targetSdkVersion 19
         testPackageName "com.ifit.sparky.fecp.tests"
+        testApplicationId 'com.ifit.sparky.fecp.tests'
+    }
+    productFlavors {
+    }
+    buildTypes {
     }
 }
 
