@@ -28,11 +28,11 @@ public class SendEmailAsyncTask extends AsyncTask<Void, Void, Boolean> {
         //Who the email is from
         m.setFrom("phil.icontesting@gmail.com");
         //Email subject
-        m.setSubject("Fecp Automation Test Results: " + dateFormat.format(Calendar.getInstance().getTime()));
+        m.setSubject("FitPro Automation Test Results: " + dateFormat.format(Calendar.getInstance().getTime()));
 //        m.setBody("see attachment");
         try {
             //Add attachment at the filename listed
-            m.addAttachment("data/data/com.ifit.sfit.sparky.TestApp/files/test.txt");
+            m.addAttachment("data/data/com.ifit.sfit.sparky/files/test.txt");
 
             if(m.send()) {
                 for(int i = 0; i < toArr.length; i++){
