@@ -4,6 +4,7 @@ import com.ifit.sparky.fecp.FecpCommand;
 import com.ifit.sparky.fecp.SystemDevice;
 import com.ifit.sparky.fecp.communication.FecpController;
 import com.ifit.sparky.fecp.interpreter.bitField.BitFieldId;
+import com.ifit.sparky.fecp.interpreter.bitField.converter.ModeId;
 import com.ifit.sparky.fecp.interpreter.command.CommandId;
 import com.ifit.sparky.fecp.interpreter.command.WriteReadDataCmd;
 import com.ifit.sparky.fecp.interpreter.device.Device;
@@ -264,6 +265,158 @@ public class TestIntegration {
         systemString = titleString + systemString;
 
         return systemString;
+    }
+    //--------------------------------------------//
+    //
+    //Testing Pause Timeout
+    //
+    //--------------------------------------------//
+    public String testPauseTimeout() throws Exception{
+        //part of redmine #930
+        //Set mode to Pause
+        //Delay for 60 seconds
+        //Verify Pause timeout by reading the mode and ensuring it is in Results mode
+        String pauseResults;
+
+        pauseResults = "\n\n------------------------PAUSE TIMEOUT TEST RESULTS------------------------\n\n";
+        pauseResults += Calendar.getInstance().getTime() + "\n\n";
+
+//        int pauseTimeout;
+//
+//        FecpCommand readPauseTimeoutCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA), handleInfoCmd, 0, 1000);//every 1 second
+//        ((WriteReadDataCmd)readPauseTimeoutCommand.getCommand()).addReadBitField(BitFieldId.IDLE_TIMEOUT);
+//        mFecpController.addCmd(readPauseTimeoutCommand);
+//        Thread.sleep(1000);
+//
+//        pauseTimeout = handleInfoCmd.getPauseTimeout();
+//        pauseResults += "The Pause Timeout is currently set at: " + pauseTimeout + " seconds\n";
+
+        FecpCommand modeCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
+        //set mode to Idle to reset the Running Time for the test
+        ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.IDLE);
+        ((WriteReadDataCmd)modeCommand.getCommand()).addReadBitField(BitFieldId.WORKOUT_MODE);
+        ((WriteReadDataCmd)modeCommand.getCommand()).addReadBitField(BitFieldId.PAUSE_TIMEOUT);
+        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
+        Thread.sleep(1000);
+        System.out.println("Default pause timeout is: "+hCmd.getPauseTimeout());
+        System.out.println("Current Mode: "+hCmd.getMode());
+
+        //Set mode to Running
+        ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.RUNNING);
+       mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
+        Thread.sleep(1000);
+
+        pauseResults += "Status of setting the Mode to Running: " + (modeCommand.getCommand()).getStatus().getStsId().getDescription() + "\n";
+        System.out.println("Current Mode: "+hCmd.getMode());
+
+        //Set mode to Pause
+        ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.PAUSE);
+       mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
+        Thread.sleep(1000);
+
+        pauseResults += "Status of setting the Mode to Pause: " + (modeCommand.getCommand()).getStatus().getStsId().getDescription() + "\n";
+        System.out.println("Current Mode: "+hCmd.getMode());
+
+        //Check each second to see if mode has changed from Pause mode. Also prevents from waiting for longer than 1 minute
+        for(long totalTime = 0; totalTime < 70; totalTime++){
+            Thread.sleep(1000);
+            System.out.println("after " + totalTime +" sec(s)the mode is  " + hCmd.getMode().getDescription());
+            if(hCmd.getMode().getDescription() != "Pause Mode"){
+                pauseResults += "The mode changed to " + hCmd.getMode().getDescription() + " after " + totalTime + " seconds\n";
+                break;
+            }
+        }
+
+        if(hCmd.getMode().getDescription() != "Pause Mode"){
+            pauseResults += "\n* PASS *\n\n";
+            pauseResults += "Pause Mode timed out to " + hCmd.getMode().getDescription() + "\n";
+        }
+        else{
+            pauseResults += "\n* FAIL *\n\n";
+            pauseResults += "Pause Mode did not time out after 60 seconds\n";
+        }
+
+        return pauseResults;
+    }
+    public String testIdleTimeout() throws Exception{
+        //part of redmine #930
+        //Set mode to Idle
+        //Set mode to running
+        //set mode to Idle then change incline
+        //Delay for the time set for Idle timeout seconds
+        //Verify Idle timeout by reading the mode and ensuring the incline reset to zero
+        String pauseResults;
+        double timeout = 0;
+        pauseResults = "\n\n------------------------IDLE TIMEOUT TEST RESULTS------------------------\n\n";
+        pauseResults += Calendar.getInstance().getTime() + "\n\n";
+
+//        int pauseTimeout;
+//
+//        FecpCommand readPauseTimeoutCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA), handleInfoCmd, 0, 1000);//every 1 second
+//        ((WriteReadDataCmd)readPauseTimeoutCommand.getCommand()).addReadBitField(BitFieldId.IDLE_TIMEOUT);
+//        mFecpController.addCmd(readPauseTimeoutCommand);
+//        Thread.sleep(1000);
+//
+//        pauseTimeout = handleInfoCmd.getPauseTimeout();
+//        pauseResults += "The Pause Timeout is currently set at: " + pauseTimeout + " seconds\n";
+
+        FecpCommand modeCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd,100,50);
+        FecpCommand wrCmd = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
+
+        //set mode to Idle to reset the Running Time for the test
+        ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.IDLE);
+        ((WriteReadDataCmd)modeCommand.getCommand()).addReadBitField(BitFieldId.WORKOUT_MODE);
+        ((WriteReadDataCmd)modeCommand.getCommand()).addReadBitField(BitFieldId.IDLE_TIMEOUT);
+        ((WriteReadDataCmd)modeCommand.getCommand()).addReadBitField(BitFieldId.ACTUAL_INCLINE);
+        ((WriteReadDataCmd)modeCommand.getCommand()).addReadBitField(BitFieldId.GRADE);//Same as INCLINE
+        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
+        Thread.sleep(1000);
+
+
+        System.out.println("Default idle timeout is: " + hCmd.getIdleTimeout());
+        System.out.println("Current Mode: "+hCmd.getMode());
+        System.out.println("Current Actual incline : "+hCmd.getActualIncline());
+
+        //set idle timeout to 60 secs
+       ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.IDLE_TIMEOUT, 60);
+       mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+       Thread.sleep(1000);
+
+        System.out.println("idle timeout is set to : "+hCmd.getIdleTimeout());
+        System.out.println("Current Mode: "+hCmd.getMode());
+        System.out.println("Current Actual incline : "+hCmd.getActualIncline());
+        timeout = hCmd.getIdleTimeout();
+       //Set incline to a 5 and check actual value until it has reached 5
+      ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.GRADE, 5);
+       mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+       Thread.sleep(1000);
+
+       while(hCmd.getActualIncline() != hCmd.getIncline()){
+           System.out.println("Current Actual incline : "+hCmd.getActualIncline()+" Goal " + hCmd.getIncline());
+           Thread.sleep(1000);
+       }
+
+        //Check each second to see if mode has changed from Pause mode. Also prevents from waiting for longer than 1 minute
+        for(long totalTime = 0; totalTime < timeout; totalTime++){
+            Thread.sleep(1000);
+            System.out.println("after " + totalTime +" sec(s)the incline is  " + hCmd.getActualIncline());
+            if(hCmd.getActualIncline() != hCmd.getIncline()){
+                pauseResults += "The incline changed to " + hCmd.getActualIncline()+ " after " + totalTime + " seconds\n";
+                break;
+            }
+        }
+
+        if(hCmd.getActualIncline() != hCmd.getIncline()){
+            pauseResults += "\n* PASS *\n\n";
+            pauseResults += "Idle Mode timed out and reset incline to " +hCmd.getActualIncline()+"\n"; ;
+        }
+        else{
+            pauseResults += "\n* FAIL *\n\n";
+            pauseResults += "Idle Mode did not time out after 60 seconds\n";
+        }
+
+        return pauseResults;
+
     }
 
 }
