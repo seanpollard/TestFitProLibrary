@@ -538,4 +538,84 @@ public class TestIntegration {
         return resultString;
     }
 
+    //--------------------------------------------//
+    //                                            //
+    //              Testing Max Speed             //
+    //                                            //
+    //--------------------------------------------//
+    //the testMaxSpeedTime is planned to automate #59 of the software
+    //checklist to time the amount of time it takes to go from 0 to max speed
+    public String testMaxSpeedTime() throws Exception{
+        //outline for code #1051 in redmine
+        //look up max speed for device (currently is not implemented - so just going to use 20kph)
+        //send basic start command to start motor at on position
+        //start stopwatch timer
+        //send command to change speed to max speed
+        //read current speed until actual is the same as target
+        //stop stopwatch and return/display/record the value of the stopwatch
+        String maxSpeedResults;
+        double maxSpeed;
+        double currentActualSpeed = 0;
+
+        maxSpeedResults = "\n--------------------------MAX SPEED TEST--------------------------\n\n";
+        maxSpeedResults += Calendar.getInstance().getTime() + "\n\n";
+
+        //TODO: Once Max Speed command is implemented, just change the constant MAX_SPEED to the maxSpeed variable (which reads the value off of the Brainboard)
+        FecpCommand readMaxSpeedCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA), hCmd, 100, 100);
+        ((WriteReadDataCmd)readMaxSpeedCommand.getCommand()).addReadBitField(BitFieldId.ACTUAL_KPH);
+        mSFitSysCntrl.getFitProCntrl().addCmd(readMaxSpeedCommand);
+
+        maxSpeed = hCmd.getMaxSpeed();
+        Thread.sleep(1000);
+        System.out.println("The max speed is " + maxSpeed);
+
+        FecpCommand modeCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
+        //set mode to idle to make sure the motor has stopped
+        ((WriteReadDataCmd) modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.IDLE);
+        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
+        Thread.sleep(1000);
+        //start timer
+        //set mode to running
+        ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.RUNNING);
+        //set to max speed currently hardcoded to 20kph as that is not implemented
+        ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.KPH, maxSpeed);
+        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
+        Thread.sleep(1000);
+        long elapsedTime = 0;
+        double seconds = 0;
+        long startime = System.nanoTime();
+        //Read the actual speed and count elsaped time. Do this until speed has reached MAX
+        while(currentActualSpeed < maxSpeed)
+        {
+            currentActualSpeed = hCmd.getActualSpeed();
+            elapsedTime = System.nanoTime() - startime;
+            seconds = elapsedTime / 1.0E09;
+        }
+
+        //test is over set back to idle to end the test
+        ((WriteReadDataCmd) modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.IDLE);
+        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
+
+        maxSpeedResults += "The max speed is " + maxSpeed + "\n";
+        maxSpeedResults += "The motor took " + seconds + " seconds to go to max speed\n";
+
+        if(maxSpeed < 10){
+            maxSpeedResults += "\n* FAIL * \n\nThe Max Speed was not properly read from the brainboard (Max Speed: "+maxSpeed+" kph)\n";
+        }
+
+        //%5 pass standard with a 23 sec spec from #59
+        if((seconds <= 22) || (seconds >= 24)) {
+            maxSpeedResults += "\n* FAIL * \n\nThe motor was off by " + (seconds - 23) + " seconds\n";
+        }
+
+        else {
+            maxSpeedResults += "\n* PASS *\n\n";
+            maxSpeedResults += "The Max Speed was correctly read off of the brainboard and the speed up to Max Speed took "+
+                    seconds+" seconds, which is within the 5% tolerance\n";
+        }
+
+        return maxSpeedResults;
+    }
+
+
 }
