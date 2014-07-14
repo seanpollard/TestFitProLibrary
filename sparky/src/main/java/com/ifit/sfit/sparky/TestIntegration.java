@@ -419,4 +419,123 @@ public class TestIntegration {
 
     }
 
+    //--------------------------------------------//
+    //
+    //Testing Running Time
+    //
+    //--------------------------------------------//
+    public String testRunningTime() throws Exception{
+        //outline for code support #930 in redmine
+        //Set mode to Running
+        //Run for 1 minute and test that the Running Time value matches 1 minute
+        //Run same test, but put in a 30 second pause in the middle of the test to ensure that the time doesn't continue or that it resets
+        //The time should pick up where it left off at the beginning of the Pause
+        String resultString;
+
+        resultString = "\n\n------------------------RUNNING TIME TEST RESULTS------------------------\n\n";
+        resultString += Calendar.getInstance().getTime() + "\n\n";
+
+        FecpCommand modeCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
+        FecpCommand timeCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA), hCmd, 100, 100);
+
+
+        ((WriteReadDataCmd)timeCommand.getCommand()).addReadBitField(BitFieldId.RUNNING_TIME);
+        mSFitSysCntrl.getFitProCntrl().addCmd(timeCommand);
+        Thread.sleep(1000);
+
+        //set mode to Idle to reset the Running Time for the test
+        ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.IDLE);
+        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
+        Thread.sleep(1000);
+
+        //set the mode to running
+        ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.RUNNING);
+        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
+        Thread.sleep(60000);
+        //wait 1 minute
+//        long elapsedTime = 0;
+//        double seconds = 0;
+//        long startime = System.nanoTime();
+//        //Check the time elasped constanly until one minute has passed
+//        for(double i = 0; i < 59; i=seconds)
+//        {
+//            elapsedTime = System.nanoTime() - startime;
+//            seconds = elapsedTime / 1.0E09;
+//        }
+        //read the running time
+
+        double timeOfRunningTest = hCmd.getRunTime();
+
+        //Test whether the running time is within +/- 2 second of 60 seconds (allow for 1 sec read time)
+        if(timeOfRunningTest >= 58 && timeOfRunningTest <= 62) {
+            resultString += "\n\n* PASS *\n\n";
+        }
+        else {
+            resultString += "\n\n* FAIL *\n\n";
+        }
+
+        resultString += "The running time for this 60 second test was " + timeOfRunningTest + " seconds\n";
+
+        //set mode back to idle to stop the test
+        ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.IDLE);
+        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
+        Thread.sleep(1000);
+        //wait 5 seconds between tests for motor speed down
+        Thread.sleep(5000);
+
+        resultString += "\nPause Test: ";
+        //start pause test
+        //start running
+        //set the mode to running
+        ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE,ModeId.RUNNING);
+        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
+        Thread.sleep(30000);
+        //wait 30 seconds
+//        startime = System.nanoTime();
+//        //Check the time elasped constanly until 30 secs have passed
+//        for(double i = 0; i < 29; i=seconds)
+//        {
+//            elapsedTime = System.nanoTime() - startime;
+//            seconds = elapsedTime / 1.0E09;
+//        }
+        //pause the test
+        ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.PAUSE);
+        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
+        //wait 30 seconds
+        Thread.sleep(30000);
+        //go from pause to running
+        ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.RUNNING);
+        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
+        Thread.sleep(30000);
+        //wait another 30 seconds for a total of 1 minute expected running time
+//        startime = System.nanoTime();
+//        //Check the time elasped constanly until 30 secs have passed
+//        for(double i = 0; i < 29; i=seconds)
+//        {
+//            elapsedTime = System.nanoTime() - startime;
+//            seconds = elapsedTime / 1.0E09;
+//        }
+
+
+        double timeOfPauseTest = hCmd.getRunTime();
+        //Test whether the running time is within +/- 2 seconds of 60 seconds
+        if(timeOfPauseTest >= 58 && timeOfPauseTest <= 62){
+            resultString += "\n\n* PASS *\n\n";
+            resultString += "The total time for this 60 sec test with 30 sec pause correctly ran for " + timeOfPauseTest + " secs\n\n";
+        }
+        else {
+            resultString += "\n\n* FAIL *\n\n";
+            resultString += "The total time for this 60 sec test with 30 sec pause actually ran for " + timeOfPauseTest + " secs (should be 60 secs)\n\n";
+        }
+
+        //set mode back to idle to stop the test
+        ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.IDLE);
+        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
+        Thread.sleep(1000);
+        //end the recurring callback
+        mSFitSysCntrl.getFitProCntrl().removeCmd(timeCommand);
+
+        return resultString;
+    }
+
 }
