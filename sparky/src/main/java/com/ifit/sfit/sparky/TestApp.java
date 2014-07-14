@@ -671,7 +671,8 @@ public class TestApp extends Activity implements View.OnClickListener, SystemSta
 
             try{
                 TestIntegration system = new TestIntegration(this.fecpController,this,this.mSFitSysCntrl);
-                configString += system.testSystemConfiguration(systemString);
+               configString += system.testSystemConfiguration(systemString);
+
                 //try to write to the file in main from the machine control structure
                 outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
                outputStream.write((configString).getBytes());
@@ -693,15 +694,17 @@ public class TestApp extends Activity implements View.OnClickListener, SystemSta
 
             try{
                 TestMotor t = new TestMotor(this.fecpController,this,this.mSFitSysCntrl);
-                returnString = t.testStartSpeed();
+                //returnString = t.testStartSpeed();
                 // returnString= t.testSpeedController();
-                // returnString= t.testPwmOvershoot();
+                 returnString= t.testPwmOvershoot();
                 // returnString= t.testDistance();
                 // returnString= t.testModeChange();
                 // returnString= t.testPauseResume();
-                // TestIntegration ti = new TestIntegration(this.fecpController,this,this.mSFitSysCntrl);
+               // TestIntegration ti = new TestIntegration(this.fecpController,this,this.mSFitSysCntrl);
                 // returnString = ti.testAge();
                 // returnString = ti.testWeight();
+                //returnString = ti.testPauseTimeout();
+               // returnString = ti.testIdleTimeout();
                 //TestBitfields tc = new TestBitfields(this.fecpController,this,this.mSFitSysCntrl);
                 //  returnString = tc.testBitfieldRdWr();
                 //  returnString = tc.testBitfieldValuesValidation();
