@@ -277,7 +277,7 @@ public class TestIntegration {
         //Delay for 60 seconds
         //Verify Pause timeout by reading the mode and ensuring it is in Results mode
         String pauseResults;
-
+        double timeout = 0;
         pauseResults = "\n\n------------------------PAUSE TIMEOUT TEST RESULTS------------------------\n\n";
         pauseResults += Calendar.getInstance().getTime() + "\n\n";
 
@@ -300,6 +300,13 @@ public class TestIntegration {
         Thread.sleep(1000);
         System.out.println("Default pause timeout is: "+hCmd.getPauseTimeout());
         System.out.println("Current Mode: "+hCmd.getMode());
+
+        //set pause timeout to 60 secs
+        ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.PAUSE_TIMEOUT, 60);
+        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
+        Thread.sleep(1000);
+        timeout = hCmd.getIdleTimeout();
+        System.out.println("pause timeout is set to : "+timeout);
 
         //Set mode to Running
         ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.RUNNING);
@@ -341,8 +348,7 @@ public class TestIntegration {
     public String testIdleTimeout() throws Exception{
         //part of redmine #930
         //Set mode to Idle
-        //Set mode to running
-        //set mode to Idle then change incline
+        //change incline
         //Delay for the time set for Idle timeout seconds
         //Verify Idle timeout by reading the mode and ensuring the incline reset to zero
         String pauseResults;
@@ -381,11 +387,11 @@ public class TestIntegration {
        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.IDLE_TIMEOUT, 60);
        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
        Thread.sleep(1000);
-
-        System.out.println("idle timeout is set to : "+hCmd.getIdleTimeout());
+        timeout = hCmd.getIdleTimeout();
+        System.out.println("idle timeout is set to : "+timeout);
         System.out.println("Current Mode: "+hCmd.getMode());
         System.out.println("Current Actual incline : "+hCmd.getActualIncline());
-        timeout = hCmd.getIdleTimeout();
+
        //Set incline to a 5 and check actual value until it has reached 5
       ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.GRADE, 5);
        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
@@ -426,10 +432,6 @@ public class TestIntegration {
     //--------------------------------------------//
     public String testRunningTime() throws Exception{
         //outline for code support #930 in redmine
-        //Set mode to Running
-        //Run for 1 minute and test that the Running Time value matches 1 minute
-        //Run same test, but put in a 30 second pause in the middle of the test to ensure that the time doesn't continue or that it resets
-        //The time should pick up where it left off at the beginning of the Pause
         String resultString;
 
         resultString = "\n\n------------------------RUNNING TIME TEST RESULTS------------------------\n\n";
