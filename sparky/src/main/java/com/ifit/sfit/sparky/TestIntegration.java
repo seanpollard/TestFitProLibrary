@@ -565,8 +565,8 @@ public class TestIntegration {
         //TODO: Once Max Speed command is implemented, just change the constant MAX_SPEED to the maxSpeed variable (which reads the value off of the Brainboard)
         FecpCommand readMaxSpeedCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA), hCmd, 100, 100);
         ((WriteReadDataCmd)readMaxSpeedCommand.getCommand()).addReadBitField(BitFieldId.ACTUAL_KPH);
+        ((WriteReadDataCmd)readMaxSpeedCommand.getCommand()).addReadBitField(BitFieldId.MAX_KPH);
         mSFitSysCntrl.getFitProCntrl().addCmd(readMaxSpeedCommand);
-
         maxSpeed = hCmd.getMaxSpeed();
         Thread.sleep(1000);
         System.out.println("The max speed is " + maxSpeed);
@@ -580,18 +580,22 @@ public class TestIntegration {
         //set mode to running
         ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.RUNNING);
         //set to max speed currently hardcoded to 20kph as that is not implemented
-        ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.KPH, maxSpeed);
+        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
+        Thread.sleep(1000);
+        ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.KPH, 16.0);//replace literal by maxSpeed later on
         mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
         Thread.sleep(1000);
         long elapsedTime = 0;
         double seconds = 0;
         long startime = System.nanoTime();
         //Read the actual speed and count elsaped time. Do this until speed has reached MAX
-        while(currentActualSpeed < maxSpeed)
+        while(currentActualSpeed < 16)
         {
             currentActualSpeed = hCmd.getActualSpeed();
             elapsedTime = System.nanoTime() - startime;
             seconds = elapsedTime / 1.0E09;
+            Thread.sleep(1000);
+            System.out.println("actual speed "+currentActualSpeed+" elapsed time " + seconds +" seconds");
         }
 
         //test is over set back to idle to end the test
