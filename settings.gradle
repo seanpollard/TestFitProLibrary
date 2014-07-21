@@ -1,1 +1,1 @@
-include ':SparkyAndroidLib:fecp',':sparky'
+include ':SparkyAndroidLib:fecp',':sparky',':fecp',':SparkyDevApp'

@@ -693,8 +693,8 @@ public class TestApp extends Activity implements View.OnClickListener, SystemSta
         {
 
             try{
-               // TestMotor t = new TestMotor(this.fecpController,this,this.mSFitSysCntrl);
-                //returnString = t.testStartSpeed();
+               TestMotor t = new TestMotor(this.fecpController,this,this.mSFitSysCntrl);
+               returnString = t.testStartSpeed();
                 // returnString= t.testSpeedController();
                // returnString= t.testPwmOvershoot();
                 // returnString= t.testDistance();
@@ -716,8 +716,8 @@ public class TestApp extends Activity implements View.OnClickListener, SystemSta
                 //returnString = tpk.testQuickInclineKeys();
                 //TestTreadmillKeyCodes ttk = new TestTreadmillKeyCodes(this.fecpController,this,this.mSFitSysCntrl);
                 // returnString = ttk.testAllKeys();
-             TestIncline tin = new TestIncline(this.fecpController,this,this.mSFitSysCntrl);
-              returnString= tin.testInclineController();
+           //  TestIncline tin = new TestIncline(this.fecpController,this,this.mSFitSysCntrl);
+            //  returnString= tin.testInclineController();
                 returnString += "\n" + systemString;
                 //try to write to the file in main from the machine control structure
                 outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
@@ -968,6 +968,25 @@ public class TestApp extends Activity implements View.OnClickListener, SystemSta
                 mToast.show();
             }
         });
+    }
+
+    @Override
+    public void systemSecurityValidated() {
+
+//        //system is validated you may control the system
+//        this.runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                if (null == mToast) {
+//                    mToast = Toast.makeText(getApplicationContext(), "System is Validated", Toast.LENGTH_LONG);
+//                }
+////                Toast.makeText(getApplicationContext(),"Connected to "+ dev.getInfo().getDevId().getDescription()+ ":" + dev.getConsoleName() , Toast.LENGTH_LONG).show();
+//                mToast.setText("System is Validated");
+//                mToast.setDuration(Toast.LENGTH_LONG);
+//                mToast.show();
+//            }
+//        });
+//        this.mSFitSysCntrl.getInitialSysItems(this, 0, 0);
     }
 
 }

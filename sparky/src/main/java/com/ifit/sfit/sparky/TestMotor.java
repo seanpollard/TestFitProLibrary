@@ -36,7 +36,9 @@ import android.content.Intent;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 
 import java.net.IDN;
+
 import java.util.ArrayList;
+import java.nio.ByteBuffer;
 import java.util.Calendar;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
@@ -65,10 +67,21 @@ public class TestMotor {
     //TestMotor constructor. Receive needed parameters from main activity(TestApp) to initialize controller
     public TestMotor(FecpController fecpController, TestApp act, SFitSysCntrl ctrl) {
         //Get controller sent from the main activity (TestApp)
-            try {
+        try {
             this.mFecpController = fecpController;
             this.mAct = act;
             this.mSFitSysCntrl = ctrl;
+            ByteBuffer secretKey = ByteBuffer.allocate(32);
+            for(int i = 0; i < 32; i++)
+            {
+                secretKey.put((byte)i);
+            }
+            try {
+                //unlock the system
+                this.mSFitSysCntrl.getFitProCntrl().unlockSystem(secretKey);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             hCmd = new HandleCmd(this.mAct);// Init handlers
             //Get current system device
             MainDevice = this.mFecpController.getSysDev();
@@ -149,7 +162,7 @@ public class TestMotor {
         }
 
         //Set Mode to Idle
-        ((WriteReadDataCmd) modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.IDLE);
+        ((WriteReadDataCmd) modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.PAUSE);
         mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
         Thread.sleep(1000);
 
@@ -208,11 +221,11 @@ public class TestMotor {
         Thread.sleep(90000);
 
         //set tor read distance
-       ((WriteReadDataCmd) modeCommand.getCommand()).addReadBitField(BitFieldId.DISTANCE);
+        ((WriteReadDataCmd) modeCommand.getCommand()).addReadBitField(BitFieldId.DISTANCE);
         mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
-       Thread.sleep(1000);
-       distanceResults += "The status of setting reading distance command: " + modeCommand.getCommand().getStatus().getStsId().getDescription() + "\n";
-       distanceResults += "Current Mode is: " + hCmd.getMode() + "\n";
+        Thread.sleep(1000);
+        distanceResults += "The status of setting reading distance command: " + modeCommand.getCommand().getStatus().getStsId().getDescription() + "\n";
+        distanceResults += "Current Mode is: " + hCmd.getMode() + "\n";
         //wait for command
 
         double distance = hCmd.getDistance();
@@ -657,11 +670,11 @@ public class TestMotor {
         //Read the speed off of device (Actual Speed, once implemented)
         ///((WriteReadDataCmd)modeCommand.getCommand()).addReadBitField(BitFieldId.KPH);
 //        ((WriteReadDataCmd)readSpeedCommand.getCommand()).addReadBitField(BitFieldId.ACTUAL_KPH);
-       // mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
-       // Thread.sleep(1000);
+        // mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
+        // Thread.sleep(1000);
 
         //Check status of the command to receive the speed
-       /// pwmResults += "Status of reading Speed: " + (modeCommand.getCommand()).getStatus().getStsId().getDescription() + "\n";
+        /// pwmResults += "Status of reading Speed: " + (modeCommand.getCommand()).getStatus().getStsId().getDescription() + "\n";
 
         //TODO: Actual Speed is not yet implemented (as of 7/9/14)
         for(int i = 0; i < 30; i++){
