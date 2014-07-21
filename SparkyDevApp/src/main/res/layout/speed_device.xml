@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:textAppearance="?android:attr/textAppearanceLarge"
+    android:text="Speed Device"
+    android:id="@+id/textViewSpeedDevice" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Speed Device"
+        android:id="@+id/textViewSpeedDetails"
+        android:layout_below="@+id/textViewSpeedDevice"
+        android:layout_alignParentStart="true" />
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/editSpeedText"
+        android:hint="Speed"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:numeric="decimal"
+        android:singleLine="true"
+        android:layout_below="@+id/textViewSpeedDetails"
+        android:layout_alignParentStart="true" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="SpeedVals "
+        android:id="@+id/textViewSpeedValues"
+        android:layout_below="@+id/editSpeedText"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="System Info"
+        android:id="@+id/textViewSystemInfo"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="center_horizontal"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>
