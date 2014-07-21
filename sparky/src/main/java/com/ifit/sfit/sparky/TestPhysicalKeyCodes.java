@@ -4,6 +4,7 @@ import com.ifit.sparky.fecp.FecpCommand;
 import com.ifit.sparky.fecp.SystemDevice;
 import com.ifit.sparky.fecp.communication.FecpController;
 import com.ifit.sparky.fecp.interpreter.bitField.BitFieldId;
+import com.ifit.sparky.fecp.interpreter.bitField.converter.ModeId;
 import com.ifit.sparky.fecp.interpreter.command.CommandId;
 import com.ifit.sparky.fecp.interpreter.command.WriteReadDataCmd;
 
@@ -40,7 +41,10 @@ public class TestPhysicalKeyCodes {
             MainDevice = this.mFecpController.getSysDev();
 
             readModeCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA), hCmd);
-            modeCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
+            modeCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd,100,100);
+            ((WriteReadDataCmd)modeCommand.getCommand()).addReadBitField(BitFieldId.KEY_OBJECT);
+            mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
+            Thread.sleep(1000);
 
             readSpeedCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA), hCmd);
             speedCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
@@ -113,9 +117,7 @@ public class TestPhysicalKeyCodes {
 
 
         for(int i = maxIncline; i >= 0; i-=5) {
-            ((WriteReadDataCmd)readKeyObjectCommand.getCommand()).addReadBitField(BitFieldId.KEY_OBJECT);
-            mSFitSysCntrl.getFitProCntrl().addCmd(readKeyObjectCommand);
-            Thread.sleep(1000);
+
             System.out.println("Press the "+ i +" key");
             Thread.sleep(5000);
             currentKey = hCmd.getKey().getCookedKeyCode().toString();
@@ -128,8 +130,7 @@ public class TestPhysicalKeyCodes {
                 quickInclineKeyResults += "\n* FAIL *\n\n";
                 quickInclineKeyResults += "The " + currentKey + " key was pressed and held for " + timeHeld + " ms (should have been INCLINE_"+i+" key)\n";
             }
-            mSFitSysCntrl.getFitProCntrl().removeCmd(readKeyObjectCommand);
-            Thread.sleep(1000);
+
         }
         for(int i = -2; i >= minIncline; i-=2){
             System.out.println("Press the "+ i +" key");
