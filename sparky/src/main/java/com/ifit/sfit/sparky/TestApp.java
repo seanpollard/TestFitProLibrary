@@ -695,8 +695,8 @@ public class TestApp extends Activity implements View.OnClickListener, SystemSta
             try{
                TestMotor t = new TestMotor(this.fecpController,this,this.mSFitSysCntrl);
                //returnString = t.testStartSpeed();
-                // returnString= t.testSpeedController();
-               returnString= t.testPwmOvershoot();
+                returnString= t.testSpeedController();
+               //returnString= t.testPwmOvershoot();
                 // returnString= t.testDistance();
               //returnString= t.testModes("all");
                //returnString= t.testPauseResume();

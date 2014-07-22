@@ -19,7 +19,6 @@ import java.util.Calendar;
  * Used sean's TestMotor code and adapted it to work with SparkyAndroidLib 0.0.9
  */
 public class TestMotor implements TestAll{
-    private final double MAX_SPEED = 3; //hardcode the value until we can read it
     //Variables needed to initialize connection with Brainboard
     private FecpController mFecpController;
     private TestApp mAct;
@@ -412,7 +411,7 @@ public class TestMotor implements TestAll{
     * */
     public String testSpeedController() throws Exception {
         System.out.println("**************** SPEED CONTROLLER TEST ****************");
-
+        final double MAX_SPEED = 16; //hardcode the value until we can read it
         //outline for code support #927 in redmine
         //run test for treadmill & incline trainers
         //send speed command
@@ -429,16 +428,11 @@ public class TestMotor implements TestAll{
         testResults = "\n--------------------------SPEED TEST RESULTS--------------------------\n\n";
         testResults += Calendar.getInstance().getTime() + "\n\n";
 
-        FecpCommand modeCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
-
-        //Set the mode to idle
-        ((WriteReadDataCmd) modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.IDLE);
-        // Set to command to read WORKOUT_MODE value
-        ((WriteReadDataCmd)modeCommand.getCommand()).addReadBitField(BitFieldId.WORKOUT_MODE);
-        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
+        ((WriteReadDataCmd)rdmodeCommand.getCommand()).addReadBitField(BitFieldId.WORKOUT_MODE);
+        ((WriteReadDataCmd)rdmodeCommand.getCommand()).addReadBitField(BitFieldId.KPH);
+        ((WriteReadDataCmd)rdmodeCommand.getCommand()).addReadBitField(BitFieldId.ACTUAL_KPH);
+        mSFitSysCntrl.getFitProCntrl().addCmd(rdmodeCommand);
         Thread.sleep(1000);
-
-        testResults += "Status of setting mode to Idle: " + (modeCommand.getCommand()).getStatus().getStsId().getDescription() + "\n";
 
         currentMode = "Current Mode is: " + hCmd.getMode() + "\n";
         testResults += currentMode;
@@ -446,7 +440,6 @@ public class TestMotor implements TestAll{
         //Set the Mode to Running Mode
         ((WriteReadDataCmd) modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.RUNNING);
         mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
-
         Thread.sleep(1000);
 
         //Check status of changing the mode to running
@@ -456,22 +449,8 @@ public class TestMotor implements TestAll{
         testResults += currentMode;
 
         //TODO: read the min speed from the Brainboard (not implemented yet)
-//        FecpCommand readMinSpeedCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA), hCmd);
-//        ((WriteReadDataCmd)readMinSpeedCommand.getCommand()).addReadBitField(BitFieldId.MIN_KPH);
-//        fecpController.addCmd(readMinSpeedCommand);
-//
-//        minSpeed = hCmd.getMinSpeed();
-//        Thread.sleep(1000);
-//        System.out.println("The min speed is " + minSpeed);
 
         //TODO: read the max speed from the Brainboard (not implemented yet)
-//        FecpCommand readMaxSpeedCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA), hCmd);
-//        ((WriteReadDataCmd)readMaxSpeedCommand.getCommand()).addReadBitField(BitFieldId.MAX_KPH);
-//        fecpController.addCmd(readMaxSpeedCommand);
-//
-//        maxSpeed = hCmd.getMaxSpeed();
-//        Thread.sleep(1000);
-//        System.out.println("The max speed is " + maxSpeed);
 
         //Set NUM_TESTS to the number of times you want to run the test
         for (int i = 0; i < NUM_TESTS; i++) {
@@ -502,26 +481,10 @@ public class TestMotor implements TestAll{
 
                 //((ModeConverter)(((WriteReadDataSts)readModeCommand.getCommand().getStatus()).getResultData().get(BitFieldId.WORKOUT_MODE))).getMode()
                 testResults += currentWorkoutMode;
-                //Set command to read the speed off of device
-                ((WriteReadDataCmd) modeCommand.getCommand()).addReadBitField(BitFieldId.KPH);
-                mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
-                Thread.sleep(1000);
                 currentSpeed = hCmd.getSpeed();
-                testResults+= "Current speed is: " + currentSpeed;
+                testResults+= "Current speed is: " + currentSpeed + " and actual speed is " +hCmd.getActualSpeed()+"\n";
 
                 Thread.sleep(1000);
-
-                //TODO: Read the ACTUAL speed off of device (not yet implemented)
-//                FecpCommand readActualSpeed = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),this, 0, 1000);//every 1 second
-//                ((WriteReadDataCmd)readActualSpeed.getCommand()).addReadBitField(BitFieldId.ACTUAL_KPH);
-//               mSFitSysCntrl.getFitProCntrl().addCmd(readActualSpeed);
-//
-//                Thread.sleep(1000);
-//
-//                //Check status of the command to receive the incline
-//                testResults += "Status of reading actual speed at " + j + "%: " + (readActualSpeed.getCommand()).getStatus().getStsId().getDescription() + "\n";
-//
-//                testResults += "THE ACTUAL SPEED IS CURRENTLY AT: " + hCmd.getActualSpeed() + " KPH\n";
 
                 testResults += "\nFor Speed " + roundedJ + ":\n";
 
@@ -532,16 +495,15 @@ public class TestMotor implements TestAll{
                     testResults += "\n* FAIL *\n\nThe speed is greatly off by " + (roundedJ - currentSpeed) + "\n\n";
                 }
 
-                System.out.println("Current Speed " + roundedJ + " (from Brainboard): " + currentSpeed);
+                System.out.println("Current Speed " + roundedJ + " (from Brainboard): " + currentSpeed+" actual speed is " +hCmd.getActualSpeed());
             }
             //Set the mode to idle
-            ((WriteReadDataCmd) modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.IDLE);
+            ((WriteReadDataCmd) modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.PAUSE);
             mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
             Thread.sleep(1000);
             //Remove all commands from the device that have a command ID = "WRITE_READ_DATA"
             mSFitSysCntrl.getFitProCntrl().removeCmd(modeCommand);
             Thread.sleep(1000);
-
 
         }
 
@@ -582,9 +544,7 @@ public class TestMotor implements TestAll{
         readBitfields.add(BitFieldId.ACTUAL_KPH);
         readBitfields.add(BitFieldId.MAX_KPH);
 
-
-
-        ((WriteReadDataCmd)rdmodeCommand.getCommand()).addReadBitField(readBitfields);
+        ((WriteReadDataCmd)rdmodeCommand.getCommand()).addReadBitField(MainDevice.getInfo().getSupportedReadOnlyBitfields());
         mSFitSysCntrl.getFitProCntrl().addCmd(rdmodeCommand);
         Thread.sleep(1000);
 
