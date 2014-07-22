@@ -106,6 +106,7 @@ public class TestMotor implements TestAll{
         //check against constant variable of 1.0 mph
         //make sure formatting is right for verification for english or metric units
         String startResults;
+        double actualspeed=0;
 
         startResults = "\n\n----------------------START SPEED TEST RESULTS----------------------\n\n";
         startResults += Calendar.getInstance().getTime() + "\n\n";
@@ -118,6 +119,8 @@ public class TestMotor implements TestAll{
         //Set command to read from WORKOUT_MODE byte of the controller
         ((WriteReadDataCmd) rdmodeCommand.getCommand()).addReadBitField(BitFieldId.WORKOUT_MODE);
         ((WriteReadDataCmd) rdmodeCommand.getCommand()).addReadBitField(BitFieldId.KPH);
+        ((WriteReadDataCmd) rdmodeCommand.getCommand()).addReadBitField(BitFieldId.ACTUAL_KPH);
+
         mSFitSysCntrl.getFitProCntrl().addCmd(rdmodeCommand); //send command to the Brainboard
         Thread.sleep(1000); //give time for the command to be done
 
@@ -136,12 +139,17 @@ public class TestMotor implements TestAll{
         startResults += "Status of changing mode to Running:\t" + (modeCommand.getCommand()).getStatus().getStsId().getDescription() + "\n";
 
         startResults += "The current mode is " + hCmd.getMode() + "\n";
+        actualspeed = hCmd.getActualSpeed();
+        startResults+="The actual speed is: "+actualspeed + "\n";
 
         Thread.sleep(5000); // Give the motor 5 secs to reach the desired speed
 
         currentSpeed = hCmd.getSpeed();
+        actualspeed = hCmd.getActualSpeed();
 
-        startResults += "The current speed after setting mode to running is: " + currentSpeed + "\n";
+
+        startResults += "The current speed after 5 seconds running is: " + currentSpeed + "\n";
+        startResults += "The ACTUAL speed after 5 seconds running is: " + actualspeed + "\n";
 
         if (currentSpeed == 1.0) {
             startResults += "\n* PASS *\n\n";
