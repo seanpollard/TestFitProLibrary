@@ -1,47 +1,16 @@
 package com.ifit.sfit.sparky;
 
 import com.ifit.sparky.fecp.FecpCommand;
-import com.ifit.sparky.fecp.interpreter.bitField.converter.ByteConverter;
-import com.ifit.sparky.fecp.interpreter.bitField.converter.CaloriesConverter;
-import com.ifit.sparky.fecp.interpreter.bitField.converter.GradeConverter;
-import com.ifit.sparky.fecp.interpreter.bitField.converter.KeyObjectConverter;
-import com.ifit.sparky.fecp.interpreter.bitField.converter.LongConverter;
-import com.ifit.sparky.fecp.interpreter.bitField.converter.ModeConverter;
-import com.ifit.sparky.fecp.interpreter.bitField.converter.ShortConverter;
-import com.ifit.sparky.fecp.interpreter.bitField.converter.SpeedConverter;
-import com.ifit.sparky.fecp.interpreter.bitField.converter.WeightConverter;
-import com.ifit.sparky.fecp.interpreter.bitField.converter.BitfieldDataConverter;
-import com.ifit.sparky.fecp.interpreter.command.SetTestingKeyCmd;
-import com.ifit.sparky.fecp.interpreter.device.Device;
-import com.ifit.sparky.fecp.interpreter.device.DeviceId;
-import com.ifit.sparky.fecp.interpreter.key.KeyCodes;
-import com.ifit.sparky.fecp.interpreter.key.KeyObject;
-import com.ifit.sparky.fecp.FitProUsb;
-import com.ifit.sparky.fecp.OnCommandReceivedListener;
 import com.ifit.sparky.fecp.SystemDevice;
 import com.ifit.sparky.fecp.communication.FecpController;
-import com.ifit.sparky.fecp.communication.SystemStatusListener;
 import com.ifit.sparky.fecp.interpreter.bitField.BitFieldId;
 import com.ifit.sparky.fecp.interpreter.bitField.converter.ModeId;
-import com.ifit.sparky.fecp.interpreter.command.Command;
 import com.ifit.sparky.fecp.interpreter.command.CommandId;
 import com.ifit.sparky.fecp.interpreter.command.WriteReadDataCmd;
-import com.ifit.sparky.fecp.interpreter.status.PortalDeviceSts;
-import com.ifit.sparky.fecp.interpreter.status.StatusId;
-import com.ifit.sparky.fecp.interpreter.status.WriteReadDataSts;
-
-import android.content.Context;
-import android.content.Intent;
-
-import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
-
-import java.net.IDN;
 
 import java.util.ArrayList;
 import java.nio.ByteBuffer;
 import java.util.Calendar;
-import java.util.TreeMap;
-import java.util.concurrent.ExecutionException;
 
 
 /**
@@ -261,47 +230,74 @@ public class TestMotor implements TestAll{
   * TODO: Testing commands supported on each mode
   * TODO: Testing transitions between modes
   * */
-    public String testModeChange() throws Exception{
-        //outline for code support #926 in redmine
-        //change to mode 1
-        //read mode status to verify mode 1
-        //change to mode 2
-        //read mode status to verify mode 2
-        //go through all modes in above manner to validate mode changes have occurred
+    public String testModes(String mode) throws Exception{
+
         String modeResults;
 
         modeResults = "\n\n----------------------------MODE TEST RESULTS----------------------------\n\n";
         modeResults += Calendar.getInstance().getTime() + "\n\n";
 
         FecpCommand modeCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
-        //FecpCommand readModeCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA), handleInfoCmd, 100, 1000);//every 1 second
+        FecpCommand readModeCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA), hCmd, 0, 100);//every 100 milli seconds
 
-        // Set to command to read WORKOUT_MODE value
-        ((WriteReadDataCmd)modeCommand.getCommand()).addReadBitField(BitFieldId.WORKOUT_MODE);
-        //Loop through all modes and confirm they are matched up with what is recorded on Redmine
-        for(int i = 0; i < 9; i++)
+        ((WriteReadDataCmd)readModeCommand.getCommand()).addReadBitField(BitFieldId.WORKOUT_MODE);
+        mSFitSysCntrl.getFitProCntrl().addCmd(readModeCommand);
+        Thread.sleep(1000);
+
+        int [] Modes;
+
+        switch (mode)
+        {
+           case "IDLE":
+           case "DEBUG":
+           case "MAINTENANCE":
+           case "LOG":
+                Modes = new int[]{1,5,1,6,1,7,1};// idle, debug, idle, log, idle, Maintenance, idle
+               modeResults+="\n\n----------------------------IDLE/DEBUG/MAINTENANCE/LOG MODE TEST RESULTS----------------------------\n\n";
+               modeResults+=runModesTest(Modes,modeCommand);
+           break;
+
+           case "RUNNING":
+           case "PAUSE":
+           case "RESULTS":
+                Modes = new int[]{2,3,2,3,4,1};// running, pause,running, pause,results,idle
+                modeResults+="\n\n----------------------------RUNNING/PAUSE/RESULTS MODE TEST RESULTS----------------------------\n\n";
+                modeResults+=runModesTest(Modes,modeCommand);
+           break;
+
+           default:
+               Modes = new int[]{1,5,1,6,1,7,1,2,3,2,3,4,1};// run both of previous cases if nothing is specified
+               modeResults+="\n\n----------------------------ALL MODES TEST RESULTS----------------------------\n\n";
+               modeResults+=runModesTest(Modes,modeCommand);
+           break;
+        }
+        return modeResults;
+    }
+    public String runModesTest(int[] modes, FecpCommand wrCmd){
+        String res="";
+        for(int i = 0; i < modes.length; i++)
         {
             try
             {
-                ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, i);
-                mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
+                ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, modes[i]);
+                mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
                 Thread.sleep(1000);
 
-                modeResults += "Status of changing mode: " + (modeCommand.getCommand()).getStatus().getStsId().getDescription() + "\n";
-                modeResults += "Current Mode is: " + hCmd.getMode() + "  and its value is  " + hCmd.getMode().getValue() +  "\n\n";
-                if(hCmd.getMode().getValue() == i)
-                    modeResults += "This mode matches : * PASS *\n\n";
-                else modeResults += "This mode does not match : * FAIL *\n\n";
+                res  += "Status of changing mode: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
+                res  += "Current Mode is: " + hCmd.getMode() + "  and its value is  " + hCmd.getMode().getValue() +  "\n\n";
+
+                if(hCmd.getMode().getValue() == modes[i])
+                    res  += "This mode matches : * PASS *\n\n";
+                else
+                    res  += "This mode does not match : * FAIL *\n\n";
             }
             catch (Exception ex)
             {
                 ex.printStackTrace();
             }
-
         }
-        mSFitSysCntrl.getFitProCntrl().removeCmd(modeCommand);
-        Thread.sleep(1000);
-        return modeResults;
+
+       return res;
     }
 
     //--------------------------------------------//
@@ -726,7 +722,7 @@ public class TestMotor implements TestAll{
         String allMotorTestResults = "";
         try {
             allMotorTestResults+=this.testStartSpeed();
-            allMotorTestResults+=this.testModeChange();
+            allMotorTestResults+=this.testModes("all");
             allMotorTestResults+=this.testPauseResume();
             allMotorTestResults+=this.testPwmOvershoot();
             allMotorTestResults+=this.testDistance();
