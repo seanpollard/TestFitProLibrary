@@ -576,23 +576,18 @@ public class TestMotor implements TestAll{
         pwmResults = "\n\n----------------------PWM OVERSHOOT TEST RESULTS----------------------\n\n";
         pwmResults += Calendar.getInstance().getTime() + "\n\n";
 
-        FecpCommand modeCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
-        FecpCommand readCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd,100,100);
-
         ArrayList<BitFieldId> readBitfields = new ArrayList<BitFieldId>();
         readBitfields.add(BitFieldId.KPH);
         readBitfields.add(BitFieldId.WORKOUT_MODE);
+        readBitfields.add(BitFieldId.ACTUAL_KPH);
+        readBitfields.add(BitFieldId.MAX_KPH);
 
-        ((WriteReadDataCmd)readCommand.getCommand()).addReadBitField(readBitfields);
-        mSFitSysCntrl.getFitProCntrl().addCmd(readCommand);
+
+
+        ((WriteReadDataCmd)rdmodeCommand.getCommand()).addReadBitField(readBitfields);
+        mSFitSysCntrl.getFitProCntrl().addCmd(rdmodeCommand);
         Thread.sleep(1000);
 
-        //Set Mode to Idle
-        ((WriteReadDataCmd) modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.IDLE);
-        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
-        Thread.sleep(1000);
-
-        pwmResults += "Status of changing mode to Idle: " + (modeCommand.getCommand()).getStatus().getStsId().getDescription() + "\n";
         pwmResults+= "Current Mode is: " + hCmd.getMode() + "\n";
         //Set Mode to Running
         ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.RUNNING);
@@ -601,29 +596,17 @@ public class TestMotor implements TestAll{
 
         pwmResults += "Status of changing mode to Running: " + (modeCommand.getCommand()).getStatus().getStsId().getDescription() + "\n";
         pwmResults+= "Current Mode is: " + hCmd.getMode() + "\n";
-        pwmResults+="About to set speed to MAX (16 Kph)... Current speed is: "+hCmd.getSpeed() +"\n";
+        pwmResults+="About to set speed to MAX (16 Kph)... Current speed is: "+hCmd.getSpeed() + " actual speed is "+hCmd.getActualSpeed()+"\n";
+
         //Set speed to Max Speed
         ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.KPH, maxSpeed);
         mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
-        Thread.sleep(23000);    //Wait for Max Speed
+        Thread.sleep(1000);
         pwmResults += "Status of changing speed to 16kph " + (modeCommand.getCommand()).getStatus().getStsId().getDescription() + "\n";
-        pwmResults+="current speed after setting it to max and before going into pause mode is: "+hCmd.getSpeed()+"\n";
+        pwmResults+="current speed after setting it to max and before waiting 22 secs is: "+hCmd.getSpeed()+" actual speed is "+hCmd.getActualSpeed()+"\n";
+        Thread.sleep(22000);    //Wait for Max Speed
+        pwmResults+="current speed after 22 secs and before going into pause mode is: "+hCmd.getSpeed()+" actual speed is "+hCmd.getActualSpeed()+"\n";
 
-        //Device keyPressTemp = this.MainDevice.getSubDevice(DeviceId.KEY_PRESS);
-
-//        //Send Stop Key Command
-//        if(keyPressTemp != null){
-//           // Command writeKeyPressCmd = keyPressTemp.getCommand(CommandId.SET_TESTING_KEY);
-//           // if(writeKeyPressCmd != null){ //TODO: Check why KeyPressTemp does not contain CommandId = SET_TESTING_KEY  because it makes writeKeyPressCmd be NULL!)
-//                //sendKeyCmd = new FecpCommand(writeKeyPressCmd, hCmd);
-//                stkCmd = new SetTestingKeyCmd();
-//                stkCmd.setKeyCode(KeyCodes.STOP);
-//                stkCmd.setKeyOverride(true);
-//                stkCmd.setTimeHeld(1000);
-//                stkCmd.setIsSingleClick(true);
-//            //}
-//            sendKeyCmd = new FecpCommand(stkCmd,hCmd);
-//        }
 
         //Set Mode to PAUSE(Simulate Stop Key)
         ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.PAUSE);
@@ -631,25 +614,14 @@ public class TestMotor implements TestAll{
         Thread.sleep(1000);
         pwmResults += "Status of Setting mode to PAUSE (simulate Stop key ): " + modeCommand.getCommand().getStatus().getStsId().getDescription() + "\n";
         pwmResults+= "Current Mode is: " + hCmd.getMode() + "\n";
-        pwmResults += "Current Speed During PAUSE: " +hCmd.getSpeed() + "\n";
+        pwmResults += "Current Speed During PAUSE: " +hCmd.getSpeed() +" actual speed is "+hCmd.getActualSpeed()+ "\n";
         pwmResults+= "About to try to set speed to Max... This action SHOULD NOT CHANGE the speed!\n ";
         ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.KPH, maxSpeed);
         mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
         Thread.sleep(1000);
         pwmResults += "Command Status after trying to set speed to max: " + modeCommand.getCommand().getStatus().getStsId().getDescription() + "\n";
-        pwmResults += "Current Speed after attempting to set max speed during pause mode: " +hCmd.getSpeed() + "\n";
+        pwmResults += "Current Speed after attempting to set max speed during pause mode: " +hCmd.getSpeed() + " actual speed is "+hCmd.getActualSpeed()+"\n";
 
-//        //Send Start Key Command
-//        if(keyPressTemp != null){
-//            Command writeKeyPressCmd = keyPressTemp.getCommand(CommandId.SET_TESTING_KEY);
-//            if(writeKeyPressCmd != null){
-//                sendKeyCmd = new FecpCommand(writeKeyPressCmd, hCmd);
-//                ((SetTestingKeyCmd)sendKeyCmd.getCommand()).setKeyCode(KeyCodes.START);
-//                ((SetTestingKeyCmd)sendKeyCmd.getCommand()).setKeyOverride(true);
-//                ((SetTestingKeyCmd)sendKeyCmd.getCommand()).setTimeHeld(1000);
-//                ((SetTestingKeyCmd)sendKeyCmd.getCommand()).setIsSingleClick(true);
-//            }
-//        }
         //Set Mode to RUNNING (Simulate Start Key)
         ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.RUNNING);
         mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
@@ -657,18 +629,9 @@ public class TestMotor implements TestAll{
 
         pwmResults += "Status of sending changing mode to running: " + modeCommand.getCommand().getStatus().getStsId().getDescription() + "\n";
         pwmResults+= "Current Mode is: " + hCmd.getMode() + "\n";
-        pwmResults += "Current Speed " +hCmd.getSpeed() + "\n";
+        pwmResults += "Current Speed " +hCmd.getSpeed() +" actual speed is "+hCmd.getActualSpeed()+ "\n";
 
-        //Read the speed off of device (Actual Speed, once implemented)
-        ///((WriteReadDataCmd)modeCommand.getCommand()).addReadBitField(BitFieldId.KPH);
-//        ((WriteReadDataCmd)readSpeedCommand.getCommand()).addReadBitField(BitFieldId.ACTUAL_KPH);
-        // mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
-        // Thread.sleep(1000);
-
-        //Check status of the command to receive the speed
-        /// pwmResults += "Status of reading Speed: " + (modeCommand.getCommand()).getStatus().getStsId().getDescription() + "\n";
-
-        //TODO: Actual Speed is not yet implemented (as of 7/9/14)
+        //TODO: Actual Speed is implemented as of 7/22/14 but the value we read is not yet accurate
         for(int i = 0; i < 30; i++){
             currentSpeeds[i] = hCmd.getSpeed();
 //            currentSpeeds[i] = hCmd.getActualSpeed();
@@ -696,7 +659,7 @@ public class TestMotor implements TestAll{
         }
 
         //Set Mode to Idle
-        ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.IDLE);
+        ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.PAUSE);
         mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
         Thread.sleep(1000);
         return pwmResults;
