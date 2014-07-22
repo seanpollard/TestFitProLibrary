@@ -35,6 +35,7 @@ public class TestMotor implements TestAll{
 
     //TestMotor constructor. Receive needed parameters from main activity(TestApp) to initialize controller
     public TestMotor(FecpController fecpController, TestApp act, SFitSysCntrl ctrl) {
+        System.out.println("^^^^^^^^^^^ MOTOR TESTS ^^^^^^^^^^^");
         //Get controller sent from the main activity (TestApp)
         try {
             this.mFecpController = fecpController;
@@ -68,6 +69,8 @@ public class TestMotor implements TestAll{
     //checklist to make sure that the machine starts at 1.0mph or 2.0kph
 
     public String testStartSpeed() throws Exception {
+        System.out.println("**************** START SPEED TEST ****************");
+
         //outline for code support #958 **first task to automate**
         //send basic start command to start motor at on position
         //request actual speed from device to make sure it is connected and moving
@@ -147,6 +150,8 @@ public class TestMotor implements TestAll{
     //                                            //
     //--------------------------------------------//
     public String testDistance() throws Exception {
+        System.out.println("**************** DISTANCE TEST ****************");
+
         //outline for code support #929 in redmine
         //start timer stopwatch
         //send a speed of 10 kph for a 1.5 min/km pace
@@ -227,10 +232,11 @@ public class TestMotor implements TestAll{
     //--------------------------------------------//
     /*
     Future tests include
-  * TODO: Testing commands supported on each mode
-  * TODO: Testing transitions between modes
+  //TODO: Testing commands supported on each mode
+  // Done: Testing transitions between modes
   * */
     public String testModes(String mode) throws Exception{
+        System.out.println("**************** MODES TEST ****************");
 
         String modeResults;
 
@@ -312,6 +318,8 @@ public class TestMotor implements TestAll{
     * */
 
     public String testPauseResume() throws Exception{
+        System.out.println("**************** PAUSE/RESUME TEST ****************");
+
         //Support #954 in Redmine
         //Turn mode to Running (mimics Start button press)
         //Set speed to 5 kph
@@ -319,53 +327,54 @@ public class TestMotor implements TestAll{
         //Set mode to Running
         //Verify actual speed is 1.0 mph/2.0 kph (as of 3/12/14, the resume speed is 1.0 kph)
         String pauseResumeResults;
+        double actualspeed=0;
 
         pauseResumeResults = "\n\n----------------------PAUSE/RESUME SPEED TEST RESULTS----------------------\n\n";
         pauseResumeResults += Calendar.getInstance().getTime() + "\n\n";
 
         FecpCommand modeCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
+        FecpCommand rdmodeCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd,0,100);
+
+        //Set command to read WORKOUT_MODE, speed and actual speed
+        ((WriteReadDataCmd)rdmodeCommand.getCommand()).addReadBitField(BitFieldId.WORKOUT_MODE);
+        ((WriteReadDataCmd)rdmodeCommand.getCommand()).addReadBitField(BitFieldId.KPH);
+        ((WriteReadDataCmd)rdmodeCommand.getCommand()).addReadBitField(BitFieldId.ACTUAL_KPH);
+        mSFitSysCntrl.getFitProCntrl().addCmd(rdmodeCommand);
+        Thread.sleep(1000);
 
         //Set Mode to Running
         ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.RUNNING);
-        //Set command to read WORKOUT_MODE value
-        ((WriteReadDataCmd)modeCommand.getCommand()).addReadBitField(BitFieldId.WORKOUT_MODE);
         mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
         Thread.sleep(1000);
-
+        currentSpeed = hCmd.getSpeed(); //read current speed
+        actualspeed = hCmd.getActualSpeed();
         pauseResumeResults += "Status of changing mode to Running: " + (modeCommand.getCommand()).getStatus().getStsId().getDescription() + "\n";
         pauseResumeResults += "The current mode is " + hCmd.getMode() + "\n";
-
+        pauseResumeResults += "Before setting speed to 5kph speed is currently set at: " + currentSpeed + " kph and the actual speed is " +actualspeed + "kph \n";
 
         ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.KPH, 5);
         mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
+
         Thread.sleep(10000);// Give it time to motor to reach speed of 5 KPH
         pauseResumeResults += "Status of changing speed to 5 KPH: " + (modeCommand.getCommand()).getStatus().getStsId().getDescription() + "\n";
         //Set command to read speed and verify its at 5 kph
-        ((WriteReadDataCmd)modeCommand.getCommand()).addReadBitField(BitFieldId.KPH);
-        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
-        Thread.sleep(1000);
 
         currentSpeed = hCmd.getSpeed(); //read current speed
-        pauseResumeResults += "The speed is currently set at: " + currentSpeed + " kph\n";
+        actualspeed = hCmd.getActualSpeed();
+        pauseResumeResults += "The speed is currently set at: " + currentSpeed + " kph and the actual speed is " +actualspeed + "kph (After 10 secs)\n";
 
         //Set Mode to Pause
         ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.PAUSE);
-        //Set command to read WORKOUT_MODE
-        // ((WriteReadDataCmd)modeCommand.getCommand()).addReadBitField(BitFieldId.WORKOUT_MODE);
         mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
-        Thread.sleep(10000); // Give time for motor to stop seconds
+        Thread.sleep(5000); // Give time for motor to stop seconds
 
 
         pauseResumeResults += "Status of changing mode to Pause: " + (modeCommand.getCommand()).getStatus().getStsId().getDescription() + "\n";
         //print out the current mode
         pauseResumeResults += "The current mode is " + hCmd.getMode() + "\n";
-        //set command to read speed value (KPH)
-        ((WriteReadDataCmd)modeCommand.getCommand()).addReadBitField(BitFieldId.KPH);
-        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
-        Thread.sleep(1000); // Give time for motor to stop seconds
         currentSpeed = hCmd.getSpeed(); //read current speed
-
-        pauseResumeResults += "The speed during PAUSE is: " + currentSpeed + " kph\n";
+        actualspeed = hCmd.getActualSpeed();
+        pauseResumeResults += "The speed during PAUSE is: " + currentSpeed + " kph and the actual speed is "+actualspeed+" kph\n";
 
         //Set Mode to Running
         ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.RUNNING);
@@ -376,11 +385,6 @@ public class TestMotor implements TestAll{
 
         //print out the current mode
         pauseResumeResults += "The current mode is " + hCmd.getMode() + "\n";
-
-        ((WriteReadDataCmd)modeCommand.getCommand()).addReadBitField(BitFieldId.KPH);
-        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
-        Thread.sleep(1000);
-
         currentSpeed = hCmd.getSpeed();// Read speed again
 
         if(currentSpeed == 1.0){
@@ -392,8 +396,8 @@ public class TestMotor implements TestAll{
             pauseResumeResults += "The speed should be 1.0 kph, but it is currently set at: " + currentSpeed + " kph\n";
         }
 
-        //Set Mode to Idle
-        ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.IDLE);
+        //Set Mode to Pause
+        ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.PAUSE);
         //Set command to read WORKOUT_MODE
         // ((WriteReadDataCmd)modeCommand.getCommand()).addReadBitField(BitFieldId.WORKOUT_MODE);
         mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
@@ -417,6 +421,8 @@ public class TestMotor implements TestAll{
     * TODO: Test with English units and verify it does proper conversion
     * */
     public String testSpeedController() throws Exception {
+        System.out.println("**************** SPEED CONTROLLER TEST ****************");
+
         //outline for code support #927 in redmine
         //run test for treadmill & incline trainers
         //send speed command
@@ -561,6 +567,8 @@ public class TestMotor implements TestAll{
     * TODO: Test with different speeds and use other non-running modes (PAUSE, RESULTS, etc...) before pressing start again
     * */
     public String testPwmOvershoot() throws Exception {
+        System.out.println("**************** PWM OVERSHOOT TEST ****************");
+
         //RedMine Support #956
         //Checklist item #39
         //Set Speed to Max Speed
@@ -704,19 +712,6 @@ public class TestMotor implements TestAll{
         return pwmResults;
     }
 
-    public void runMotor() {
-        try {
-            FecpCommand modeCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA));
-
-            ((WriteReadDataCmd) modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.RUNNING);
-            mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
-            Thread.sleep(5000);
-            ((WriteReadDataCmd) modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.IDLE);
-            mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
     @Override
     public String runAll() {
         String allMotorTestResults = "";
