@@ -49,7 +49,7 @@ import java.util.concurrent.ExecutionException;
  * Class for motor type tests
  * Used sean's TestMotor code and adapted it to work with SparkyAndroidLib 0.0.9
  */
-public class TestMotor {
+public class TestMotor implements TestAll{
     private final double MAX_SPEED = 3; //hardcode the value until we can read it
     //Variables needed to initialize connection with Brainboard
     private FecpController mFecpController;
@@ -112,23 +112,20 @@ public class TestMotor {
 
         //Declare command
         FecpCommand modeCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
+        FecpCommand rdmodeCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd,0,100);
+
 
         //Set command to read from WORKOUT_MODE byte of the controller
-        ((WriteReadDataCmd) modeCommand.getCommand()).addReadBitField(BitFieldId.WORKOUT_MODE);
-        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand); //send command to the Brainboard
+        ((WriteReadDataCmd) rdmodeCommand.getCommand()).addReadBitField(BitFieldId.WORKOUT_MODE);
+        ((WriteReadDataCmd) rdmodeCommand.getCommand()).addReadBitField(BitFieldId.KPH);
+        mSFitSysCntrl.getFitProCntrl().addCmd(rdmodeCommand); //send command to the Brainboard
         Thread.sleep(1000); //give time for the command to be done
-
-        startResults += "Status of changing mode to Idle:\t" + (modeCommand.getCommand()).getStatus().getStsId().getDescription() + "\n";
 
         //print out the current mode
         startResults += "The current mode is " + hCmd.getMode() + "\n";
 
-        ((WriteReadDataCmd) modeCommand.getCommand()).addReadBitField(BitFieldId.KPH);
-        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
-        Thread.sleep(1000);
-        startResults += "Status of reading the speed:\t" + (modeCommand.getCommand()).getStatus().getStsId().getDescription() + "\n";
         currentSpeed = hCmd.getSpeed();
-        startResults += "The current speed after setting mode to IDLE is: " + currentSpeed + "\n";
+        startResults += "The current speed is: " + currentSpeed + "\n";
 
 
         //Set Mode to Running
@@ -142,13 +139,6 @@ public class TestMotor {
 
         Thread.sleep(5000); // Give the motor 5 secs to reach the desired speed
 
-        ((WriteReadDataCmd) modeCommand.getCommand()).addReadBitField(BitFieldId.KPH);
-        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
-        Thread.sleep(1000);
-
-        //Check status of the command to receive the speed
-        startResults += "Status of reading current speed: " + (modeCommand.getCommand()).getStatus().getStsId().getDescription() + "\n";
-
         currentSpeed = hCmd.getSpeed();
 
         startResults += "The current speed after setting mode to running is: " + currentSpeed + "\n";
@@ -161,12 +151,12 @@ public class TestMotor {
             startResults += "Speed should have started at 1.0 mph (2.0 kph), but is actually set at " + currentSpeed + " kph\n";
         }
 
-        //Set Mode to Idle
+        //Set Mode to Pause
         ((WriteReadDataCmd) modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.PAUSE);
         mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
         Thread.sleep(1000);
 
-        //Remove all commands from the device that have a command ID = "WRITE_READ_DATA"
+        //Remove command
         mSFitSysCntrl.getFitProCntrl().removeCmd(modeCommand);
         Thread.sleep(1000);
 
@@ -722,5 +712,21 @@ public class TestMotor {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+    @Override
+    public String runAll() {
+        String allMotorTestResults = "";
+        try {
+            allMotorTestResults+=this.testStartSpeed();
+            allMotorTestResults+=this.testModeChange();
+            allMotorTestResults+=this.testPauseResume();
+            allMotorTestResults+=this.testPwmOvershoot();
+            allMotorTestResults+=this.testDistance();
+            allMotorTestResults+=this.testSpeedController();
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return allMotorTestResults;
     }
 }
