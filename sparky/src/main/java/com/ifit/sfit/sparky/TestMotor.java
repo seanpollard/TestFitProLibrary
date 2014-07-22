@@ -27,6 +27,8 @@ public class TestMotor implements TestAll{
     private SFitSysCntrl mSFitSysCntrl;
     private SystemDevice MainDevice;
     private double currentSpeed; // Current motor speed
+    private FecpCommand modeCommand;
+    private FecpCommand rdmodeCommand;
 
     //To hold time lapsed
     private long stopTimer = 0;
@@ -41,6 +43,8 @@ public class TestMotor implements TestAll{
             this.mFecpController = fecpController;
             this.mAct = act;
             this.mSFitSysCntrl = ctrl;
+            this.hCmd = new HandleCmd(this.mAct);// Init handlers
+
             ByteBuffer secretKey = ByteBuffer.allocate(32);
             for(int i = 0; i < 32; i++)
             {
@@ -49,12 +53,14 @@ public class TestMotor implements TestAll{
             try {
                 //unlock the system
                 this.mSFitSysCntrl.getFitProCntrl().unlockSystem(secretKey);
+                //Get current system device
+                MainDevice = this.mFecpController.getSysDev();
+                this.modeCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
+                this.rdmodeCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd,0,100);
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            hCmd = new HandleCmd(this.mAct);// Init handlers
-            //Get current system device
-            MainDevice = this.mFecpController.getSysDev();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -82,10 +88,6 @@ public class TestMotor implements TestAll{
 
         startResults = "\n\n----------------------START SPEED TEST RESULTS----------------------\n\n";
         startResults += Calendar.getInstance().getTime() + "\n\n";
-
-        //Declare command
-        FecpCommand modeCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
-        FecpCommand rdmodeCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd,0,100);
 
 
         //Set command to read from WORKOUT_MODE byte of the controller
@@ -159,15 +161,16 @@ public class TestMotor implements TestAll{
         //read distance value
         //verify distance is 250 meters
         String distanceResults;
-
+        double distance = 0;
         distanceResults = "\n----------------------------DISTANCE TEST---------------------------\n\n";
         distanceResults += Calendar.getInstance().getTime() + "\n\n";
-        FecpCommand modeCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
 
-        //Set to read the WORKOUT_MODE value from the brainboard
-        ((WriteReadDataCmd) modeCommand.getCommand()).addReadBitField(BitFieldId.WORKOUT_MODE);
 
-        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand); //Send command to brainboard
+
+        //Set to read the WORKOUT_MODE and distance values from the brainboard
+        ((WriteReadDataCmd) rdmodeCommand.getCommand()).addReadBitField(BitFieldId.WORKOUT_MODE);
+        ((WriteReadDataCmd) rdmodeCommand.getCommand()).addReadBitField(BitFieldId.DISTANCE);
+        mSFitSysCntrl.getFitProCntrl().addCmd(rdmodeCommand); //Send command to brainboard
         Thread.sleep(1000);
 
         distanceResults += "The status of reading the initial mode is: " + modeCommand.getCommand().getStatus().getStsId().getDescription() + "\n";
@@ -184,6 +187,7 @@ public class TestMotor implements TestAll{
         //Set the motor speed to 10 KPH
         ((WriteReadDataCmd) modeCommand.getCommand()).addWriteData(BitFieldId.KPH, 10);
         mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
+        Thread.sleep(1000);
 
         distanceResults += "The status of setting speed to 10kph: " + modeCommand.getCommand().getStatus().getStsId().getDescription() + "\n";
         distanceResults += "Current Mode is: " + hCmd.getMode() + "\n";
@@ -192,23 +196,15 @@ public class TestMotor implements TestAll{
         //wait 1.5 minutes
         Thread.sleep(90000);
 
-        //set tor read distance
-        ((WriteReadDataCmd) modeCommand.getCommand()).addReadBitField(BitFieldId.DISTANCE);
-        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
-        Thread.sleep(1000);
-        distanceResults += "The status of setting reading distance command: " + modeCommand.getCommand().getStatus().getStsId().getDescription() + "\n";
-        distanceResults += "Current Mode is: " + hCmd.getMode() + "\n";
-        //wait for command
-
-        double distance = hCmd.getDistance();
+        distance = hCmd.getDistance();
         distanceResults += "The distance was " + distance + "\n";
         distanceResults += "The status of reading the distance is: " + modeCommand.getCommand().getStatus().getStsId().getDescription() + "\n";
 
         //set mode to back to idle to end the test.
-        ((WriteReadDataCmd) modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.IDLE);
+        ((WriteReadDataCmd) modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.PAUSE);
         mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
         Thread.sleep(1000);
-        distanceResults += "The status of changing mode to IDLE is: " + modeCommand.getCommand().getStatus().getStsId().getDescription() + "\n";
+        distanceResults += "The status of changing mode to PAUSE is: " + modeCommand.getCommand().getStatus().getStsId().getDescription() + "\n";
         distanceResults += "Current Mode is: " + hCmd.getMode() + "\n";
 
         //5% tolerance for passing: 250 meters = +/- 12.5
@@ -243,11 +239,8 @@ public class TestMotor implements TestAll{
         modeResults = "\n\n----------------------------MODE TEST RESULTS----------------------------\n\n";
         modeResults += Calendar.getInstance().getTime() + "\n\n";
 
-        FecpCommand modeCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
-        FecpCommand readModeCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA), hCmd, 0, 100);//every 100 milli seconds
-
-        ((WriteReadDataCmd)readModeCommand.getCommand()).addReadBitField(BitFieldId.WORKOUT_MODE);
-        mSFitSysCntrl.getFitProCntrl().addCmd(readModeCommand);
+        ((WriteReadDataCmd)rdmodeCommand.getCommand()).addReadBitField(BitFieldId.WORKOUT_MODE);
+        mSFitSysCntrl.getFitProCntrl().addCmd(rdmodeCommand);
         Thread.sleep(1000);
 
         int [] Modes;
@@ -332,10 +325,7 @@ public class TestMotor implements TestAll{
         pauseResumeResults = "\n\n----------------------PAUSE/RESUME SPEED TEST RESULTS----------------------\n\n";
         pauseResumeResults += Calendar.getInstance().getTime() + "\n\n";
 
-        FecpCommand modeCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
-        FecpCommand rdmodeCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd,0,100);
-
-        //Set command to read WORKOUT_MODE, speed and actual speed
+               //Set command to read WORKOUT_MODE, speed and actual speed
         ((WriteReadDataCmd)rdmodeCommand.getCommand()).addReadBitField(BitFieldId.WORKOUT_MODE);
         ((WriteReadDataCmd)rdmodeCommand.getCommand()).addReadBitField(BitFieldId.KPH);
         ((WriteReadDataCmd)rdmodeCommand.getCommand()).addReadBitField(BitFieldId.ACTUAL_KPH);

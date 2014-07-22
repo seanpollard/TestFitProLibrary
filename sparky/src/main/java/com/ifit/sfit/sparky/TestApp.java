@@ -697,9 +697,9 @@ public class TestApp extends Activity implements View.OnClickListener, SystemSta
                //returnString = t.testStartSpeed();
                 // returnString= t.testSpeedController();
                // returnString= t.testPwmOvershoot();
-                // returnString= t.testDistance();
+                 returnString= t.testDistance();
               // returnString= t.testModes("all");
-                returnString= t.testPauseResume();
+               // returnString= t.testPauseResume();
               //TestIntegration ti = new TestIntegration(this.fecpController,this,this.mSFitSysCntrl);
               // returnString = ti.testRunningTime();
                 // returnString = ti.testAge();
