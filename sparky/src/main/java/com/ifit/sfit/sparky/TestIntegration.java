@@ -10,6 +10,7 @@ import com.ifit.sparky.fecp.interpreter.command.WriteReadDataCmd;
 import com.ifit.sparky.fecp.interpreter.device.Device;
 import com.ifit.sparky.fecp.interpreter.status.StatusId;
 
+import java.nio.ByteBuffer;
 import java.util.Calendar;
 
 /**
@@ -21,6 +22,8 @@ public class TestIntegration {
     private HandleCmd hCmd;
     private SFitSysCntrl mSFitSysCntrl;
     private SystemDevice MainDevice;
+    private  FecpCommand wrCmd;
+    private  FecpCommand rdCmd;
 
     public TestIntegration(FecpController fecpController, TestApp act, SFitSysCntrl ctrl) {
         //Get controller sent from the main activity (TestApp)
@@ -29,8 +32,36 @@ public class TestIntegration {
             this.mAct = act;
             this.mSFitSysCntrl = ctrl;
             hCmd = new HandleCmd(this.mAct);// Init handlers
-            //Get current system device
-            MainDevice = this.mFecpController.getSysDev();
+            ByteBuffer secretKey = ByteBuffer.allocate(32);
+            for(int i = 0; i < 32; i++)
+            {
+                secretKey.put((byte)i);
+            }
+            try {
+                //unlock the system
+                this.mSFitSysCntrl.getFitProCntrl().unlockSystem(secretKey);
+                Thread.sleep(1000);
+                //Get current system device
+                MainDevice = this.mFecpController.getSysDev();
+                this.wrCmd = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
+                this.rdCmd = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd,0,100);
+                ((WriteReadDataCmd)rdCmd.getCommand()).addReadBitField(BitFieldId.MAX_GRADE);
+                ((WriteReadDataCmd)rdCmd.getCommand()).addReadBitField(BitFieldId.MIN_GRADE);
+                ((WriteReadDataCmd)rdCmd.getCommand()).addReadBitField(BitFieldId.ACTUAL_INCLINE);
+                ((WriteReadDataCmd)rdCmd.getCommand()).addReadBitField(BitFieldId.GRADE);
+               // ((WriteReadDataCmd)rdCmd.getCommand()).addReadBitField(BitFieldId.AGE);
+                //((WriteReadDataCmd)rdCmd.getCommand()).addReadBitField(BitFieldId.WEIGHT);
+                ((WriteReadDataCmd)rdCmd.getCommand()).addReadBitField(BitFieldId.WORKOUT_MODE);
+                ((WriteReadDataCmd)rdCmd.getCommand()).addReadBitField(BitFieldId.PAUSE_TIMEOUT);
+                ((WriteReadDataCmd)rdCmd.getCommand()).addReadBitField(BitFieldId.IDLE_TIMEOUT);
+                ((WriteReadDataCmd)rdCmd.getCommand()).addReadBitField(BitFieldId.RUNNING_TIME);
+
+                mSFitSysCntrl.getFitProCntrl().addCmd(rdCmd);
+                Thread.sleep(1000);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -61,13 +92,6 @@ public class TestIntegration {
         double age;
         double prevAge;
 
-        FecpCommand ageCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
-
-        ((WriteReadDataCmd)ageCommand.getCommand()).addReadBitField(BitFieldId.AGE);
-       mSFitSysCntrl.getFitProCntrl().addCmd(ageCommand);
-        Thread.sleep(25);
-
-        ageCommand.getCommand().getDevId().getDescription();
 
         age = hCmd.getAge();
         ageResults += "The default age is set to " + age + " years old\n";
@@ -79,8 +103,8 @@ public class TestIntegration {
         int i;
         long startTime;
         for(i = 18; i <=95; i+=1) {
-            ((WriteReadDataCmd) ageCommand.getCommand()).addWriteData(BitFieldId.AGE, i);
-            mSFitSysCntrl.getFitProCntrl().addCmd(ageCommand);
+            ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(BitFieldId.AGE, i);
+            mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
             age = hCmd.getAge();
             startTime = System.currentTimeMillis();
             //Keep reading the value until is the on you set it too or until it has try for long enough (25ms) that
@@ -91,7 +115,7 @@ public class TestIntegration {
                 }
             System.out.println(elapsedTime);
 
-            ageResults += "Status of setting the Age to " + i + ": " + (ageCommand.getCommand()).getStatus().getStsId().getDescription() + "\n";
+            ageResults += "Status of setting the Age to " + i + ": " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
 
            /*
             if(age == 80)
@@ -110,7 +134,7 @@ public class TestIntegration {
                 ageResults += "\n* FAIL *\n\n";
                 ageResults += "Current Age is set to: " + age + " years old, but should be set to: " + i + " years old\n";
             }
-            mSFitSysCntrl.getFitProCntrl().removeCmd(ageCommand);
+            mSFitSysCntrl.getFitProCntrl().removeCmd(wrCmd);
         }
         return ageResults;
     }
@@ -140,10 +164,6 @@ public class TestIntegration {
 
         double weight;
 
-        FecpCommand weightCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
-        ((WriteReadDataCmd)weightCommand.getCommand()).addReadBitField(BitFieldId.WEIGHT);
-        mSFitSysCntrl.getFitProCntrl().addCmd(weightCommand);
-        Thread.sleep(1000);
 
         weight = hCmd.getWeight();
         weightResults += "The default weight is set to " + weight + " kilograms\n";
@@ -152,12 +172,12 @@ public class TestIntegration {
         //Set weight to 50 kg and increment by 10 up to 175 kg (max is 400lbs = 181 kg)
         for(double i = 45.35; i <=175; i+=10) {
 
-            ((WriteReadDataCmd) weightCommand.getCommand()).addWriteData(BitFieldId.WEIGHT, i);
-            mSFitSysCntrl.getFitProCntrl().addCmd(weightCommand);
+            ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(BitFieldId.WEIGHT, i);
+            mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
             //need more time for weight controller
             Thread.sleep(1000);
 
-            weightResults += "\nStatus of setting the Weight to " + i + ": " + (weightCommand.getCommand()).getStatus().getStsId().getDescription() + "\n";
+            weightResults += "\nStatus of setting the Weight to " + i + ": " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
 
             weight = hCmd.getWeight();
             diff = Math.abs(weight - i);
@@ -175,7 +195,7 @@ public class TestIntegration {
 
           }
         }
-        mSFitSysCntrl.getFitProCntrl().removeCmd(weightCommand);
+        mSFitSysCntrl.getFitProCntrl().removeCmd(wrCmd);
         return weightResults;
     }
 
@@ -199,33 +219,8 @@ public class TestIntegration {
         double maxSpeed;
         double minSpeed;
 
-        FecpCommand readMaxIncline = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA), hCmd);//every 1 second
-        ((WriteReadDataCmd)readMaxIncline.getCommand()).addReadBitField(BitFieldId.MAX_GRADE);
-        mSFitSysCntrl.getFitProCntrl().addCmd(readMaxIncline);
-        Thread.sleep(1000);
-
-        //Check status of the command to receive the incline
-        titleString += "Status of reading max incline: " + (readMaxIncline.getCommand()).getStatus().getStsId().getDescription() + "\n";
-
         maxIncline = hCmd.getMaxIncline();
-
-        FecpCommand readMinIncline = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);//every 1 second
-        ((WriteReadDataCmd)readMinIncline.getCommand()).addReadBitField(BitFieldId.MIN_GRADE);
-        mSFitSysCntrl.getFitProCntrl().addCmd(readMinIncline);
-        Thread.sleep(1000);
-
-        //Check status of the command to receive the incline
-        titleString += "Status of reading min incline: " + (readMaxIncline.getCommand()).getStatus().getStsId().getDescription() + "\n";
-
         minIncline = hCmd.getMinIncline();
-
-        FecpCommand readMaxSpeed = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);//every 1 second
-        ((WriteReadDataCmd)readMaxSpeed.getCommand()).addReadBitField(BitFieldId.MIN_GRADE);
-        mSFitSysCntrl.getFitProCntrl().addCmd(readMaxSpeed);
-        Thread.sleep(1000);
-
-        //Check status of the command to receive the incline
-        titleString += "Status of reading max speed: " + (readMaxSpeed.getCommand()).getStatus().getStsId().getDescription() + "\n";
 
         maxSpeed = hCmd.getMaxSpeed();
         minSpeed = hCmd.getMinSpeed();
@@ -281,47 +276,26 @@ public class TestIntegration {
         pauseResults = "\n\n------------------------PAUSE TIMEOUT TEST RESULTS------------------------\n\n";
         pauseResults += Calendar.getInstance().getTime() + "\n\n";
 
-//        int pauseTimeout;
-//
-//        FecpCommand readPauseTimeoutCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA), handleInfoCmd, 0, 1000);//every 1 second
-//        ((WriteReadDataCmd)readPauseTimeoutCommand.getCommand()).addReadBitField(BitFieldId.IDLE_TIMEOUT);
-//        mFecpController.addCmd(readPauseTimeoutCommand);
-//        Thread.sleep(1000);
-//
-//        pauseTimeout = handleInfoCmd.getPauseTimeout();
-//        pauseResults += "The Pause Timeout is currently set at: " + pauseTimeout + " seconds\n";
-
-        FecpCommand modeCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
-        //set mode to Idle to reset the Running Time for the test
-        ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.IDLE);
-        ((WriteReadDataCmd)modeCommand.getCommand()).addReadBitField(BitFieldId.WORKOUT_MODE);
-        ((WriteReadDataCmd)modeCommand.getCommand()).addReadBitField(BitFieldId.PAUSE_TIMEOUT);
-        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
-        Thread.sleep(1000);
         System.out.println("Default pause timeout is: "+hCmd.getPauseTimeout());
         System.out.println("Current Mode: "+hCmd.getMode());
 
-        //set pause timeout to 60 secs
-        ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.PAUSE_TIMEOUT, 60);
-        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
-        Thread.sleep(1000);
-        timeout = hCmd.getIdleTimeout();
+        timeout = hCmd.getPauseTimeout();
         System.out.println("pause timeout is set to : "+timeout);
 
         //Set mode to Running
-        ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.RUNNING);
-       mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.RUNNING);
+       mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
         Thread.sleep(1000);
 
-        pauseResults += "Status of setting the Mode to Running: " + (modeCommand.getCommand()).getStatus().getStsId().getDescription() + "\n";
+        pauseResults += "Status of setting the Mode to Running: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
         System.out.println("Current Mode: "+hCmd.getMode());
 
         //Set mode to Pause
-        ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.PAUSE);
-       mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.PAUSE);
+       mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
         Thread.sleep(1000);
 
-        pauseResults += "Status of setting the Mode to Pause: " + (modeCommand.getCommand()).getStatus().getStsId().getDescription() + "\n";
+        pauseResults += "Status of setting the Mode to Pause: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
         System.out.println("Current Mode: "+hCmd.getMode());
 
         //Check each second to see if mode has changed from Pause mode. Also prevents from waiting for longer than 1 minute
@@ -353,72 +327,54 @@ public class TestIntegration {
         //Verify Idle timeout by reading the mode and ensuring the incline reset to zero
         String pauseResults;
         double timeout = 0;
+        double runtime = 0;
         pauseResults = "\n\n------------------------IDLE TIMEOUT TEST RESULTS------------------------\n\n";
         pauseResults += Calendar.getInstance().getTime() + "\n\n";
 
-//        int pauseTimeout;
-//
-//        FecpCommand readPauseTimeoutCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA), handleInfoCmd, 0, 1000);//every 1 second
-//        ((WriteReadDataCmd)readPauseTimeoutCommand.getCommand()).addReadBitField(BitFieldId.IDLE_TIMEOUT);
-//        mFecpController.addCmd(readPauseTimeoutCommand);
-//        Thread.sleep(1000);
-//
-//        pauseTimeout = handleInfoCmd.getPauseTimeout();
-//        pauseResults += "The Pause Timeout is currently set at: " + pauseTimeout + " seconds\n";
+        timeout = hCmd.getIdleTimeout();
+        System.out.println("Default idle timeout is: " + timeout);
+        System.out.println("Current Mode: "+hCmd.getMode());
+        System.out.println("Current RunningTime: "+hCmd.getRunTime());
 
-        FecpCommand modeCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd,100,50);
-        FecpCommand wrCmd = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
+//       //Set incline to a 5 and check actual value until it has reached 5
+//      ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.GRADE, 5);
+//       mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+//       Thread.sleep(1000);
 
-        //set mode to Idle to reset the Running Time for the test
-        ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.IDLE);
-        ((WriteReadDataCmd)modeCommand.getCommand()).addReadBitField(BitFieldId.WORKOUT_MODE);
-        ((WriteReadDataCmd)modeCommand.getCommand()).addReadBitField(BitFieldId.IDLE_TIMEOUT);
-        ((WriteReadDataCmd)modeCommand.getCommand()).addReadBitField(BitFieldId.ACTUAL_INCLINE);
-        ((WriteReadDataCmd)modeCommand.getCommand()).addReadBitField(BitFieldId.GRADE);//Same as INCLINE
-        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
+//       while(hCmd.getActualIncline() != hCmd.getIncline()){
+//           System.out.println("Current Actual incline : "+hCmd.getActualIncline()+" Goal " + hCmd.getIncline());
+//           Thread.sleep(1000);
+//       }
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.RUNNING);
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+        Thread.sleep(10000);
+
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.PAUSE);
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
         Thread.sleep(1000);
 
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.IDLE);
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+        Thread.sleep(1000);
 
-        System.out.println("Default idle timeout is: " + hCmd.getIdleTimeout());
-        System.out.println("Current Mode: "+hCmd.getMode());
-        System.out.println("Current Actual incline : "+hCmd.getActualIncline());
-
-        //set idle timeout to 60 secs
-       ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.IDLE_TIMEOUT, 60);
-       mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
-       Thread.sleep(1000);
-        timeout = hCmd.getIdleTimeout();
-        System.out.println("idle timeout is set to : "+timeout);
-        System.out.println("Current Mode: "+hCmd.getMode());
-        System.out.println("Current Actual incline : "+hCmd.getActualIncline());
-
-       //Set incline to a 5 and check actual value until it has reached 5
-      ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.GRADE, 5);
-       mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
-       Thread.sleep(1000);
-
-       while(hCmd.getActualIncline() != hCmd.getIncline()){
-           System.out.println("Current Actual incline : "+hCmd.getActualIncline()+" Goal " + hCmd.getIncline());
-           Thread.sleep(1000);
-       }
 
         //Check each second to see if mode has changed from Pause mode. Also prevents from waiting for longer than 1 minute
         for(long totalTime = 0; totalTime < timeout; totalTime++){
             Thread.sleep(1000);
-            System.out.println("after " + totalTime +" sec(s)the incline is  " + hCmd.getActualIncline());
-            if(hCmd.getActualIncline() != hCmd.getIncline()){
-                pauseResults += "The incline changed to " + hCmd.getActualIncline()+ " after " + totalTime + " seconds\n";
-                break;
-            }
+            System.out.println("after " + totalTime +" sec(s)the running time is  " + hCmd.getRunTime());
+//            if(hCmd.getActualIncline() != hCmd.getIncline()){
+//                pauseResults += "The incline changed to " + hCmd.getActualIncline()+ " after " + totalTime + " seconds\n";
+//                break;
+//            }
         }
 
-        if(hCmd.getActualIncline() != hCmd.getIncline()){
+        if(hCmd.getRunTime() == 0){
             pauseResults += "\n* PASS *\n\n";
-            pauseResults += "Idle Mode timed out and reset incline to " +hCmd.getActualIncline()+"\n"; ;
+            pauseResults += "Idle Mode timed out and reset running time to " +hCmd.getRunTime()+"\n"; ;
         }
         else{
             pauseResults += "\n* FAIL *\n\n";
-            pauseResults += "Idle Mode did not time out after 60 seconds\n";
+            pauseResults += "Idle Mode did not time out after "+timeout+" seconds\n";
         }
 
         return pauseResults;
@@ -433,27 +389,26 @@ public class TestIntegration {
     public String testRunningTime() throws Exception{
         //outline for code support #930 in redmine
         String resultString;
+        long runtime = 60; //time for running test (in secs)
+        long pauseruntime = 23; //time for running test with pause
 
         resultString = "\n\n------------------------RUNNING TIME TEST RESULTS------------------------\n\n";
         resultString += Calendar.getInstance().getTime() + "\n\n";
 
-        FecpCommand modeCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
-        FecpCommand timeCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA), hCmd, 100, 100);
+        System.out.println("Default pause timeout is: "+hCmd.getPauseTimeout());
+        System.out.println("Current Mode: "+hCmd.getMode());
 
-
-        ((WriteReadDataCmd)timeCommand.getCommand()).addReadBitField(BitFieldId.RUNNING_TIME);
-        mSFitSysCntrl.getFitProCntrl().addCmd(timeCommand);
+        //set the pause timeout to 60
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.PAUSE_TIMEOUT,60);
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
         Thread.sleep(1000);
-
-        //set mode to Idle to reset the Running Time for the test
-        ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.IDLE);
-        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
-        Thread.sleep(1000);
+        resultString+="Status of setting pause timeout to 60 secs: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
+        System.out.println("New pause timeout is: "+hCmd.getPauseTimeout());
 
         //set the mode to running
-        ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.RUNNING);
-        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
-        Thread.sleep(60000);
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.RUNNING);
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+        Thread.sleep(runtime*1000);
         //wait 1 minute
 //        long elapsedTime = 0;
 //        double seconds = 0;
@@ -469,29 +424,37 @@ public class TestIntegration {
         double timeOfRunningTest = hCmd.getRunTime();
 
         //Test whether the running time is within +/- 2 second of 60 seconds (allow for 1 sec read time)
-        if(timeOfRunningTest >= 58 && timeOfRunningTest <= 62) {
+        if(timeOfRunningTest >= runtime-2 && timeOfRunningTest <= runtime+2) {
             resultString += "\n\n* PASS *\n\n";
         }
         else {
             resultString += "\n\n* FAIL *\n\n";
         }
 
-        resultString += "The running time for this 60 second test was " + timeOfRunningTest + " seconds\n";
+        resultString += "The running time for this "+runtime+" second test was " + timeOfRunningTest + " seconds\n";
 
-        //set mode back to idle to stop the test
-        ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.IDLE);
-        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
+        //set mode back to Pause to stop the test
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.PAUSE);
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
         Thread.sleep(1000);
-        //wait 5 seconds between tests for motor speed down
-        Thread.sleep(5000);
+
+        //set mode back to Results
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.RESULTS);
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+        Thread.sleep(1000);
+
+        //set mode back to IDLE to reset running time
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.IDLE);
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+        Thread.sleep(1000);
 
         resultString += "\nPause Test: ";
         //start pause test
         //start running
         //set the mode to running
-        ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE,ModeId.RUNNING);
-        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
-        Thread.sleep(30000);
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE,ModeId.RUNNING);
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+        Thread.sleep(pauseruntime*1000);
         //wait 30 seconds
 //        startime = System.nanoTime();
 //        //Check the time elasped constanly until 30 secs have passed
@@ -501,14 +464,14 @@ public class TestIntegration {
 //            seconds = elapsedTime / 1.0E09;
 //        }
         //pause the test
-        ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.PAUSE);
-        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.PAUSE);
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
         //wait 30 seconds
         Thread.sleep(30000);
         //go from pause to running
-        ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.RUNNING);
-        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
-        Thread.sleep(30000);
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.RUNNING);
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+        Thread.sleep(pauseruntime*1000);
         //wait another 30 seconds for a total of 1 minute expected running time
 //        startime = System.nanoTime();
 //        //Check the time elasped constanly until 30 secs have passed
@@ -520,22 +483,29 @@ public class TestIntegration {
 
 
         double timeOfPauseTest = hCmd.getRunTime();
-        //Test whether the running time is within +/- 2 seconds of 60 seconds
-        if(timeOfPauseTest >= 58 && timeOfPauseTest <= 62){
+        pauseruntime*=2; // This time is used twice
+        //Test whether the running time is within +/- 2 seconds of 55 seconds
+        if(timeOfPauseTest >= pauseruntime-2 && timeOfPauseTest <= pauseruntime+2){
             resultString += "\n\n* PASS *\n\n";
-            resultString += "The total time for this 60 sec test with 30 sec pause correctly ran for " + timeOfPauseTest + " secs\n\n";
+            resultString += "The total time for this "+pauseruntime+ " sec test with 30 sec pause correctly ran for " + timeOfPauseTest + " secs\n\n";
         }
         else {
             resultString += "\n\n* FAIL *\n\n";
-            resultString += "The total time for this 60 sec test with 30 sec pause actually ran for " + timeOfPauseTest + " secs (should be 60 secs)\n\n";
+            resultString += "The total time for this "+pauseruntime+" sec test with 30 sec pause actually ran for " + timeOfPauseTest +"\n\n";
         }
 
         //set mode back to idle to stop the test
-        ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.IDLE);
-        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.PAUSE);
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+        Thread.sleep(1000);
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.RESULTS);
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+        Thread.sleep(1000);
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.IDLE);
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
         Thread.sleep(1000);
         //end the recurring callback
-        mSFitSysCntrl.getFitProCntrl().removeCmd(timeCommand);
+        mSFitSysCntrl.getFitProCntrl().removeCmd(wrCmd);
 
         return resultString;
     }
