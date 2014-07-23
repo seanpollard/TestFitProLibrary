@@ -702,11 +702,10 @@ public class TestApp extends Activity implements View.OnClickListener, SystemSta
               //returnString= t.testModes("all");
                //returnString= t.testPauseResume();
               TestIntegration ti = new TestIntegration(this.fecpController,this,this.mSFitSysCntrl);
-              returnString = ti.testRunningTime();
+            //  returnString = ti.testRunningTime();
                 // returnString = ti.testAge();
                 // returnString = ti.testWeight();
-                //returnString = ti.testPauseTimeout();
-//                returnString = ti.testIdleTimeout();
+                returnString = ti.testPauseIdleTimeout();
                 //returnString = ti.testMaxSpeedTime();
                 //TestBitfields tc = new TestBitfields(this.fecpController,this,this.mSFitSysCntrl);
                 //  returnString = tc.testBitfieldRdWr();
