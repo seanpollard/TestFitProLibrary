@@ -8,6 +8,7 @@ import com.ifit.sparky.fecp.interpreter.bitField.converter.ModeId;
 import com.ifit.sparky.fecp.interpreter.command.CommandId;
 import com.ifit.sparky.fecp.interpreter.command.WriteReadDataCmd;
 
+import java.nio.ByteBuffer;
 import java.util.Calendar;
 
 /**
@@ -22,15 +23,8 @@ public class TestIncline {
     private SFitSysCntrl mSFitSysCntrl;
     private SystemDevice MainDevice;
 
-    private FecpCommand modeCommand;
-    private FecpCommand inclineCommand;
-    private FecpCommand readMinIncline;
-    private FecpCommand readMaxIncline;
-    private FecpCommand readInclineCommand;
-    private FecpCommand readActualIncline;
-    private FecpCommand readModeCommand;
-    private FecpCommand sendKeyCmd;
-
+    private FecpCommand wrCmd;
+    private FecpCommand rdCmd;
     private String currentWorkoutMode = "";
     private double currentIncline = 0.0;
     private double actualInlcine = 0.0;
@@ -46,17 +40,33 @@ public class TestIncline {
             hCmd = new HandleCmd(this.mAct);// Init handlers
             //Get current system device
             MainDevice = this.mFecpController.getSysDev();
+            ByteBuffer secretKey = ByteBuffer.allocate(32);
+            for(int i = 0; i < 32; i++)
+            {
+                secretKey.put((byte)i);
+            }
+            try {
+                //unlock the system
+                this.mSFitSysCntrl.getFitProCntrl().unlockSystem(secretKey);
+                Thread.sleep(1000);
+                //Get current system device
+                MainDevice = this.mFecpController.getSysDev();
+                this.wrCmd = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
+                this.rdCmd = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd,0,100);
+                ((WriteReadDataCmd)rdCmd.getCommand()).addReadBitField(BitFieldId.MAX_GRADE);
+                ((WriteReadDataCmd)rdCmd.getCommand()).addReadBitField(BitFieldId.MIN_GRADE);
+                ((WriteReadDataCmd)rdCmd.getCommand()).addReadBitField(BitFieldId.ACTUAL_INCLINE);
+                ((WriteReadDataCmd)rdCmd.getCommand()).addReadBitField(BitFieldId.GRADE);
+                ((WriteReadDataCmd)rdCmd.getCommand()).addReadBitField(BitFieldId.WORKOUT_MODE);
+                ((WriteReadDataCmd)rdCmd.getCommand()).addReadBitField(BitFieldId.TRANS_MAX);
 
-            modeCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
-            inclineCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
-            readMinIncline = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA), hCmd, 100, 100);
-            readMaxIncline = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA), hCmd, 100, 100);
-            readModeCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA), hCmd, 100, 100);
-            readInclineCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA), hCmd, 100, 100);
-            readActualIncline = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA), hCmd, 100, 100);
+                mSFitSysCntrl.getFitProCntrl().addCmd(rdCmd);
+                Thread.sleep(1000);
 
-        }
-        catch (Exception ex) {
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
 
@@ -87,42 +97,8 @@ public class TestIncline {
         double currentActualIncline;
         double transMax;
 
-        ((WriteReadDataCmd)readModeCommand.getCommand()).addReadBitField(BitFieldId.MAX_GRADE);
-        ((WriteReadDataCmd)readModeCommand.getCommand()).addReadBitField(BitFieldId.GRADE);
-        ((WriteReadDataCmd)readModeCommand.getCommand()).addReadBitField(BitFieldId.MIN_GRADE);
-        ((WriteReadDataCmd)readModeCommand.getCommand()).addReadBitField(BitFieldId.TRANS_MAX);
-        ((WriteReadDataCmd)readModeCommand.getCommand()).addReadBitField(BitFieldId.WORKOUT_MODE);
-        ((WriteReadDataCmd)readModeCommand.getCommand()).addReadBitField(BitFieldId.ACTUAL_INCLINE);
-        mSFitSysCntrl.getFitProCntrl().addCmd(readModeCommand);
-        Thread.sleep(1000);
-        //Testing to see if setting TransMax value works
-        //no longer need to set transmax but sometimes it is reading 92 instead of 183
-        //FecpCommand setTransMax = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA));
-
-        //Set Mode to Idle
-        ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.IDLE);
-        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
-        Thread.sleep(1000);
-
-       // ((WriteReadDataCmd)readMaxIncline.getCommand()).addReadBitField(BitFieldId.MAX_GRADE);
-//       mSFitSysCntrl.getFitProCntrl().addCmd(readMaxIncline);
-//        Thread.sleep(1000);
-
-        //Check status of the command to receive the incline
-       // inclineResults += "Status of reading max incline: " + (readMaxIncline.getCommand()).getStatus().getStsId().getDescription() + "\n";
-
-        maxIncline = hCmd.getMaxIncline();
-        inclineResults += "Max Incline is " + maxIncline + "%\n";
-        System.out.println("Max Incline is " + maxIncline + "%\n");
-
-//        ((WriteReadDataCmd)readMinIncline.getCommand()).addReadBitField(BitFieldId.MIN_GRADE);
-//       mSFitSysCntrl.getFitProCntrl().addCmd(readMinIncline);
-//        Thread.sleep(1000);
-
-        //Check status of the command to receive the incline
-       // inclineResults += "Status of reading min incline: " + (readMinIncline.getCommand()).getStatus().getStsId().getDescription() + "\n";
-
         minIncline = hCmd.getMinIncline();
+        maxIncline = hCmd.getMaxIncline();
         inclineResults += "Min Incline is " + minIncline + "%\n";
         System.out.println("Min Incline is " + minIncline + "%\n");
 
@@ -133,23 +109,9 @@ public class TestIncline {
         //mFecpController.addCmd(setTransMax);
         //Thread.sleep(1000);
 
-        //Check status of the command to set the transMax
-        //inclineResults += "Status of setting Trans Max: " + (setTransMax.getCommand()).getStatus().getStsId().getDescription() + "\n";
-
-//        ((WriteReadDataCmd)readCmd.getCommand()).addReadBitField(BitFieldId.TRANS_MAX);
-//       mSFitSysCntrl.getFitProCntrl().addCmd(readCmd);
-//        Thread.sleep(1000);
-
-        //Check status of the command to receive the transMax
-       // inclineResults += "Status of reading Trans Max: " + (readModeCommand.getCommand()).getStatus().getStsId().getDescription() + "\n";
-
         transMax = hCmd.getTransMax();
         inclineResults += "TransMax is " + transMax + "\n\n";
         System.out.println("TransMax is " + transMax + "%\n");
-
-
-        // mSFitSysCntrl.getFitProCntrl().removeCmd(readCmd);
-
 
         //--------------------------------------------------------------------------------------------------------------//
         //Run through all incline settings, going from -3% to 15% (hard-coded until min and max incline are implemented)//
@@ -159,58 +121,34 @@ public class TestIncline {
         long startime = 0;
         for(int i = 0; i < NUM_TESTS; i++)
         {
-            for(double j = maxIncline; j >= minIncline; j = j-0.5)      //Set MAX_INCLINE TO the maximum incline and MIN_INCLINE to minimum
+            //Set MAx incline harcoded to be 15% since that is our motor's max capacity.
+            //This value "J" will be set to maxIncline later on when we use it on a motor with higher incline range
+            for(double j = 15; j >= minIncline; j = j-0.5)
             {
                 inclineResults += "Sending a command for incline at " + j + "% to the FecpController\n";
 
                 //Set value for the incline
-                ((WriteReadDataCmd) modeCommand.getCommand()).addWriteData(BitFieldId.GRADE, j);
-               mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
+                ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(BitFieldId.GRADE, j);
+               mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
                 Thread.sleep(50);
 
                 //Check status of the command to send the incline
-                inclineResults += "Status of sending incline " + j + "%: " + (modeCommand.getCommand()).getStatus().getStsId().getDescription() + "\n";
+                inclineResults += "Status of sending incline " + j + "%: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
                 startime= System.nanoTime();
                 do
                 {
                     currentActualIncline = hCmd.getActualIncline();
                     Thread.sleep(300);
-                    System.out.println("Current Incline is: " + currentActualIncline+ "goal: " + j+" time elapsed: "+seconds);
+                    System.out.println("Current Incline is: " + currentActualIncline+ " goal: " + j+" time elapsed: "+seconds);
                     elapsedTime = System.nanoTime() - startime;
                     seconds = elapsedTime / 1.0E09;
                 } while(j!=currentActualIncline && seconds < 180);//Do while the incline hasn't reached its point yet or took more than 3 mins
 
-//                ((WriteReadDataCmd)readModeCommand.getCommand()).addReadBitField(BitFieldId.WORKOUT_MODE);
-//               mSFitSysCntrl.getFitProCntrl().addCmd(readModeCommand);
-
-//                Thread.sleep(1000);
-
-//                inclineResults += "Status of reading the Mode: " + (readModeCommand.getCommand()).getStatus().getStsId().getDescription() + "\n";
-
                 currentWorkoutMode = "Workout mode of incline at " + j + "% is " + hCmd.getMode() + "\n";
                 inclineResults += currentWorkoutMode;
 
-//                mFecpController.removeCmd(readModeCommand);
-
-                //Read sent incline off of device
-//                ((WriteReadDataCmd)readInclineCommand.getCommand()).addReadBitField(BitFieldId.GRADE);
-//               mSFitSysCntrl.getFitProCntrl().addCmd(readInclineCommand);
-//                Thread.sleep(1000);
-//
-//                //Check Status of the command to read the send incline
-//                inclineResults += "Status of reading last sent incline at " + j + "%: " + (readInclineCommand.getCommand()).getStatus().getStsId().getDescription() + "\n";
-
                 inclineResults += "The last set incline is " + hCmd.getIncline() + "%\n";
                 System.out.println("The last set incline is " + hCmd.getIncline() + "%\n");
-
-
-                //Read the actual incline off of device
-//                ((WriteReadDataCmd)readActualIncline.getCommand()).addReadBitField(BitFieldId.ACTUAL_INCLINE);
-//               mSFitSysCntrl.getFitProCntrl().addCmd(readActualIncline);
-//                Thread.sleep(1000);
-
-                //Check status of the command to receive the actual incline
-//                inclineResults += "Status of reading actual incline at " + j + "%: " + (readActualIncline.getCommand()).getStatus().getStsId().getDescription() + "\n";
 
                 //Read the actual incline off of device
                 actualInlcine = hCmd.getActualIncline();
