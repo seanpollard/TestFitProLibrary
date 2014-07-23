@@ -47,6 +47,8 @@ public class TestIntegration implements TestAll {
                 ((WriteReadDataCmd)rdCmd.getCommand()).addReadBitField(BitFieldId.MAX_GRADE);
                 ((WriteReadDataCmd)rdCmd.getCommand()).addReadBitField(BitFieldId.MIN_GRADE);
                 ((WriteReadDataCmd)rdCmd.getCommand()).addReadBitField(BitFieldId.ACTUAL_INCLINE);
+                ((WriteReadDataCmd)rdCmd.getCommand()).addReadBitField(BitFieldId.ACTUAL_KPH);
+                ((WriteReadDataCmd)rdCmd.getCommand()).addReadBitField(BitFieldId.KPH);
                 ((WriteReadDataCmd)rdCmd.getCommand()).addReadBitField(BitFieldId.GRADE);
                // ((WriteReadDataCmd)rdCmd.getCommand()).addReadBitField(BitFieldId.AGE);
                 //((WriteReadDataCmd)rdCmd.getCommand()).addReadBitField(BitFieldId.WEIGHT);
@@ -506,27 +508,19 @@ public class TestIntegration implements TestAll {
         maxSpeedResults += Calendar.getInstance().getTime() + "\n\n";
 
         //TODO: Once Max Speed command is implemented, just change the constant MAX_SPEED to the maxSpeed variable (which reads the value off of the Brainboard)
-        FecpCommand readMaxSpeedCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA), hCmd, 100, 100);
-        ((WriteReadDataCmd)readMaxSpeedCommand.getCommand()).addReadBitField(BitFieldId.ACTUAL_KPH);
-        ((WriteReadDataCmd)readMaxSpeedCommand.getCommand()).addReadBitField(BitFieldId.MAX_KPH);
-        mSFitSysCntrl.getFitProCntrl().addCmd(readMaxSpeedCommand);
+
         maxSpeed = hCmd.getMaxSpeed();
         Thread.sleep(1000);
         System.out.println("The max speed is " + maxSpeed);
 
-        FecpCommand modeCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
-        //set mode to idle to make sure the motor has stopped
-        ((WriteReadDataCmd) modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.IDLE);
-        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
-        Thread.sleep(1000);
         //start timer
         //set mode to running
-        ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.RUNNING);
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.RUNNING);
         //set to max speed currently hardcoded to 20kph as that is not implemented
-        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
         Thread.sleep(1000);
-        ((WriteReadDataCmd)modeCommand.getCommand()).addWriteData(BitFieldId.KPH, 16.0);//replace literal by maxSpeed later on
-        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.KPH, 16.0);//replace literal by maxSpeed later on
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
         Thread.sleep(1000);
         long elapsedTime = 0;
         double seconds = 0;
@@ -541,10 +535,16 @@ public class TestIntegration implements TestAll {
             System.out.println("actual speed "+currentActualSpeed+" elapsed time " + seconds +" seconds");
         }
 
-        //test is over set back to idle to end the test
-        ((WriteReadDataCmd) modeCommand.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.IDLE);
-        mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
-
+        //set mode back to idle to stop the test
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.PAUSE);
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+        Thread.sleep(1000);
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.RESULTS);
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+        Thread.sleep(1000);
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.IDLE);
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+        Thread.sleep(1000);
         maxSpeedResults += "The max speed is " + maxSpeed + "\n";
         maxSpeedResults += "The motor took " + seconds + " seconds to go to max speed\n";
 

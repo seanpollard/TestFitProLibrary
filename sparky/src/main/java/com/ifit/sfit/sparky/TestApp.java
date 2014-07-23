@@ -705,8 +705,8 @@ public class TestApp extends Activity implements View.OnClickListener, SystemSta
             //  returnString = ti.testRunningTime();
                 // returnString = ti.testAge();
                 // returnString = ti.testWeight();
-                returnString = ti.testPauseIdleTimeout();
-                //returnString = ti.testMaxSpeedTime();
+                //returnString = ti.testPauseIdleTimeout();
+                returnString = ti.testMaxSpeedTime();
                 //TestBitfields tc = new TestBitfields(this.fecpController,this,this.mSFitSysCntrl);
                 //  returnString = tc.testBitfieldRdWr();
                 //  returnString = tc.testBitfieldValuesValidation();
