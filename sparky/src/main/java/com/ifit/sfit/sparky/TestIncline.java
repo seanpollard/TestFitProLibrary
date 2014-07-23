@@ -1,5 +1,7 @@
 package com.ifit.sfit.sparky;
 
+import android.graphics.AvoidXfermode;
+
 import com.ifit.sparky.fecp.FecpCommand;
 import com.ifit.sparky.fecp.SystemDevice;
 import com.ifit.sparky.fecp.communication.FecpController;
@@ -172,4 +174,128 @@ public class TestIncline {
         return inclineResults;
     }
 
+
+// ISSUE FOUND: if incline is set to a value and stop button is pressed (or Mode is set to pause), incline keeps going which it should not
+    public String testStopIncline() throws Exception{
+        //Redmine Support #1182
+        //Set Incline to 0 or Min Incline
+        //Set Incline to Max Incline
+        //Send Stop key command before the incline has reached Max
+        //Read the Incline
+        //Validate that the Incline is not set to the Max Incline
+        //Set Incline to Max Incline
+        //Set Incline to Min or 0
+        //Send Stop key command before the inclne has reached Min
+        //Read the Incline
+        //Validate that the Incline is not set to the Min Incline
+        String stopInclineResults;
+        double maxIncline;
+        double minIncline;
+        double maxToMinIncline1;
+        double maxToMinIncline2;
+        double minToMaxIncline1;
+        double minToMaxIncline2;
+
+        stopInclineResults = "\n\n----------------------STOP INCLINE TEST RESULTS----------------------\n\n";
+        stopInclineResults += Calendar.getInstance().getTime() + "\n\n";
+        double currentActualIncline;
+        long elapsedTime = 0, startime = 0;
+        double seconds = 0;
+
+
+        maxIncline = hCmd.getMaxIncline();
+        stopInclineResults += "Max Incline is " + maxIncline + "%\n";
+        System.out.println("Max Incline is " + maxIncline + "%\n");
+
+        minIncline = hCmd.getMinIncline();
+        stopInclineResults += "Min Incline is " + minIncline + "%\n";
+        System.out.println("MinIncline is " + minIncline + "%\n");
+
+        //Set Incline to Min Incline
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.GRADE, minIncline);
+        mFecpController.addCmd(wrCmd);
+        Thread.sleep(1000);
+        //check actual incline until value reaches minIncline
+        startime = System.nanoTime();
+        do
+        {
+            currentActualIncline = hCmd.getActualIncline();
+            Thread.sleep(300);
+            System.out.println("Current Incline is: " + currentActualIncline+ " goal: " + minIncline+" time elapsed: "+seconds);
+            elapsedTime = System.nanoTime() - startime;
+            seconds = elapsedTime / 1.0E09;
+        } while(minIncline!=currentActualIncline && seconds < 90);//Do while the incline hasn't reached its point yet or took more than 1.5 mins
+
+
+        //Set Incline to Max Incline
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.GRADE, 15);
+        mFecpController.addCmd(wrCmd);
+        Thread.sleep(7000);    //Wait for enough time so that the incline does not increase all the way to Max Incline
+
+        //Stop
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.PAUSE);
+        mFecpController.addCmd(wrCmd);
+        Thread.sleep(1000);
+
+        stopInclineResults += "Status of sending Stop key command: " + wrCmd.getCommand().getStatus().getStsId().getDescription() + "\n";
+
+        minToMaxIncline1 = hCmd.getActualIncline();
+        Thread.sleep(5000);
+
+        minToMaxIncline2 = hCmd.getMaxIncline();
+
+        if(minToMaxIncline1 == minToMaxIncline2){
+            stopInclineResults += "\n* PASS *\n\n";
+            stopInclineResults += "The incline value from Min Incline to Max Incline was reset to " + minToMaxIncline1 + "%\n";
+        }
+        else{
+            stopInclineResults += "\n* FAIL *\n\n";
+            stopInclineResults += "The Incline value from Min Incline to Max Incline did not stop when the Stop button was pressed\n";
+        }
+
+        //Set Incline to Max Incline
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.GRADE, 15);
+        mFecpController.addCmd(wrCmd);
+        Thread.sleep(1000);
+        maxIncline = 15; //Our motor only reaches to max incline value of 15%
+        //check actual incline until value reaches maxIncline
+        startime = System.nanoTime();
+        do
+        {
+            currentActualIncline = hCmd.getActualIncline();
+            Thread.sleep(300);
+            System.out.println("Current Incline is: " + currentActualIncline+ " goal: " + maxIncline+" time elapsed: "+seconds);
+            elapsedTime = System.nanoTime() - startime;
+            seconds = elapsedTime / 1.0E09;
+        } while(maxIncline!=currentActualIncline && seconds < 90);//Do while the incline hasn't reached its point yet or took more than 1.5 mins
+
+
+        //Set Incline to Min Incline
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.GRADE, minIncline);
+        mFecpController.addCmd(wrCmd);
+        Thread.sleep(7000);    //Wait for enough time so that the incline does not go all the way to Min Incline
+
+        //Stop
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.PAUSE);
+        mFecpController.addCmd(wrCmd);
+        Thread.sleep(5000);    //Wait for enough time so that the incline does not increase all the way to Max Incline
+
+        stopInclineResults += "Status of sending Stop key command: " + wrCmd.getCommand().getStatus().getStsId().getDescription() + "\n";
+
+        maxToMinIncline1 = hCmd.getActualIncline();
+        Thread.sleep(5000);
+
+        maxToMinIncline2 = hCmd.getActualIncline();
+
+        if(maxToMinIncline1 == maxToMinIncline2){
+            stopInclineResults += "\n* PASS *\n\n";
+            stopInclineResults += "The incline value from Max Incline to Min Incline was reset to " + maxToMinIncline1 + "%\n";
+        }
+        else{
+            stopInclineResults += "\n* FAIL *\n\n";
+            stopInclineResults += "The Incline value from Max Incline to Min Incline did not stop when the Stop button was pressed\n";
+        }
+
+        return stopInclineResults;
+    }
 }

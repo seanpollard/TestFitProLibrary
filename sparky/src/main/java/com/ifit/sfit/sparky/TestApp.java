@@ -717,7 +717,9 @@ public class TestApp extends Activity implements View.OnClickListener, SystemSta
                 //TestTreadmillKeyCodes ttk = new TestTreadmillKeyCodes(this.fecpController,this,this.mSFitSysCntrl);
                 // returnString = ttk.testAllKeys();
             TestIncline tin = new TestIncline(this.fecpController,this,this.mSFitSysCntrl);
-            returnString= tin.testInclineController();
+               // returnString= tin.testInclineController();
+                //returnString= tin.testStopIncline();
+
                 returnString += "\n" + systemString;
                 //try to write to the file in main from the machine control structure
                 outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
