@@ -15,6 +15,7 @@ import com.ifit.sparky.fecp.interpreter.command.InvalidCommandException;
 import com.ifit.sparky.fecp.interpreter.command.WriteReadDataCmd;
 import com.ifit.sparky.fecp.interpreter.device.Device;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -42,6 +43,8 @@ public class TestBitfields {
     private SFitSysCntrl mSFitSysCntrl;
     private SystemDevice MainDevice;
     private String bitfieldRdWrResults = "\n\n----------------------------BITFIELDS TEST RESULTS----------------------------\n\n"; //to store results of test
+    private  FecpCommand wrCmd;
+    private  FecpCommand rdCmd;
 
     public TestBitfields(FecpController fecpController, TestApp act, SFitSysCntrl ctrl) {
         //Get controller sent from the main activity (TestApp)
@@ -50,34 +53,45 @@ public class TestBitfields {
             this.mAct = act;
             this.mSFitSysCntrl = ctrl;
             hCmd = new HandleCmd(this.mAct);// Init handlers
-            //Get current system device
-            MainDevice = this.mFecpController.getSysDev();
-
-        }
-        catch (Exception ex) {
+            ByteBuffer secretKey = ByteBuffer.allocate(32);
+            for(int i = 0; i < 32; i++)
+            {
+                secretKey.put((byte)i);
+            }
+            try {
+                //unlock the system
+                this.mSFitSysCntrl.getFitProCntrl().unlockSystem(secretKey);
+                Thread.sleep(1000);
+                //Get current system device
+                MainDevice = this.mFecpController.getSysDev();
+                this.wrCmd = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
+                this.rdCmd = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd,0,100);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-     //---------------------------------------------------------------------//
-     //  Test read/write access on supported read-only - testBitfieldRdWr() //
-     //                                                                     //
-     //         -  verify writing operation to bitfield fails for read only //
-     //         - If bitfield is not supported, verify exception is thrown  //
-     //---------------------------------------------------------------------//
+    //---------------------------------------------------------------------//
+    //  Test read/write access on supported read-only - testBitfieldRdWr() //
+    //                                                                     //
+    //         -  verify writing operation to bitfield fails for read only //
+    //         - If bitfield is not supported, verify exception is thrown  //
+    //---------------------------------------------------------------------//
 //Future test include
 //TODO: Verify read operation on all read-only bitfields by reading default values
- //TODO: Do same tests for new and future supported commands
+    //TODO: Do same tests for new and future supported commands
 
     public String testBitfieldRdWr() throws Exception {
-
+        System.out.println("NOW RUNNING READ ACCESS & UNSUPPORTED BITFIELDS TEST...\n");
         Object valueToWrite = 10;
-        FecpCommand cmd= new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
 
         bitfieldRdWrResults+= "------Testing Unsupported Bitfields------\n\n"; //to store results of test
 
-         ArrayList<BitFieldId> supportedBitFields = new ArrayList<BitFieldId>(MainDevice.getInfo().getSupportedBitfields());
-         ArrayList<BitFieldId> supportedRdBitFields = new ArrayList<BitFieldId>(MainDevice.getInfo().getSupportedReadOnlyBitfields());
+        ArrayList<BitFieldId> supportedBitFields = new ArrayList<BitFieldId>(MainDevice.getInfo().getSupportedBitfields());
+        ArrayList<BitFieldId> supportedRdBitFields = new ArrayList<BitFieldId>(MainDevice.getInfo().getSupportedReadOnlyBitfields());
 
         //loop through all bitfields, try to read unsupported ones, verify exception is thrown
 
@@ -85,51 +99,54 @@ public class TestBitfields {
         {
             if(!supportedBitFields.contains(bf))
             {
-              //  unsupportedBitFields.add(bf);
-              //Try to read a value from this bitfeld and verify that it throws exception
+                //  unsupportedBitFields.add(bf);
+                //Try to read a value from this bitfeld and verify that it throws exception
                 try{
                     bitfieldRdWrResults += "current bitfield: "+ bf.name()+"\n";
 
-                    ((WriteReadDataCmd)cmd.getCommand()).addReadBitField(bf);
-                    mSFitSysCntrl.getFitProCntrl().addCmd(cmd);
+                    ((WriteReadDataCmd)wrCmd.getCommand()).addReadBitField(bf);
+                    mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
                     Thread.sleep(1000);
-                    bitfieldRdWrResults += "Status trying to read unsupported bitfield: "+ bf.name() +" " + (cmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
+                    bitfieldRdWrResults += "Status trying to read unsupported bitfield: "+ bf.name() +" " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
 
                     bitfieldRdWrResults+="* FAIL * NO Exception thrown when trying to read unsupported bitfield:  "+bf.name()+ "\n";
-
                 }
                 catch (Exception ex)
                 {
                     ex.printStackTrace();
-                    bitfieldRdWrResults += "Status trying to read unsupported bitfield: "+ bf.name() +" "+ (cmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
+                    bitfieldRdWrResults += "Status trying to read unsupported bitfield: "+ bf.name() +" "+ (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
                     bitfieldRdWrResults+="* PASS * Exception thrown when trying to read unsupported bitfield:  "+bf.name()+ "\n";
                     bitfieldRdWrResults+="Details: " + ex.toString() +"\n\n";
+                    //Remove bitfield so system can throw exception for next invalid bitfiled
+                    ((WriteReadDataCmd)wrCmd.getCommand()).removeReadDataField(bf);
+                    mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+                    Thread.sleep(1000);
                 }
             }
         }
 
-         bitfieldRdWrResults+= "------Testing Read/Write Access for Supported READ-ONLY Bitfields------\n\n"; //to store results of test
+        bitfieldRdWrResults+= "------Testing Read/Write Access for Supported READ-ONLY Bitfields------\n\n"; //to store results of test
 
-            //Loop through all readonly supported fields
+        //Loop through all readonly supported fields
         for(BitFieldId b: supportedRdBitFields)
         {
             //if it's readonly, try to write to it and verify exception is thrown
 
-                try {
-                    ((WriteReadDataCmd) cmd.getCommand()).addWriteData(b, 10);
-                    mSFitSysCntrl.getFitProCntrl().addCmd(cmd);
-                    Thread.sleep(1000);
-                    bitfieldRdWrResults += "* FAIL * NO Exception thrown when trying to write read-only bitfield:  " + b.name() + "\n";
-                }
-                catch (Exception ex)
-                {
-                    ex.printStackTrace();
-                    bitfieldRdWrResults+="* PASS * Exception thrown when trying to write read-only bitfield:  "+b.name()+ "\n";
-                    bitfieldRdWrResults+=" Details: " + ex.getMessage() +"\n\n";
-                }
+            try {
+                ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(b, 10);
+                mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+                Thread.sleep(1000);
+                bitfieldRdWrResults += "* FAIL * NO Exception thrown when trying to write read-only bitfield:  " + b.name() + "\n";
             }
-         mSFitSysCntrl.getFitProCntrl().removeCmd(cmd);
-         return bitfieldRdWrResults;
+            catch (Exception ex)
+            {
+                ex.printStackTrace();
+                bitfieldRdWrResults+="* PASS * Exception thrown when trying to write read-only bitfield:  "+b.name()+ "\n";
+                bitfieldRdWrResults+=" Details: " + ex.getMessage() +"\n\n";
+            }
+        }
+        mSFitSysCntrl.getFitProCntrl().removeCmd(wrCmd);
+        return bitfieldRdWrResults;
     }
     //-------------------------------------------------------------------------------//
     //   Test input values for each bitfield - testBitfieldValuesValidation()        //
@@ -142,9 +159,9 @@ public class TestBitfields {
     //TODO: Test max and min limits and check out of range values
     public String testBitfieldValuesValidation() throws Exception
     {
+        System.out.println("NOW RUNNING READ/WRITE ACCESS FOR SUPPORTED BITFIELDS...\n");
         bitfieldRdWrResults+= "------Testing Read/Write Access with valid values for Supported WRITE/READ Bitfields------\n\n"; //to store results of test
         ArrayList<BitFieldId> supportedWrBitFields = new ArrayList<BitFieldId>(MainDevice.getInfo().getSupportedWriteBitfields());
-//        mSFitSysCntrl.getFitProCntrl().removeCmd(MainDevice.getInfo().getDevId(),CommandId.WRITE_READ_DATA);
 
         FecpCommand fanSpeedcmd = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
         FecpCommand kphCmd = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
@@ -195,7 +212,7 @@ public class TestBitfields {
                 case "VOLUME":
                     break;
                 case "WORKOUT_MODE":
-                    ((WriteReadDataCmd) workoutModeCmd.getCommand()).addReadBitField(BitFieldId.WORKOUT_MODE);
+                    ((WriteReadDataCmd) workoutModeCmd.getCommand()).addReadBitField(bf);
                     mSFitSysCntrl.getFitProCntrl().addCmd(workoutModeCmd);
                     Thread.sleep(1000);
                     defaultValue = hCmd.getMode();//In this case the default is last mode
@@ -273,52 +290,52 @@ public class TestBitfields {
                     break;
 
             }
-           // mSFitSysCntrl.getFitProCntrl().removeCmd(cmd);
-           // Thread.sleep(1000);
+            // mSFitSysCntrl.getFitProCntrl().removeCmd(cmd);
+            // Thread.sleep(1000);
         }
 
         return bitfieldRdWrResults;
     }
     //Helper function to test bitfields
-public void verifyBitfield(FecpCommand cmd, ModeId modeId,BitFieldId bitFieldId, Object valueToWrite, boolean validValue,Object defaultVal) throws InvalidCommandException, InvalidBitFieldException {
-    long time=1000;
-    if(modeId.name() =="KPH" || modeId.name() =="GRADE")
-    {
-        time = 5000;
-    }
-    try {
-        ((WriteReadDataCmd) cmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, modeId);
-        mSFitSysCntrl.getFitProCntrl().addCmd(cmd);
-        Thread.sleep(1000);
-        ((WriteReadDataCmd) cmd.getCommand()).addWriteData(bitFieldId, valueToWrite); //set speed to valueToWrite KPH
-        mSFitSysCntrl.getFitProCntrl().addCmd(cmd);
-        Thread.sleep(time);
-        ((WriteReadDataCmd) cmd.getCommand()).addReadBitField(bitFieldId);
-        mSFitSysCntrl.getFitProCntrl().addCmd(cmd);
-        Thread.sleep(1000);
-    }
-    catch (Exception ex)
-    {
-        ex.printStackTrace();
-    }
-    if(validValue) {
-        bitfieldRdWrResults += "\nusing VALID value "+ valueToWrite;
-        if (hCmd.toString().equals(String.valueOf(valueToWrite))) {
-            bitfieldRdWrResults += "\n* PASS * value " + hCmd.toString() + " read from brainboard matches value " + valueToWrite + " written to bitfield " + bitFieldId.name() + "\n";
-        } else {
-            bitfieldRdWrResults += "\n* FAIL * value " + hCmd.toString() + " read from brainboard DOESN'T match value " + valueToWrite + " written to bitfield " + bitFieldId.name() + "\n";
+    public void verifyBitfield(FecpCommand cmd, ModeId modeId,BitFieldId bitFieldId, Object valueToWrite, boolean validValue,Object defaultVal) throws InvalidCommandException, InvalidBitFieldException {
+        long time=1000;
+        if(bitFieldId.name() =="KPH" || bitFieldId.name() =="GRADE")
+        {
+            time = 5000;
         }
-    }
-    else
-    { bitfieldRdWrResults += "\nusing INVALID value "+ valueToWrite;
+        try {
+            ((WriteReadDataCmd) cmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, modeId);
+            mSFitSysCntrl.getFitProCntrl().addCmd(cmd);
+            Thread.sleep(1000);
+            ((WriteReadDataCmd) cmd.getCommand()).addWriteData(bitFieldId, valueToWrite);
+            mSFitSysCntrl.getFitProCntrl().addCmd(cmd);
+            Thread.sleep(time);
+            ((WriteReadDataCmd) cmd.getCommand()).addReadBitField(bitFieldId);
+            mSFitSysCntrl.getFitProCntrl().addCmd(cmd);
+            Thread.sleep(time);
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+        if(validValue) {
+            bitfieldRdWrResults += "\nusing VALID value "+ valueToWrite;
+            if (hCmd.toString().equals(String.valueOf(valueToWrite))) {
+                bitfieldRdWrResults += "\n* PASS * value " + hCmd.toString() + " read from brainboard matches value " + valueToWrite + " written to bitfield " + bitFieldId.name() + "\n";
+            } else {
+                bitfieldRdWrResults += "\n* FAIL * value " + hCmd.toString() + " read from brainboard DOESN'T match value " + valueToWrite + " written to bitfield " + bitFieldId.name() + "\n";
+            }
+        }
+        else
+        { bitfieldRdWrResults += "\nusing INVALID value "+ valueToWrite;
 
-        if (hCmd.toString().equals(String.valueOf(defaultVal))) {
-            bitfieldRdWrResults += "\n* PASS * value " + hCmd.toString() + " read from brainboard matches value default value" + defaultVal + " for bitfield " + bitFieldId.name() + "\n";
-        } else {
-            bitfieldRdWrResults += "\n* FAIL * value " + hCmd.toString() + " read from brainboard DOESN'T match value " + defaultVal + " for bitfield " + bitFieldId.name() + "\n";
+            if (hCmd.toString().equals(String.valueOf(defaultVal))) {
+                bitfieldRdWrResults += "\n* PASS * value " + hCmd.toString() + " read from brainboard matches value default value " + defaultVal + " for bitfield " + bitFieldId.name() + "\n";
+            } else {
+                bitfieldRdWrResults += "\n* FAIL * value " + hCmd.toString() + " read from brainboard DOESN'T match value " + defaultVal + " for bitfield " + bitFieldId.name() + "\n";
+            }
         }
     }
-}
 
 
 }
