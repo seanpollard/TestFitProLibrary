@@ -535,16 +535,7 @@ public class TestIntegration implements TestAll {
             System.out.println("actual speed "+currentActualSpeed+" elapsed time " + seconds +" seconds");
         }
 
-        //set mode back to idle to stop the test
-        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.PAUSE);
-        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
-        Thread.sleep(1000);
-        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.RESULTS);
-        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
-        Thread.sleep(1000);
-        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.IDLE);
-        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
-        Thread.sleep(1000);
+
         maxSpeedResults += "The max speed is " + maxSpeed + "\n";
         maxSpeedResults += "The motor took " + seconds + " seconds to go to max speed\n";
 
@@ -563,6 +554,16 @@ public class TestIntegration implements TestAll {
                     seconds+" seconds, which is within the 5% tolerance\n";
         }
 
+        //set mode back to idle to stop the test
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.PAUSE);
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+        Thread.sleep(1000);
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.RESULTS);
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+        Thread.sleep(1000);
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.IDLE);
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+        Thread.sleep(1000);
         return maxSpeedResults;
     }
     @Override

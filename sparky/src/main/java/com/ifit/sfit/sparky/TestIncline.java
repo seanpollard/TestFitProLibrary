@@ -16,7 +16,7 @@ import java.util.Calendar;
 /**
  * Created by jc.almonte on 7/14/14.
  */
-public class TestIncline {
+public class TestIncline implements TestAll {
 
     //Variables needed to initialize connection with Brainboard
     private FecpController mFecpController;
@@ -76,7 +76,7 @@ public class TestIncline {
 
     //--------------------------------------------//
     //                                            //
-    //Testing All Inclines (in decrements of 1.0%)//
+    //Testing All Inclines (in decrements of 0.5%)//
     //                                            //
     //--------------------------------------------//
     public String testInclineController() throws Exception{
@@ -171,6 +171,16 @@ public class TestIncline {
             }
         }
 
+        //set mode back to idle to stop the test
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.PAUSE);
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+        Thread.sleep(1000);
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.RESULTS);
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+        Thread.sleep(1000);
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.IDLE);
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+        Thread.sleep(1000);
         return inclineResults;
     }
 
@@ -185,7 +195,7 @@ public class TestIncline {
         //Validate that the Incline is not set to the Max Incline
         //Set Incline to Max Incline
         //Set Incline to Min or 0
-        //Send Stop key command before the inclne has reached Min
+        //Send Stop key command before the incline has reached Min
         //Read the Incline
         //Validate that the Incline is not set to the Min Incline
         String stopInclineResults;
@@ -295,7 +305,133 @@ public class TestIncline {
             stopInclineResults += "\n* FAIL *\n\n";
             stopInclineResults += "The Incline value from Max Incline to Min Incline did not stop when the Stop button was pressed\n";
         }
-
+    //set mode back to idle to stop the test
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.PAUSE);
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+        Thread.sleep(1000);
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.RESULTS);
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+        Thread.sleep(1000);
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.IDLE);
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+        Thread.sleep(1000);
         return stopInclineResults;
+    }
+
+    //--------------------------------------------//
+    //                                            //
+    //          Testing Retained Incline          //
+    //                                            //
+    //--------------------------------------------//
+    // ISSUE FOUND: Incline always calibrates when it goes to IDLE mode after it has been in running mode.
+    public String testRetainedIncline() throws Exception {
+        //Redmine Support #1077
+        //Set Incline to 5%
+        //Set mode to Running
+        //Read the incline to verify that it hasn't changed
+        String retainedInclineResults;
+
+        retainedInclineResults = "\n\n----------------------RETAINED INCLINE TEST RESULTS----------------------\n\n";
+        retainedInclineResults += Calendar.getInstance().getTime() + "\n\n";
+
+        double currentIncline1, currentIncline2;
+        double testIncline = 5;
+        double setIncline = 0;
+        String currentMode;
+        double currentActualIncline =0;
+
+        currentMode = "Current Mode is: " + hCmd.getMode();
+        retainedInclineResults += currentMode + "\n";
+
+        //Set incline to 5% for testing the incline
+
+        ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(BitFieldId.GRADE, testIncline);
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+        Thread.sleep(1000);
+        setIncline = hCmd.getIncline();
+        retainedInclineResults += "The status of setting the Incline to 5%: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
+
+        long elapsedTime = 0;
+        double seconds = 0;
+        long startime = 0;
+        //Wait for the incline motor to go to 5%
+        startime= System.nanoTime();
+        do
+        {
+            currentActualIncline = hCmd.getActualIncline();
+            Thread.sleep(300);
+            System.out.println("Current Incline is: " + currentActualIncline+ " goal: " + setIncline+" time elapsed: "+seconds);
+            elapsedTime = System.nanoTime() - startime;
+            seconds = elapsedTime / 1.0E09;
+        } while(setIncline!=currentActualIncline && seconds < 60);//Do while the incline hasn't reached its target point. Break the  loop if it took more than a minute to reach target incline
+
+        currentIncline1 = hCmd.getActualIncline();
+
+        retainedInclineResults += "The actual incline is " + currentIncline1 +" % \n";
+
+        //Set Mode to Running
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE,ModeId.RUNNING);
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+        Thread.sleep(1000);
+        retainedInclineResults += "Status of setting the mode to Running: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
+
+        //wait for the motor to speed up
+        Thread.sleep(3000);
+        //read the mode
+        currentMode = hCmd.getMode().toString();
+        retainedInclineResults += "Current Mode is: " + currentMode + "\n";
+        //let the workout run for 30 sec
+        Thread.sleep(30000);
+
+        currentIncline2 = hCmd.getActualIncline();
+
+        if(currentIncline1 == currentIncline2 && currentIncline1 == testIncline && currentMode.equals("RUNNING")){
+            retainedInclineResults += "\n* PASS *\n\n";
+            retainedInclineResults += "The Incline went to " + testIncline + " and did not change when the mode was changed to Running\n";
+        }
+        else{
+            if(!currentMode.equals("RUNNING")){
+                retainedInclineResults += "\n* FAIL *\n\n";
+                retainedInclineResults += "Mode didn't change to Running\n";
+            }
+            if(currentIncline1 != currentIncline2) {
+                retainedInclineResults += "\n* FAIL *\n\n";
+                retainedInclineResults += "Incline should be " + currentIncline1 + "%, but is " + currentIncline2 + "%\n";
+            }
+            if(currentIncline1!= testIncline || currentIncline2 != testIncline) {
+                retainedInclineResults += "\n* FAIL *\n\n";
+                retainedInclineResults += "The incline did not go to " + testIncline + " %\n";
+                retainedInclineResults += "The incline was at " + currentIncline1 + " % before mode change and " + currentIncline2 + " % afterwards \n";
+            }
+        }
+
+        //set mode back to idle to stop the test
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.PAUSE);
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+        Thread.sleep(1000);
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.RESULTS);
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+        Thread.sleep(1000);
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.IDLE);
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+        Thread.sleep(1000);
+
+        return retainedInclineResults;
+    }
+
+
+    @Override
+    public String runAll() {
+        String allTestInclineResults="";
+
+        try {
+            allTestInclineResults+=this.testInclineController();
+            allTestInclineResults+=this.testStopIncline();
+            allTestInclineResults+=this.testRetainedIncline();
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return allTestInclineResults;
     }
 }

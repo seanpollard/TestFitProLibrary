@@ -719,6 +719,7 @@ public class TestApp extends Activity implements View.OnClickListener, SystemSta
             TestIncline tin = new TestIncline(this.fecpController,this,this.mSFitSysCntrl);
                // returnString= tin.testInclineController();
                 //returnString= tin.testStopIncline();
+                returnString = tin.testRetainedIncline();
 
                 returnString += "\n" + systemString;
                 //try to write to the file in main from the machine control structure
