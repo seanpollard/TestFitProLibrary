@@ -707,10 +707,10 @@ public class TestApp extends Activity implements View.OnClickListener, SystemSta
                 // returnString = ti.testWeight();
                 //returnString = ti.testPauseIdleTimeout();
                 //returnString = ti.testMaxSpeedTime();
-              // TestBitfields tc = new TestBitfields(this.fecpController,this,this.mSFitSysCntrl);
+               TestBitfields tc = new TestBitfields(this.fecpController,this,this.mSFitSysCntrl);
                //returnString= tc.runAll();
                 //returnString = tc.testBitfieldRdWr();
-                //returnString = tc.testBitfieldValuesValidation();
+                returnString = tc.testBitfieldValuesValidation();
               //TestPhysicalKeyCodes tpk = new TestPhysicalKeyCodes(this.fecpController,this,this.mSFitSysCntrl);
               //  returnString=tpk.runAll();
                 //returnString = tpk.testStartKey();
@@ -718,11 +718,11 @@ public class TestApp extends Activity implements View.OnClickListener, SystemSta
                 //returnString = tpk.testQuickInclineKeys();
                 //TestTreadmillKeyCodes ttk = new TestTreadmillKeyCodes(this.fecpController,this,this.mSFitSysCntrl);
                 // returnString = ttk.testAllKeys();
-            TestIncline tin = new TestIncline(this.fecpController,this,this.mSFitSysCntrl);
+           // TestIncline tin = new TestIncline(this.fecpController,this,this.mSFitSysCntrl);
                // returnString= tin.testInclineController();
                 //returnString= tin.testStopIncline();
                 //returnString = tin.testRetainedIncline();
-                returnString+=tin.testSpeedInclineLimit();
+              //  returnString+=tin.testSpeedInclineLimit();
 
                 returnString += "\n" + systemString;
                 //try to write to the file in main from the machine control structure
