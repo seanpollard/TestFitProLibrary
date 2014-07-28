@@ -8,6 +8,8 @@ import com.ifit.sparky.fecp.interpreter.bitField.converter.ModeId;
 import com.ifit.sparky.fecp.interpreter.command.CommandId;
 import com.ifit.sparky.fecp.interpreter.command.WriteReadDataCmd;
 
+import java.nio.ByteBuffer;
+
 /**
  * Created by jc.almonte on 7/9/14.
  */
@@ -15,7 +17,7 @@ import com.ifit.sparky.fecp.interpreter.command.WriteReadDataCmd;
 //This class tests that the program recognizes the physical key pressed
 // and it tells for how long it was pressed (in milliseconds)
 
-public class TestPhysicalKeyCodes {
+public class TestPhysicalKeyCodes implements TestAll {
     //Variables needed to initialize connection with Brainboard
     private FecpController mFecpController;
     private TestApp mAct;
@@ -23,12 +25,8 @@ public class TestPhysicalKeyCodes {
     private SFitSysCntrl mSFitSysCntrl;
     private SystemDevice MainDevice;
 
-    private FecpCommand modeCommand;
-    private FecpCommand readModeCommand;
-    private FecpCommand sendKeyCmd;
-    private FecpCommand readSpeedCommand;
-    private FecpCommand speedCommand;
-    private FecpCommand readKeyObjectCommand;
+    private FecpCommand rdCmd;
+
 
     public TestPhysicalKeyCodes(FecpController fecpController, TestApp act, SFitSysCntrl ctrl) {
         //Get controller sent from the main activity (TestApp)
@@ -37,20 +35,21 @@ public class TestPhysicalKeyCodes {
             this.mAct = act;
             this.mSFitSysCntrl = ctrl;
             hCmd = new HandleCmd(this.mAct);// Init handlers
+            ByteBuffer secretKey = ByteBuffer.allocate(32);
+            for(int i = 0; i < 32; i++)
+            {
+                secretKey.put((byte)i);
+            }
+            //unlock the system
+            this.mSFitSysCntrl.getFitProCntrl().unlockSystem(secretKey);
+            Thread.sleep(1000);
             //Get current system device
             MainDevice = this.mFecpController.getSysDev();
 
-            readModeCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA), hCmd);
-            modeCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd,100,100);
-            ((WriteReadDataCmd)modeCommand.getCommand()).addReadBitField(BitFieldId.KEY_OBJECT);
-            mSFitSysCntrl.getFitProCntrl().addCmd(modeCommand);
+            rdCmd = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA), hCmd);
+            ((WriteReadDataCmd) rdCmd.getCommand()).addReadBitField(BitFieldId.KEY_OBJECT);
+            mSFitSysCntrl.getFitProCntrl().addCmd(rdCmd);
             Thread.sleep(1000);
-
-            readSpeedCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA), hCmd);
-            speedCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
-
-            readKeyObjectCommand = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA), hCmd);
-
 
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -58,16 +57,16 @@ public class TestPhysicalKeyCodes {
     }
     //Test the Start Key
     public String testStartKey() throws Exception {
-        //
+        System.out.println("NOW RUNNING START KEY TEST.. PRESS AND HOLD START KEY\n");
         String startKeyResults;
         String currentKey;
         int timeHeld;
 
         startKeyResults = "PHYSICAL START KEY TEST\n";
-
+        Thread.sleep(3000); // Give 3 secs for people to press start button
         currentKey = hCmd.getKey().getCookedKeyCode().toString();
         timeHeld = hCmd.getKey().getTimeHeld();
-
+        System.out.println("YOU CAN LET GO OF START KEY!\n");
         if(currentKey.equals("START")){
             startKeyResults += "\n* PASS *\n\n";
             startKeyResults += "The " + currentKey + " key was pressed and held for " + timeHeld + " ms\n";
@@ -81,16 +80,16 @@ public class TestPhysicalKeyCodes {
     }
     //Test the stop key
     public String testStopKey() throws Exception {
-        //
+        System.out.println("NOW RUNNING STOP KEY TEST.. PRESS AND HOLD START KEY\n");
         String stopKeyResults;
         String currentKey;
         int timeHeld;
 
         stopKeyResults = "\n\nPHYSICAL STOP KEY TEST\n";
-
+        Thread.sleep(3000);// Give 3 secs for people to press stop button
         currentKey = hCmd.getKey().getCookedKeyCode().toString();
         timeHeld = hCmd.getKey().getTimeHeld();
-
+        System.out.println("YOU CAN LET GO OF STOP KEY!\n");
         if(currentKey.equals("STOP")){
             stopKeyResults += "\n* PASS *\n\n";
             stopKeyResults += "The " + currentKey + " key was pressed and held for " + timeHeld + " ms\n";
@@ -104,7 +103,7 @@ public class TestPhysicalKeyCodes {
     }
 
     public String testQuickInclineKeys() throws Exception {
-        //
+        System.out.println("NOW RUNNING QUICK INCLINE KEY TEST.. \n");
         String quickInclineKeyResults;
         String currentKey;
         int timeHeld;
@@ -151,4 +150,14 @@ public class TestPhysicalKeyCodes {
         return quickInclineKeyResults;
     }
 
+    @Override
+    public String runAll() throws Exception {
+        String allPhysicalCodesRes = "";
+
+        allPhysicalCodesRes+=this.testStartKey();
+        allPhysicalCodesRes+=this.testStopKey();
+        allPhysicalCodesRes+=this.testQuickInclineKeys();
+
+        return allPhysicalCodesRes;
+    }
 }
