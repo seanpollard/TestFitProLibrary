@@ -625,6 +625,113 @@ public class TestIncline implements TestAll {
         return limitResults;
     }
 
+    //--------------------------------------------//
+    //                                            //
+    //Testing Incline Condition from Checklist #44//
+    //                                            //
+    //--------------------------------------------//
+    public String testInclineRetentionDmk() throws Exception {
+        //From Software Checklist #44
+        //Redmine Support #1079
+        //Set mode to Idle
+        //Set Incline to 0
+        //Set Incline to max incline
+        //Halfway up, set mode to Running
+        //Set mode to Pause
+        //Set mode to DMK
+        //Read actual Incline to verify the console has correct current incline
+        String DmkResults;
+
+        DmkResults = "\n----------------------INCLINE RETENTION AFTER DMK TEST RESULTS----------------------\n\n";
+        DmkResults += Calendar.getInstance().getTime() + "\n\n";
+
+        double actualIncline;
+        double maxIncline;
+
+        //Set Incline to 0
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.GRADE, 0);
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+        Thread.sleep(1000);
+
+        //Check status of the command to receive the incline
+        DmkResults += "Status of setting incline to 0%: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
+
+        long elapsedTime = 0;
+        double seconds = 0;
+        long startime = 0;
+        double setIncline = 0;
+        //Wait for the incline motor to go to 5%
+        startime= System.nanoTime();
+        do
+        {
+            actualIncline = hCmd.getActualIncline();
+            Thread.sleep(300);
+            System.out.println("Current Incline is: " + actualIncline+ " goal: " + setIncline+" time elapsed: "+seconds);
+            elapsedTime = System.nanoTime() - startime;
+            seconds = elapsedTime / 1.0E09;
+        } while(setIncline!=actualIncline && seconds < 60);//Do while the incline hasn't reached its target point. Break the  loop if it took more than a minute to reach target incline
+
+        maxIncline = 15; //hCmd.getMaxIncline();
+
+        //Set Incline to Max Incline
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.GRADE, maxIncline);
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+        Thread.sleep(3000);    //Wait a little while to get past 0, but not to max incline
+
+        DmkResults += "Status of setting incline to " + maxIncline + "% (Max Incline): " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
+
+        //Set Mode to Running
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.RUNNING);
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+        Thread.sleep(1000);
+
+        DmkResults += "Status of setting mode to Running: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
+
+        //Set Mode to Pause
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.PAUSE);
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+        Thread.sleep(1000);
+
+        DmkResults += "Status of setting mode to Pause: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
+
+        System.out.println("Pull DMK key now!");
+        DmkResults+= "Waiting for DMK key to be pulled...\n";
+        while(hCmd.getMode()!=ModeId.DMK);
+        {
+            // Stay here until DMK Key is pulled
+        }
+        System.out.println("DMK Key Pulled!");
+        DmkResults+="DMK key pulled!\n";
+
+        //Read Incline and verify it is not equal to max incline or less than, or equal to, zero
+
+        actualIncline = hCmd.getActualIncline();
+
+        if(actualIncline > 0  && actualIncline <maxIncline ){
+            DmkResults += "\n* PASS *\n\n";
+            DmkResults += "Actual Incline is currently at " + actualIncline + "% which is between 0% and max incline\n";
+        }
+        else {
+            DmkResults += "\n* FAIL *\n\n";
+            DmkResults += "Actual Incline should be between 0% and " + maxIncline + "%, but it is currently at " + actualIncline + "%\n";
+        }
+
+        //set mode back to idle to stop the test
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.PAUSE);
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+        Thread.sleep(1000);
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.RESULTS);
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+        Thread.sleep(1000);
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.IDLE);
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+        Thread.sleep(1000);
+        //end the recurring callback
+        mSFitSysCntrl.getFitProCntrl().removeCmd(wrCmd);
+
+        return DmkResults;
+    }
+
         @Override
     public String runAll() {
         String allTestInclineResults="";
@@ -634,6 +741,7 @@ public class TestIncline implements TestAll {
             allTestInclineResults+=this.testStopIncline();
             allTestInclineResults+=this.testRetainedIncline();
             allTestInclineResults+=this.testSpeedInclineLimit();
+            allTestInclineResults+=this.testInclineRetentionDmk();
         }
         catch (Exception ex) {
             ex.printStackTrace();
