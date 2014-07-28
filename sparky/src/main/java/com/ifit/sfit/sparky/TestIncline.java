@@ -61,7 +61,7 @@ public class TestIncline implements TestAll {
                 ((WriteReadDataCmd)rdCmd.getCommand()).addReadBitField(BitFieldId.GRADE);
                 ((WriteReadDataCmd)rdCmd.getCommand()).addReadBitField(BitFieldId.WORKOUT_MODE);
                 ((WriteReadDataCmd)rdCmd.getCommand()).addReadBitField(BitFieldId.TRANS_MAX);
-
+                ((WriteReadDataCmd)rdCmd.getCommand()).addReadBitField(BitFieldId.KPH);
                 mSFitSysCntrl.getFitProCntrl().addCmd(rdCmd);
                 Thread.sleep(1000);
 
@@ -225,6 +225,8 @@ public class TestIncline implements TestAll {
         ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.GRADE, minIncline);
         mFecpController.addCmd(wrCmd);
         Thread.sleep(1000);
+        stopInclineResults += "Status of setting incline to min: " + wrCmd.getCommand().getStatus().getStsId().getDescription() + "\n";
+
         //check actual incline until value reaches minIncline
         startime = System.nanoTime();
         do
@@ -419,8 +421,211 @@ public class TestIncline implements TestAll {
         return retainedInclineResults;
     }
 
+    public String testSpeedInclineLimit() throws Exception {
+        //TODO: As of 3/12/14, this functionality is not yet implemented
+        //Redmine issue #953
+        //Testing limits on the incline and on the speed
+        //Limits are (Software Checklist 201B, #9):
+        //-6% to -5% = 6 mph
+        //-4.5% to 3.1% = 7 mph
+        //-3% to -2.1% = 8 mph
+        //-2% to -1.1% = 8.5 mph
+        //-1% to -0.1% = 9 mph
+        //0% to 15% = full speed (up to 12 mph)
+        //Incline Trainers:
+        //>15% to 25% = 8 mph
+        //>25% to 40% = 6 mph
+        //Club Units:
+        //As long as the incline is negative, speed limit is always 10 mph
 
-    @Override
+        //Test
+        //Set mode to Running
+        //Make sure Incline is set to 0%
+        //Set speed to max speed (20 kph for now)
+        //Read speed to ensure it's at 20 kph
+        //Set Incline to a negative limit
+        //Read speed to ensure it was lowered and matches the above limits
+        //NOTE: The limit for our incline motor is -6% to 15%, so we can only test the negative limits
+        String limitResults;
+        double currentActualIncline = 0;
+        long elapsedTime = 0;
+        double seconds = 0;
+        long startime = 0;
+        double setIncline =0;
+        double currentSpeed = 0;
+        limitResults = "\n----------------------SPEED/INCLINE LIMITS TEST RESULTS----------------------\n\n";
+        limitResults += Calendar.getInstance().getTime() + "\n\n";
+
+        //Set mode to running
+        ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.RUNNING);
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+        Thread.sleep(1000);
+        limitResults += "Status of setting mode tu running: " + wrCmd.getCommand().getStatus().getStsId().getDescription() + "\n";
+        limitResults+="current mode: "+hCmd.getMode();
+
+        //set Incline to zero
+        ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(BitFieldId.GRADE, 0);
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+        Thread.sleep(1000);
+        currentIncline = hCmd.getIncline();
+        limitResults += "Status of setting incline to zero: " + wrCmd.getCommand().getStatus().getStsId().getDescription() + "\n";
+
+        //Wait til incline reaches target value
+        startime = System.nanoTime();
+        do
+        {
+            currentActualIncline = hCmd.getActualIncline();
+            Thread.sleep(300);
+            System.out.println("Current Incline is: " + currentActualIncline+ " goal: " + currentIncline+" time elapsed: "+seconds);
+            elapsedTime = System.nanoTime() - startime;
+            seconds = elapsedTime / 1.0E09;
+        } while(currentIncline!=currentActualIncline && seconds < 60);//Do while the incline hasn't reached its point yet or took more than 1 mins
+
+        //set speed to max
+        ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(BitFieldId.KPH, 16); // Our motor's speed limit is 16mph
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+        Thread.sleep(23000); // give it 23 secs to reach max speed
+
+        //Start incline at -1, then go to -6
+        for(int i = -1; i >= -6; i--) {
+            ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(BitFieldId.GRADE, i);
+            mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+            Thread.sleep(1000);
+
+            limitResults += "Status of sending incline at " + i + "%: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
+
+
+            currentIncline = hCmd.getIncline();
+
+            limitResults += "Current Incline is set to " + currentIncline + "%\n";
+            //Wait til incline reaches target value
+            startime = System.nanoTime();
+            do
+            {
+                currentActualIncline = hCmd.getActualIncline();
+                Thread.sleep(300);
+                System.out.println("Current Incline is: " + currentActualIncline+ " goal: " + currentIncline+" time elapsed: "+seconds);
+                elapsedTime = System.nanoTime() - startime;
+                seconds = elapsedTime / 1.0E09;
+            } while(currentIncline!=currentActualIncline && seconds < 60);//Do while the incline hasn't reached its point yet or took more than 1 mins
+
+
+            currentSpeed = hCmd.getSpeed();
+
+
+            //0% to 15% = 12 mph
+            if( ( i<= 0 && i >= 15)  && currentSpeed == 12.0) {
+                limitResults += "\n* PASS *\n\n";
+                limitResults += "At Incline " +currentIncline+", Current speed is " + currentSpeed + " mph\n";
+            }
+            else if (( i<= 0 && i >= 15) && currentSpeed != 12.0) {
+                limitResults += "\n* FAIL *\n\n";
+                limitResults += "At Incline " +currentIncline+" Current speed should be 12 MPH, but it is " + currentSpeed + " mph\n";
+            }
+
+            //15.5% to 25% = 8 mph
+            if( ( i<= 15.5 && i >= 25)  && currentSpeed == 8.0) {
+                limitResults += "\n* PASS *\n\n";
+                limitResults += "At Incline " +currentIncline+", Current speed is " + currentSpeed + " mph\n";
+            }
+            else if (( i<= 15.5 && i >= 25) && currentSpeed !=8.0) {
+                limitResults += "\n* FAIL *\n\n";
+                limitResults += "At Incline " +currentIncline+" Current speed should be 8 MPH, but it is " + currentSpeed + " mph\n";
+            }
+
+            //25.5% to 40% = 6 mph
+            if( ( i<= 25.5 && i >= 40)  && currentSpeed == 6) {
+                limitResults += "\n* PASS *\n\n";
+                limitResults += "At Incline " +currentIncline+", Current speed is " + currentSpeed + " mph\n";
+            }
+            else if (( i<= 25.5 && i >= 40) && currentSpeed != 6) {
+                limitResults += "\n* FAIL *\n\n";
+                limitResults += "At Incline " +currentIncline+" Current speed should be 6 MPH, but it is " + currentSpeed + " mph\n";
+            }
+
+            //-1% to -0.1% = 9 mph
+            if( ( i<= 0 && i >= -1)  && currentSpeed == 9.0) {
+                limitResults += "\n* PASS *\n\n";
+                limitResults += "At Incline " +currentIncline+", Current speed is " + currentSpeed + " mph\n";
+            }
+            else if (( i<= 0 && i >= -1) && currentSpeed != 9.0) {
+                limitResults += "\n* FAIL *\n\n";
+                limitResults += "At Incline " +currentIncline+" Current speed should be 9 MPH, but it is " + currentSpeed + " mph\n";
+            }
+
+            //-2% to -1.1% = 8.5 mph
+            if((i <= -1 && i >= -2)  && currentSpeed == 8.5) {
+                limitResults += "\n* PASS *\n\n";
+                limitResults += "At Incline " +currentIncline+", Current speed is " + currentSpeed + " mph\n";
+            }
+            else if ( (i<= -1 && i >= -2) && currentSpeed != 8.5) {
+                limitResults += "\n* FAIL *\n\n";
+                limitResults += "At Incline " +currentIncline+" Current speed should be 8.5 MPH, but it is " + currentSpeed + " mph\n";
+            }
+
+            //-3% to -2.1% = 8 mph
+            if( (i<= -2 && i >= -3) && currentSpeed == 8.0) {
+                limitResults += "\n* PASS *\n\n";
+                limitResults += "At Incline " +currentIncline+", Current speed is " + currentSpeed + " mph\n";
+            }
+            else if ( (i<= -2 && i >= -3) && currentSpeed != 8.0) {
+                limitResults += "\n* FAIL *\n\n";
+                limitResults += "At Incline " +currentIncline+" Current speed should be 8.0 MPH, but it is " + currentSpeed + " mph\n";
+            }
+
+            //-4.5% to -3.1% = 7 mph
+            if( (i< -3.5 && i >= -4.5) && currentSpeed == 7.0) {
+                limitResults += "\n* PASS *\n\n";
+                limitResults += "At Incline " +currentIncline+", Current speed is " + currentSpeed + " mph\n";
+            }
+            else if ( (i<= -3.5 && i >= -4.5) && currentSpeed != 7.0) {
+                limitResults += "\n* FAIL *\n\n";
+                limitResults += "At Incline " +currentIncline+" Current speed should be 7.0 MPH, but it is " + currentSpeed + " mph\n";
+            }
+
+            //-6% to -5% = 6 mph
+            if( (i< -5 && i >= -6) && currentSpeed == 6.0) {
+                limitResults += "\n* PASS *\n\n";
+                limitResults += "At Incline " +currentIncline+", Current speed is " + currentSpeed + " mph\n";
+            }
+            else if ( (i<= -5 && i >= -6) && currentSpeed != 6.0) {
+                limitResults += "\n* FAIL *\n\n";
+                limitResults += "At Incline " +currentIncline+" Current speed should be 6.0 MPH, but it is " + currentSpeed + " mph\n";
+            }
+            //>15% to 25% = 8 mph
+            if( (i> 15 && i <= 25) && currentSpeed == 8.0) {
+                limitResults += "\n* PASS *\n\n";
+                limitResults += "At Incline " +currentIncline+", Current speed is " + currentSpeed + " mph\n";
+            }
+            else if ( (i> 15 && i <= 25) && currentSpeed != 8.0) {
+                limitResults += "\n* FAIL *\n\n";
+                limitResults += "At Incline " +currentIncline+" Current speed should be 6.0 MPH, but it is " + currentSpeed + " mph\n";
+            }
+            //>25% to 40% = 6 mph
+            if( (i> 25 && i <= 40) && currentSpeed == 6.0) {
+                limitResults += "\n* PASS *\n\n";
+                limitResults += "At Incline " +currentIncline+", Current speed is " + currentSpeed + " mph\n";
+            }
+            else if ( (i> 25 && i <= 40) && currentSpeed != 6.0) {
+                limitResults += "\n* FAIL *\n\n";
+                limitResults += "At Incline " +currentIncline+" Current speed should be 6.0 MPH, but it is " + currentSpeed + " mph\n";
+            }
+
+        }
+        //set mode back to idle to stop the test
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.PAUSE);
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+        Thread.sleep(1000);
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.RESULTS);
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+        Thread.sleep(1000);
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.IDLE);
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+        Thread.sleep(1000);
+        return limitResults;
+    }
+
+        @Override
     public String runAll() {
         String allTestInclineResults="";
 
@@ -428,6 +633,7 @@ public class TestIncline implements TestAll {
             allTestInclineResults+=this.testInclineController();
             allTestInclineResults+=this.testStopIncline();
             allTestInclineResults+=this.testRetainedIncline();
+            allTestInclineResults+=this.testSpeedInclineLimit();
         }
         catch (Exception ex) {
             ex.printStackTrace();
