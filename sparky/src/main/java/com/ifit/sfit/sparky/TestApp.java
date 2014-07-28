@@ -723,7 +723,7 @@ public class TestApp extends Activity implements View.OnClickListener, SystemSta
                 //returnString= tin.testStopIncline();
                 //returnString = tin.testRetainedIncline();
               //  returnString =tin.testSpeedInclineLimit();
-                returnString = tin.testInclineRetentionDmk();
+                returnString = tin.testInclineRetentionDmkRecall();
 
                 returnString += "\n" + systemString;
                 //try to write to the file in main from the machine control structure

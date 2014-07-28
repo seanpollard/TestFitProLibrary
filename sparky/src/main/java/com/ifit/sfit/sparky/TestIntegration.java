@@ -87,6 +87,9 @@ public class TestIntegration implements TestAll {
         //Read the Age
         //Validate the Age
         //Repeat 6 times with values in increments of 5 years
+
+        System.out.println("NOW RUNNING AGE TEST\n");
+
         String ageResults;
 
         ageResults = "\n\n------------------------AGE TEST RESULTS------------------------\n\n";
@@ -161,6 +164,7 @@ public class TestIntegration implements TestAll {
         //Validate the Weight
         //Repeat 6 times with different values
         String weightResults;
+        System.out.println("NOW RUNNING WEIGHT TEST\n");
 
         weightResults = "\n\n------------------------WEIGHT TEST RESULTS------------------------\n\n";
         weightResults += Calendar.getInstance().getTime() + "\n\n";
@@ -274,6 +278,8 @@ public class TestIntegration implements TestAll {
         //Set mode to Pause
         //Delay for 60 seconds
         //Verify Pause timeout by reading the mode and ensuring it is in Results mode
+        System.out.println("NOW PAUSE/IDLE TIMEOUT TEST\n");
+
         String pauseResults;
         double pauseTimeout = 0;
         double idleTimeout = 0;
@@ -368,6 +374,9 @@ public class TestIntegration implements TestAll {
         String resultString;
         long runtime = 60; //time for running test (in secs)
         long pauseruntime = 23; //time for running test with pause
+
+        System.out.println("RUNNING-TIME TEST\n");
+
 
         resultString = "\n\n------------------------RUNNING TIME TEST RESULTS------------------------\n\n";
         resultString += Calendar.getInstance().getTime() + "\n\n";
@@ -505,6 +514,8 @@ public class TestIntegration implements TestAll {
         String maxSpeedResults;
         double maxSpeed;
         double currentActualSpeed = 0;
+
+        System.out.println("NOW RUNNING MAX SPEED TIME TEST\n");
 
         maxSpeedResults = "\n--------------------------MAX SPEED TEST--------------------------\n\n";
         maxSpeedResults += Calendar.getInstance().getTime() + "\n\n";

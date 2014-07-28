@@ -1,7 +1,5 @@
 package com.ifit.sfit.sparky;
 
-import android.graphics.AvoidXfermode;
-
 import com.ifit.sparky.fecp.FecpCommand;
 import com.ifit.sparky.fecp.SystemDevice;
 import com.ifit.sparky.fecp.communication.FecpController;
@@ -90,6 +88,7 @@ public class TestIncline implements TestAll {
         //Check current sent incline against actual incline
         //Run the above logic for the entire range of incline values from Max Incline to Min Incline in decrements of 0.5%
         String inclineResults;
+        System.out.println("NOW RUNNING INCLINE CONTROLLER TEST\n");
 
         inclineResults = "\n----------------------INCLINE CONTROLLER TEST RESULTS----------------------\n\n";
         inclineResults += Calendar.getInstance().getTime() + "\n\n";
@@ -199,6 +198,9 @@ public class TestIncline implements TestAll {
         //Read the Incline
         //Validate that the Incline is not set to the Min Incline
         String stopInclineResults;
+
+        System.out.println("NOW RUNNING STOP INCLINE TEST\n");
+
         double maxIncline;
         double minIncline;
         double maxToMinIncline1;
@@ -332,6 +334,7 @@ public class TestIncline implements TestAll {
         //Set mode to Running
         //Read the incline to verify that it hasn't changed
         String retainedInclineResults;
+        System.out.println("NOW RUNNING RETAINED INCLINE TEST\n");
 
         retainedInclineResults = "\n\n----------------------RETAINED INCLINE TEST RESULTS----------------------\n\n";
         retainedInclineResults += Calendar.getInstance().getTime() + "\n\n";
@@ -453,6 +456,9 @@ public class TestIncline implements TestAll {
         long startime = 0;
         double setIncline =0;
         double currentSpeed = 0;
+
+        System.out.println("NOW RUNNING SPEED INCLINE LIMIT TEST\n");
+
         limitResults = "\n----------------------SPEED/INCLINE LIMITS TEST RESULTS----------------------\n\n";
         limitResults += Calendar.getInstance().getTime() + "\n\n";
 
@@ -630,7 +636,7 @@ public class TestIncline implements TestAll {
     //Testing Incline Condition from Checklist #44//
     //                                            //
     //--------------------------------------------//
-    public String testInclineRetentionDmk() throws Exception {
+    public String testInclineRetentionDmkRecall() throws Exception {
         //From Software Checklist #44
         //Redmine Support #1079
         //Set mode to Idle
@@ -641,6 +647,8 @@ public class TestIncline implements TestAll {
         //Set mode to DMK
         //Read actual Incline to verify the console has correct current incline
         String DmkResults;
+
+        System.out.println("NOW RUNNING INCLINE RETENTION AFTER DMK TEST\n");
 
         DmkResults = "\n----------------------INCLINE RETENTION AFTER DMK TEST RESULTS----------------------\n\n";
         DmkResults += Calendar.getInstance().getTime() + "\n\n";
@@ -716,6 +724,27 @@ public class TestIncline implements TestAll {
             DmkResults += "Actual Incline should be between 0% and " + maxIncline + "%, but it is currently at " + actualIncline + "%\n";
         }
 
+        DmkResults += "\n----------------------DMK RECALL INCLINE TEST RESULTS----------------------\n\n";
+
+        System.out.println("Put DMK key back on console");
+        DmkResults+= "Waiting for DMK key to be put pack on console...\n";
+        while(hCmd.getMode()==ModeId.DMK);
+        {
+            // Stay here until DMK Key put back on console
+        }
+        System.out.println("DMK Key Put back");
+        DmkResults+="DMK key put back!\n";
+
+        //Compare the value read for actual incline after key has been pulled to value read after key was put back
+        if(actualIncline ==hCmd.getActualIncline() ){
+            DmkResults += "\n* PASS *\n\n";
+            DmkResults += "Actual Incline after DMK put back is at " + actualIncline + "% which is the same as when the key was pulled\n";
+        }
+        else {
+            DmkResults += "\n* FAIL *\n\n";
+            DmkResults += "Actual Incline should be " + actualIncline + "%, but it is currently at " + hCmd.getActualIncline() + "%\n";
+        }
+
         //set mode back to idle to stop the test
         ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.PAUSE);
         mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
@@ -741,7 +770,7 @@ public class TestIncline implements TestAll {
             allTestInclineResults+=this.testStopIncline();
             allTestInclineResults+=this.testRetainedIncline();
             allTestInclineResults+=this.testSpeedInclineLimit();
-            allTestInclineResults+=this.testInclineRetentionDmk();
+            allTestInclineResults+=this.testInclineRetentionDmkRecall();
         }
         catch (Exception ex) {
             ex.printStackTrace();
