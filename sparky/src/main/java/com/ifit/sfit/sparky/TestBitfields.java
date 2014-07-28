@@ -35,7 +35,7 @@ import java.util.Collection;
  *                                                                                     *
  **************************************************************************************/
 
-public class TestBitfields {
+public class TestBitfields implements TestAll {
     //Variables needed to initialize connection with Brainboard
     private FecpController mFecpController;
     private TestApp mAct;
@@ -357,4 +357,13 @@ public class TestBitfields {
     }
 
 
+    @Override
+    public String runAll() throws Exception {
+        String allBitfieldsResults = "";
+
+        allBitfieldsResults+=this.testBitfieldRdWr();
+        allBitfieldsResults+=this.testBitfieldValuesValidation();
+
+        return allBitfieldsResults;
+    }
 }

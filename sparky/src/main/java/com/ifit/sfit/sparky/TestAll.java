@@ -7,5 +7,5 @@ package com.ifit.sfit.sparky;
 public interface TestAll {
 
     //method that will call each test to run
-    public String runAll();
+    public String runAll() throws Exception;
 }
