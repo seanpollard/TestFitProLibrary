@@ -60,6 +60,8 @@ public class TestMotor implements TestAll{
                 ((WriteReadDataCmd) rdCmd.getCommand()).addReadBitField(BitFieldId.ACTUAL_KPH);
                 ((WriteReadDataCmd) rdCmd.getCommand()).addReadBitField(BitFieldId.DISTANCE);
                 ((WriteReadDataCmd) rdCmd.getCommand()).addReadBitField(BitFieldId.WORKOUT_MODE);
+              //  ((WriteReadDataCmd) rdCmd.getCommand()).addReadBitField(BitFieldId.WEIGHT);
+                ((WriteReadDataCmd) rdCmd.getCommand()).addReadBitField(BitFieldId.CALORIES);
                 mSFitSysCntrl.getFitProCntrl().addCmd(rdCmd);
                 Thread.sleep(1000);
 
@@ -521,6 +523,70 @@ public class TestMotor implements TestAll{
         return testResults;
     }
 
+    public String testCalories() throws Exception {
+
+        //this test is for #964 in redmine and later #1052 when incline is implemented
+        //currently not implemented by the FECP library or brainboard and will fail
+        //calories depend on weight so we need to check weight also for the proper calorie calculation
+        //we also need to implement the incline with calorie verification #1052
+        //see TestIncline.java
+        String calorieResults;
+        double calories;
+        System.out.println("NOW RUNNING CALORIES TEST\n");
+        calorieResults = "\n\n----------------------------CALORIE TEST----------------------------\n";
+        calorieResults += Calendar.getInstance().getTime() + "\n\n";
+
+        //read the weight value for calorie calculation
+        calorieResults += "\nThe current weight before setting to 83.91 kg is " + hCmd.getWeight() + "\n";
+        System.out.println("The current weight before setting to 83.91 kg is " + hCmd.getWeight() );
+        //set the weight value for calorie calculation
+//        if(hCmd.getWeight() != 83.91) {
+//            ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(BitFieldId.WEIGHT, 83.91);
+//            mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+//            Thread.sleep(1000);
+//            calorieResults += "\n\nThe weight is not 83.91 kg = 185 pounds so we are setting it\n\n";
+//            calorieResults += "\n\nThe status of setting the weight is " + wrCmd.getCommand().getStatus().getStsId().getDescription();
+//            calorieResults += "The current weight after setting to 83.91 kg is read as " + hCmd.getWeight() + "\n";
+//        }
+        System.out.println("The current weight after setting to 83.91 kg is " + hCmd.getWeight() );
+        //set mode to running
+        ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.RUNNING);
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+        Thread.sleep(2000);
+
+        //send speed
+        startTimer = System.currentTimeMillis();
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.KPH, 10);
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+
+        //wait 1 minute
+        Thread.sleep(60000);
+        //read calories
+        calories = hCmd.getCalories();
+        //set mode to back to idle to end the test.
+        ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.PAUSE);
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+        stopTimer = System.currentTimeMillis() - startTimer;
+        //Thread.sleep(16000);
+        calorieResults += "The status of the calorie command is: " + wrCmd.getCommand().getStatus().getStsId().getDescription();
+
+        //5% tolerance for passing expect 15.20 for 1 min
+        if(Math.abs(15.20-calories) > 0.05) {
+            calorieResults +="\n\n* FAIL * \n\nThe calories were " + calories + " and were off by " + (calories - 15.20)+ "\n\n";
+        }
+        else {
+            calorieResults +="\n\n* PASS *\n\nThe calories should be 15.20 and is " + calories + " which is within 5%\n\n";
+        }
+
+        calorieResults += "The calories are now " + hCmd.getCalories() + "\n";
+        calorieResults += "The test took " + ((stopTimer)/1000) + " seconds\n";
+        //stop the call back
+        mFecpController.removeCmd(wrCmd);
+        mFecpController.removeCmd(rdCmd);
+
+        return calorieResults;
+    }
+
     //--------------------------------------------//
     //                                            //
     //           Testing PWM Overshoot            //
@@ -646,6 +712,7 @@ public class TestMotor implements TestAll{
             allMotorTestResults+=this.testPauseResume();
             allMotorTestResults+=this.testPwmOvershoot();
             allMotorTestResults+=this.testSpeedController();
+            allMotorTestResults+=this.testCalories();
         }
         catch (Exception ex) {
             ex.printStackTrace();

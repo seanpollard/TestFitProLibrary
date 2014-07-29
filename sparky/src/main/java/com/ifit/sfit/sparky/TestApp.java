@@ -693,8 +693,9 @@ public class TestApp extends Activity implements View.OnClickListener, SystemSta
         {
 
             try{
-              // TestMotor t = new TestMotor(this.fecpController,this,this.mSFitSysCntrl);
+              TestMotor t = new TestMotor(this.fecpController,this,this.mSFitSysCntrl);
                 //returnString = t.runAll();
+                returnString = t.testCalories();
                 //returnString = t.testStartSpeed();
                 //returnString= t.testSpeedController();
                //returnString= t.testPwmOvershoot();
@@ -718,12 +719,12 @@ public class TestApp extends Activity implements View.OnClickListener, SystemSta
                 //returnString = tpk.testQuickInclineKeys();
                 //TestTreadmillKeyCodes ttk = new TestTreadmillKeyCodes(this.fecpController,this,this.mSFitSysCntrl);
                 // returnString = ttk.testAllKeys();
-           TestIncline tin = new TestIncline(this.fecpController,this,this.mSFitSysCntrl);
+           //TestIncline tin = new TestIncline(this.fecpController,this,this.mSFitSysCntrl);
                // returnString= tin.testInclineController();
                 //returnString= tin.testStopIncline();
                 //returnString = tin.testRetainedIncline();
               //  returnString =tin.testSpeedInclineLimit();
-                returnString = tin.testInclineRetentionDmkRecall();
+               // returnString = tin.testInclineRetentionDmkRecall();
 
                 returnString += "\n" + systemString;
                 //try to write to the file in main from the machine control structure
