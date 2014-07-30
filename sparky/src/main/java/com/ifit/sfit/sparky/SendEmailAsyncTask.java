@@ -4,6 +4,8 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.ifit.sfit.sparky.tests.BaseTest;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -36,10 +38,10 @@ public class SendEmailAsyncTask extends AsyncTask<Void, Void, Boolean> {
 
             if(m.send()) {
                 for(int i = 0; i < toArr.length; i++){
-                    Toast.makeText(TestApp.getAppContext(), "Email was sent successfully to " + toArr[i], Toast.LENGTH_LONG).show();
+                    Toast.makeText(BaseTest.getAppContext(), "Email was sent successfully to " + toArr[i], Toast.LENGTH_LONG).show();
                 }
             } else {
-                Toast.makeText(TestApp.getAppContext(), "Email was not sent.", Toast.LENGTH_LONG).show();
+                Toast.makeText(BaseTest.getAppContext(), "Email was not sent.", Toast.LENGTH_LONG).show();
             }
         } catch(Exception e) {
             //Toast.makeText(MailApp.this, "There was a problem sending the email.", Toast.LENGTH_LONG).show();

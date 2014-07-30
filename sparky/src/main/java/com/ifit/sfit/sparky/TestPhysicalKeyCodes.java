@@ -1,5 +1,6 @@
 package com.ifit.sfit.sparky;
 
+import com.ifit.sfit.sparky.tests.BaseTest;
 import com.ifit.sparky.fecp.FecpCommand;
 import com.ifit.sparky.fecp.SystemDevice;
 import com.ifit.sparky.fecp.communication.FecpController;
@@ -20,7 +21,7 @@ import java.nio.ByteBuffer;
 public class TestPhysicalKeyCodes implements TestAll {
     //Variables needed to initialize connection with Brainboard
     private FecpController mFecpController;
-    private TestApp mAct;
+    private BaseTest mAct;
     private HandleCmd hCmd;
     private SFitSysCntrl mSFitSysCntrl;
     private SystemDevice MainDevice;
@@ -28,7 +29,7 @@ public class TestPhysicalKeyCodes implements TestAll {
     private FecpCommand rdCmd;
 
 
-    public TestPhysicalKeyCodes(FecpController fecpController, TestApp act, SFitSysCntrl ctrl) {
+    public TestPhysicalKeyCodes(FecpController fecpController, BaseTest act, SFitSysCntrl ctrl) {
         //Get controller sent from the main activity (TestApp)
         try {
             this.mFecpController = fecpController;

@@ -15,8 +15,11 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name">
+        <activity android:name=".tests.MotorTest"/>
+        <activity android:name=".tests.InclineTest"/>
+        <activity android:name=".tests.IntegrationTest"/>
         <activity android:windowSoftInputMode="stateHidden"
-            android:name="com.ifit.sfit.sparky.TestApp"
+            android:name="com.ifit.sfit.sparky.activities.ManageTests"
             android:screenOrientation="landscape"
             android:configChanges="keyboardHidden|orientation"
             android:label="@string/app_name" >

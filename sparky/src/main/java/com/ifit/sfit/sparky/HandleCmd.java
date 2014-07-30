@@ -2,6 +2,7 @@ package com.ifit.sfit.sparky;
 
 import android.content.Context;
 
+import com.ifit.sfit.sparky.tests.BaseTest;
 import com.ifit.sparky.fecp.OnCommandReceivedListener;
 import com.ifit.sparky.fecp.interpreter.bitField.BitFieldId;
 import com.ifit.sparky.fecp.interpreter.bitField.converter.BitfieldDataConverter;
@@ -31,7 +32,7 @@ import java.util.TreeMap;
  */
 public class HandleCmd implements OnCommandReceivedListener
 {
-    private TestApp mAct;
+    private BaseTest mAct;
     private  double mMaxSpeed = 0.0;
     private  double mMinSpeed = 0.0;
     private ModeId mResultMode;
@@ -55,7 +56,7 @@ public class HandleCmd implements OnCommandReceivedListener
     private String valueToString="none";
 
 
-    public HandleCmd(TestApp act) {
+    public HandleCmd(BaseTest act) {
 
         this.mAct = act;
         this.valueToString = "No Value!";

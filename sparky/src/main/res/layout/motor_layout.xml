@@ -11,9 +11,10 @@
         android:layout_height="fill_parent"
         android:id="@+id/scrollView"
         android:fillViewport="true"
-        android:layout_toLeftOf="@+id/allTests"
+        android:layout_toLeftOf="@+id/emailButton"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/checkValsButton">
+        android:layout_below="@+id/checkValsButton"
+        android:layout_alignLeft="@+id/emailButton">
 
         <TextView
             android:layout_width="wrap_content"
@@ -265,8 +266,8 @@
         android:text="Highlight Fails"
         android:id="@+id/findFailButton"
         android:layout_below="@+id/allTests"
-        android:layout_toRightOf="@+id/scrollView"
-        android:layout_alignEnd="@+id/allTests" />
+        android:layout_alignEnd="@+id/allTests"
+        android:layout_alignStart="@+id/allTests" />
 
     <Button
         android:layout_width="wrap_content"
@@ -322,5 +323,13 @@
         android:layout_above="@+id/scrollView"
         android:layout_alignStart="@+id/textView12"
         android:layout_alignEnd="@+id/textView12" />
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/spinnerMotor"
+        android:layout_toEndOf="@+id/textView7"
+        android:layout_below="@+id/findFailButton"
+        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>

@@ -1,23 +1,18 @@
 package com.ifit.sfit.sparky;
 
-import android.widget.Switch;
-
+import com.ifit.sfit.sparky.tests.BaseTest;
 import com.ifit.sparky.fecp.FecpCommand;
 import com.ifit.sparky.fecp.SystemDevice;
 import com.ifit.sparky.fecp.communication.FecpController;
 import com.ifit.sparky.fecp.interpreter.bitField.BitFieldId;
 import com.ifit.sparky.fecp.interpreter.bitField.InvalidBitFieldException;
-import com.ifit.sparky.fecp.interpreter.bitField.converter.ByteConverter;
 import com.ifit.sparky.fecp.interpreter.bitField.converter.ModeId;
-import com.ifit.sparky.fecp.interpreter.bitField.converter.SpeedConverter;
 import com.ifit.sparky.fecp.interpreter.command.CommandId;
 import com.ifit.sparky.fecp.interpreter.command.InvalidCommandException;
 import com.ifit.sparky.fecp.interpreter.command.WriteReadDataCmd;
-import com.ifit.sparky.fecp.interpreter.device.Device;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Collection;
 
 /**************************************************************************************
  * Created by jc.almonte on 7/2/14.                                                    *
@@ -38,7 +33,7 @@ import java.util.Collection;
 public class TestBitfields implements TestAll {
     //Variables needed to initialize connection with Brainboard
     private FecpController mFecpController;
-    private TestApp mAct;
+    private BaseTest mAct;
     private HandleCmd hCmd;
     private SFitSysCntrl mSFitSysCntrl;
     private SystemDevice MainDevice;
@@ -46,7 +41,7 @@ public class TestBitfields implements TestAll {
     private  FecpCommand wrCmd;
     private  FecpCommand rdCmd;
 
-    public TestBitfields(FecpController fecpController, TestApp act, SFitSysCntrl ctrl) {
+    public TestBitfields(FecpController fecpController, BaseTest act, SFitSysCntrl ctrl) {
         //Get controller sent from the main activity (TestApp)
         try {
             this.mFecpController = fecpController;
@@ -316,7 +311,7 @@ public class TestBitfields implements TestAll {
         return bitfieldRdWrResults;
     }
     //Helper function to test bitfields
-    public void verifyBitfield(FecpCommand cmd, ModeId modeId,BitFieldId bitFieldId, Object valueToWrite, boolean validValue,Object defaultVal) throws InvalidCommandException, InvalidBitFieldException {
+    private void verifyBitfield(FecpCommand cmd, ModeId modeId,BitFieldId bitFieldId, Object valueToWrite, boolean validValue,Object defaultVal) throws InvalidCommandException, InvalidBitFieldException {
         long time=1000;
         if(bitFieldId.name() =="KPH" || bitFieldId.name() =="GRADE")
         {

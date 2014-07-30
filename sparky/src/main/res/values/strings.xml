@@ -1,5 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string-array name="motor_array">
+             <item>Start Speed</item>
+             <item>Pause Resume</item>
+             <item>Distance</item>
+             <item>Modes</item>
+             <item>Speed Controller</item>
+             <item>PWM Overshoot</item>
+             <item>Calories</item>
+             <item>Run All</item>
+         </string-array>
+
+    <string-array name="incline_array">
+        <item>Stop Incline</item>
+        <item>Incline Controller</item>
+        <item>Retained Incline</item>
+        <item>Speed Incline Limits</item>
+        <item>DMK Incline Retention/Recall</item>
+        <item>Run All</item>
+    </string-array>
+
+    <string-array name="integration_array">
+        <item>Max Speed</item>
+        <item>Running Time</item>
+        <item>Pause/Idle Timeout</item>
+
+    </string-array>
 
     <string name="app_name">Fit Pro</string>
     <string name="hello_world">Hello world!</string>
