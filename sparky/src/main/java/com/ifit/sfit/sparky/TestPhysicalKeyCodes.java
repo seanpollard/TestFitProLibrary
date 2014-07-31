@@ -1,11 +1,10 @@
 package com.ifit.sfit.sparky;
 
-import com.ifit.sfit.sparky.tests.BaseTest;
+import com.ifit.sfit.sparky.testsdrivers.BaseTest;
 import com.ifit.sparky.fecp.FecpCommand;
 import com.ifit.sparky.fecp.SystemDevice;
 import com.ifit.sparky.fecp.communication.FecpController;
 import com.ifit.sparky.fecp.interpreter.bitField.BitFieldId;
-import com.ifit.sparky.fecp.interpreter.bitField.converter.ModeId;
 import com.ifit.sparky.fecp.interpreter.command.CommandId;
 import com.ifit.sparky.fecp.interpreter.command.WriteReadDataCmd;
 
@@ -18,7 +17,7 @@ import java.nio.ByteBuffer;
 //This class tests that the program recognizes the physical key pressed
 // and it tells for how long it was pressed (in milliseconds)
 
-public class TestPhysicalKeyCodes implements TestAll {
+public class TestPhysicalKeyCodes extends TestCommons implements TestAll {
     //Variables needed to initialize connection with Brainboard
     private FecpController mFecpController;
     private BaseTest mAct;
@@ -58,54 +57,50 @@ public class TestPhysicalKeyCodes implements TestAll {
     }
     //Test the Start Key
     public String testStartKey() throws Exception {
-        System.out.println("NOW RUNNING START KEY TEST.. PRESS AND HOLD START KEY\n");
-        String startKeyResults;
+        System.out.println("NOW RUNNING START KEY TEST.. PRESS AND HOLD START KEY<br>");
         String currentKey;
         int timeHeld;
 
-        startKeyResults = "PHYSICAL START KEY TEST\n";
+        appendMessage("NOW RUNNING START KEY TEST.. PRESS AND HOLD START KEY<br>");
         Thread.sleep(3000); // Give 3 secs for people to press start button
         currentKey = hCmd.getKey().getCookedKeyCode().toString();
         timeHeld = hCmd.getKey().getTimeHeld();
-        System.out.println("YOU CAN LET GO OF START KEY!\n");
+        appendMessage("YOU CAN LET GO OF START KEY!<br>");
         if(currentKey.equals("START")){
-            startKeyResults += "\n* PASS *\n\n";
-            startKeyResults += "The " + currentKey + " key was pressed and held for " + timeHeld + " ms\n";
+            appendMessage("<br><br><font color = #00ff00>* PASS *</font><br><br>");
+            appendMessage("The " + currentKey + " key was pressed and held for " + timeHeld + " ms<br>");
         }
         else{
-            startKeyResults += "\n* FAIL *\n\n";
-            startKeyResults += "The " + currentKey + " key was pressed and held for " + timeHeld + " ms (should have been START key)\n";
+            appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>");
+            appendMessage("The " + currentKey + " key was pressed and held for " + timeHeld + " ms (should have been START key)<br>");
         }
 
-        return startKeyResults;
+        return res;
     }
     //Test the stop key
     public String testStopKey() throws Exception {
-        System.out.println("NOW RUNNING STOP KEY TEST.. PRESS AND HOLD START KEY\n");
-        String stopKeyResults;
         String currentKey;
         int timeHeld;
 
-        stopKeyResults = "\n\nPHYSICAL STOP KEY TEST\n";
+        appendMessage("<br><br>PHYSICAL STOP KEY TEST<br>");
+        appendMessage("PRESS AND HOLD START KEY<br>");
         Thread.sleep(3000);// Give 3 secs for people to press stop button
         currentKey = hCmd.getKey().getCookedKeyCode().toString();
         timeHeld = hCmd.getKey().getTimeHeld();
-        System.out.println("YOU CAN LET GO OF STOP KEY!\n");
+        System.out.println("YOU CAN LET GO OF STOP KEY!<br>");
         if(currentKey.equals("STOP")){
-            stopKeyResults += "\n* PASS *\n\n";
-            stopKeyResults += "The " + currentKey + " key was pressed and held for " + timeHeld + " ms\n";
+            appendMessage("<br><br><font color = #00ff00>* PASS *</font><br><br>");
+            appendMessage("The " + currentKey + " key was pressed and held for " + timeHeld + " ms<br>");
         }
         else{
-            stopKeyResults += "\n* FAIL *\n\n";
-            stopKeyResults += "The " + currentKey + " key was pressed and held for " + timeHeld + " ms (should have been STOP key)\n";
+            appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>");
+            appendMessage("The " + currentKey + " key was pressed and held for " + timeHeld + " ms (should have been STOP key)<br>");
         }
 
-        return stopKeyResults;
+        return res;
     }
 
     public String testQuickInclineKeys() throws Exception {
-        System.out.println("NOW RUNNING QUICK INCLINE KEY TEST.. \n");
-        String quickInclineKeyResults;
         String currentKey;
         int timeHeld;
         //max and min incline should eventually be read from the brainboard, but the max incline is currently set at 15%,
@@ -113,52 +108,51 @@ public class TestPhysicalKeyCodes implements TestAll {
         int maxIncline = 40;
         int minIncline = -6;
 
-        quickInclineKeyResults = "PHYSICAL QUICK INCLINE KEYS TEST\n";
+        appendMessage("PHYSICAL QUICK INCLINE KEYS TEST<br>");
 
 
         for(int i = maxIncline; i >= 0; i-=5) {
 
-            System.out.println("Press the "+ i +" key");
+            appendMessage("Press the "+ i +" key");
             Thread.sleep(5000);
             currentKey = hCmd.getKey().getCookedKeyCode().toString();
             timeHeld = hCmd.getKey().getTimeHeld();
             System.out.println(currentKey);
             if (currentKey.equals("INCLINE_" + i)) {
-                quickInclineKeyResults += "\n* PASS *\n\n";
-                quickInclineKeyResults += "The " + currentKey + " key was pressed and held for " + timeHeld + " ms\n";
+                appendMessage("<br><br><font color = #00ff00>* PASS *</font><br><br>");
+                appendMessage("The " + currentKey + " key was pressed and held for " + timeHeld + " ms<br>");
             } else {
-                quickInclineKeyResults += "\n* FAIL *\n\n";
-                quickInclineKeyResults += "The " + currentKey + " key was pressed and held for " + timeHeld + " ms (should have been INCLINE_"+i+" key)\n";
+                appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>");
+                appendMessage("The " + currentKey + " key was pressed and held for " + timeHeld + " ms (should have been INCLINE_"+i+" key)<br>");
             }
 
         }
         for(int i = -2; i >= minIncline; i-=2){
-            System.out.println("Press the "+ i +" key");
+            appendMessage("Press the "+ i +" key");
             Thread.sleep(5000);
             currentKey = hCmd.getKey().getCookedKeyCode().toString();
             timeHeld = hCmd.getKey().getTimeHeld();
             System.out.println(currentKey);
             if(currentKey.equals("INCLINE_NEG_"+Math.abs(i))){
-                quickInclineKeyResults += "\n* PASS *\n\n";
-                quickInclineKeyResults += "The " + currentKey + " key was pressed and held for " + timeHeld + " ms\n";
+                appendMessage("<br><br><font color = #00ff00>* PASS *</font><br><br>");
+                appendMessage("The " + currentKey + " key was pressed and held for " + timeHeld + " ms<br>");
             }
             else{
-                quickInclineKeyResults += "\n* FAIL *\n\n";
-                quickInclineKeyResults += "The " + currentKey + " key was pressed and held for " + timeHeld + " ms (should have been INCLINE_NEG_"+Math.abs(i)+" key)\n";
+                appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>");
+                appendMessage("The " + currentKey + " key was pressed and held for " + timeHeld + " ms (should have been INCLINE_NEG_"+Math.abs(i)+" key)<br>");
             }
         }
 
-        return quickInclineKeyResults;
+        return res;
     }
 
     @Override
     public String runAll() throws Exception {
-        String allPhysicalCodesRes = "";
 
-        allPhysicalCodesRes+=this.testStartKey();
-        allPhysicalCodesRes+=this.testStopKey();
-        allPhysicalCodesRes+=this.testQuickInclineKeys();
+        this.testStartKey();
+        this.testStopKey();
+        this.testQuickInclineKeys();
 
-        return allPhysicalCodesRes;
+        return res;
     }
 }

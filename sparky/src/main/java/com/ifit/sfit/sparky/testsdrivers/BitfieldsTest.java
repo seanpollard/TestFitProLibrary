@@ -1,6 +1,5 @@
-package com.ifit.sfit.sparky.tests;
+package com.ifit.sfit.sparky.testsdrivers;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.View;
@@ -9,13 +8,13 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import com.ifit.sfit.sparky.R;
-import com.ifit.sfit.sparky.TestIncline;
+import com.ifit.sfit.sparky.TestBitfields;
 import com.ifit.sfit.sparky.TestMotor;
 
 /**
- * Created by jc.almonte on 7/30/14.
+ * Created by jc.almonte on 7/31/14.
  */
-public class InclineTest extends BaseTest implements View.OnClickListener, AdapterView.OnItemSelectedListener {
+public class BitfieldsTest extends BaseTest implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +28,7 @@ public class InclineTest extends BaseTest implements View.OnClickListener, Adapt
         spinner.setOnItemSelectedListener(this);
 // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.incline_array, android.R.layout.simple_spinner_item);
+                R.array.bitfields_array, android.R.layout.simple_spinner_item);
 // Specify the layout to use when the list of choices appears
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 // Apply the adapter to the spinner
@@ -40,7 +39,7 @@ public class InclineTest extends BaseTest implements View.OnClickListener, Adapt
     @Override
     void runTest() {
 
-        final TestIncline t = new TestIncline(fecpController, (BaseTest) context, this.mSFitSysCntrl);
+        final TestBitfields t = new TestBitfields(fecpController, (BaseTest) context, this.mSFitSysCntrl);
 
         t.setUpdateResultViewListener(new TestMotor.UpdateResultView() {
             @Override
@@ -59,23 +58,13 @@ public class InclineTest extends BaseTest implements View.OnClickListener, Adapt
             @Override
             public void run() {
                 try {
-
                     switch (testToRun)
                     {
-                        case "Stop Incline":
-                            returnString = t.testStopIncline();
+                        case "Unsupported/RdOnly":
+                            returnString = t.testBitfieldRdWr();
                             break;
-                        case "Retained Incline":
-                            returnString = t.testRetainedIncline();
-                            break;
-                        case "Speed Incline Limits":
-                            returnString = t.testSpeedInclineLimit();
-                            break;
-                        case "DMK Incline Retention/Recall":
-                            returnString = t.testInclineRetentionDmkRecall();
-                            break;
-                        case "Incline Controller":
-                            returnString = t.testInclineController();
+                        case "Values Validation":
+                            returnString = t.testBitfieldValuesValidation();
                             break;
                         case "Run All":
                             returnString = t.runAll();
@@ -89,23 +78,7 @@ public class InclineTest extends BaseTest implements View.OnClickListener, Adapt
         });
         th.start();
         //try to write to the file in main from the machine control structure
-        try {
-            returnString += "\n" + systemString;
 
-            outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
-            outputStream.write((returnString).getBytes());
-            outputStream.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        if (returnString.isEmpty()) {
-            passFail = "<font color = #ff0000>ERROR</font>";
-        } else if (returnString.contains("FAIL")) {
-            passFail = "<font color = #ff0000>FAIL</font>";
-        } else {
-            passFail = "<font color = #00ff00>PASS</font>";
-        }
-        resultView.setText(Html.fromHtml(passFail));
     }
 
     @Override

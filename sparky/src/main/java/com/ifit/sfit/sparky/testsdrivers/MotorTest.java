@@ -1,6 +1,5 @@
-package com.ifit.sfit.sparky.tests;
+package com.ifit.sfit.sparky.testsdrivers;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.View;
@@ -81,7 +80,10 @@ public class MotorTest extends BaseTest implements AdapterView.OnItemSelectedLis
                         break;
                         case "Calories":
                             returnString = t.testCalories();
-                            break;
+                        break;
+                        case "Run All":
+                            returnString = t.runAll();
+                        break;
                     }
 
                 } catch (Exception e) {
@@ -91,23 +93,7 @@ public class MotorTest extends BaseTest implements AdapterView.OnItemSelectedLis
         });
         th.start();
         //try to write to the file in main from the machine control structure
-        try {
-            returnString += "\n" + systemString;
 
-            outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
-            outputStream.write((returnString).getBytes());
-            outputStream.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        if (returnString.isEmpty()) {
-            passFail = "<font color = #ff0000>ERROR</font>";
-        } else if (returnString.contains("FAIL")) {
-            passFail = "<font color = #ff0000>FAIL</font>";
-        } else {
-            passFail = "<font color = #00ff00>PASS</font>";
-        }
-        resultView.setText(Html.fromHtml(passFail));
     }
 
     @Override

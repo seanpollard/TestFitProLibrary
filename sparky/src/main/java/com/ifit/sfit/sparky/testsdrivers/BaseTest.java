@@ -1,4 +1,4 @@
-package com.ifit.sfit.sparky.tests;
+package com.ifit.sfit.sparky.testsdrivers;
 
 import android.app.Activity;
 import android.content.Context;
@@ -141,6 +141,9 @@ public abstract class BaseTest extends Activity implements View.OnClickListener,
 
     //Initialize the application layout
     private void initLayout(){
+        //initialize views
+        testingView = (TextView) findViewById(R.id.testView);
+        resultView = (TextView)findViewById(R.id.passFailView);
         //Initializing buttons
         allTestsButton = (Button) findViewById(R.id.allTests);
         allTestsButton.setOnClickListener(this);
@@ -652,8 +655,7 @@ public abstract class BaseTest extends Activity implements View.OnClickListener,
     @Override
     public void onClick(View v)
     {
-        testingView = (TextView) findViewById(R.id.testView);
-        resultView = (TextView)findViewById(R.id.passFailView);
+
         //Press this button to check the values entered by the user
         if(v == checkValsButton){
 
@@ -689,6 +691,23 @@ public abstract class BaseTest extends Activity implements View.OnClickListener,
         else if(v==allTestsButton)
         {
             runTest();
+//            try {
+//                returnString += "\n" + systemString;
+//
+//                outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
+//                outputStream.write((returnString).getBytes());
+//                outputStream.close();
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//            if (returnString.isEmpty()) {
+//                passFail = "<font color = #ff0000>ERROR</font>";
+//            } else if (returnString.contains("FAIL")) {
+//                passFail = "<font color = #ff0000>FAIL</font>";
+//            } else {
+//                passFail = "<font color = #00ff00>PASS</font>";
+//            }
+//            resultView.setText(Html.fromHtml(passFail));
 
         }
         if(v == findFailButton) {
@@ -737,6 +756,7 @@ public abstract class BaseTest extends Activity implements View.OnClickListener,
             }
 
         }
+
 
         //Clear out the system device string to re-enter new values for next test
         systemString = "";

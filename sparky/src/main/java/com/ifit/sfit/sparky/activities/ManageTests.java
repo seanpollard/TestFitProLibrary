@@ -6,9 +6,10 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.ifit.sfit.sparky.R;
-import com.ifit.sfit.sparky.tests.InclineTest;
-import com.ifit.sfit.sparky.tests.IntegrationTest;
-import com.ifit.sfit.sparky.tests.MotorTest;
+import com.ifit.sfit.sparky.testsdrivers.BitfieldsTest;
+import com.ifit.sfit.sparky.testsdrivers.InclineTest;
+import com.ifit.sfit.sparky.testsdrivers.IntegrationTest;
+import com.ifit.sfit.sparky.testsdrivers.MotorTest;
 
 /**
  * Created by jc.almonte on 7/29/14.
@@ -50,6 +51,10 @@ public class ManageTests extends Activity implements View.OnClickListener {
             case R.id.bIntegration:
                 Intent integrationTest = new Intent(ManageTests.this, IntegrationTest.class);
                 startActivity(integrationTest);
+            break;
+            case R.id.bBitfields:
+                Intent bitfieldsTest = new Intent(ManageTests.this, BitfieldsTest.class);
+                startActivity(bitfieldsTest);
             break;
         }
     }

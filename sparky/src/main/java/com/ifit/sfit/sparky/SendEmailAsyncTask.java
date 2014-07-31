@@ -4,7 +4,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.ifit.sfit.sparky.tests.BaseTest;
+import com.ifit.sfit.sparky.testsdrivers.BaseTest;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

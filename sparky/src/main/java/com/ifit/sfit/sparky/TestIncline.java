@@ -1,6 +1,6 @@
 package com.ifit.sfit.sparky;
 
-import com.ifit.sfit.sparky.tests.BaseTest;
+import com.ifit.sfit.sparky.testsdrivers.BaseTest;
 import com.ifit.sparky.fecp.FecpCommand;
 import com.ifit.sparky.fecp.SystemDevice;
 import com.ifit.sparky.fecp.communication.FecpController;
@@ -760,18 +760,17 @@ public class TestIncline extends TestCommons implements TestAll {
 
         @Override
     public String runAll() {
-        String allTestInclineResults="";
 
         try {
-            allTestInclineResults+=this.testInclineController();
-            allTestInclineResults+=this.testStopIncline();
-            allTestInclineResults+=this.testRetainedIncline();
-            allTestInclineResults+=this.testSpeedInclineLimit();
-            allTestInclineResults+=this.testInclineRetentionDmkRecall();
+            this.testInclineController();
+            this.testStopIncline();
+            this.testRetainedIncline();
+            this.testSpeedInclineLimit();
+            this.testInclineRetentionDmkRecall();
         }
         catch (Exception ex) {
             ex.printStackTrace();
         }
-        return allTestInclineResults;
+        return res;
     }
 }

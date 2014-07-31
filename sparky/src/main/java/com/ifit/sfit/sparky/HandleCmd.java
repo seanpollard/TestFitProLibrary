@@ -1,8 +1,6 @@
 package com.ifit.sfit.sparky;
 
-import android.content.Context;
-
-import com.ifit.sfit.sparky.tests.BaseTest;
+import com.ifit.sfit.sparky.testsdrivers.BaseTest;
 import com.ifit.sparky.fecp.OnCommandReceivedListener;
 import com.ifit.sparky.fecp.interpreter.bitField.BitFieldId;
 import com.ifit.sparky.fecp.interpreter.bitField.converter.BitfieldDataConverter;
@@ -22,8 +20,6 @@ import com.ifit.sparky.fecp.interpreter.key.KeyObject;
 import com.ifit.sparky.fecp.interpreter.status.PortalDeviceSts;
 import com.ifit.sparky.fecp.interpreter.status.StatusId;
 import com.ifit.sparky.fecp.interpreter.status.WriteReadDataSts;
-
-import junit.framework.Test;
 
 import java.util.TreeMap;
 

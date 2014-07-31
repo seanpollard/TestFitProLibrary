@@ -24,7 +24,14 @@
         <item>Max Speed</item>
         <item>Running Time</item>
         <item>Pause/Idle Timeout</item>
+        <item>Run All</item>
 
+    </string-array>
+
+    <string-array name="bitfields_array">
+        <item>Unsupported/RdOnly</item>
+        <item>Values Validation</item>
+        <item>Run All</item>
     </string-array>
 
     <string name="app_name">Fit Pro</string>
