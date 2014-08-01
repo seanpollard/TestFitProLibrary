@@ -193,25 +193,25 @@ public class TestBitfields extends TestCommons implements TestAll {
                 case "KPH":
                     valueToWrite = -5.0;//Invalid value
                     defaultValue = 1.0;
-                    verifyBitfield(kphCmd,ModeId.RUNNING,bf,valueToWrite,false,defaultValue);
+                    verifyBitfield(kphCmd,ModeId.RUNNING,bf,valueToWrite,false);
                     valueToWrite = 3.0;
-                    verifyBitfield(kphCmd,ModeId.RUNNING,bf,valueToWrite,true,defaultValue);
+                    verifyBitfield(kphCmd,ModeId.RUNNING,bf,valueToWrite,true);
                     break;
                 case "GRADE":
                     defaultValue = 0.0;
                     valueToWrite = 45.0;//Invalid value
-                    verifyBitfield(gradeCmd,ModeId.IDLE,bf,valueToWrite,false,defaultValue);
+                    verifyBitfield(gradeCmd,ModeId.IDLE,bf,valueToWrite,false);
                     valueToWrite = 5.0;
-                    verifyBitfield(gradeCmd,ModeId.IDLE,bf,valueToWrite,true,defaultValue);
+                    verifyBitfield(gradeCmd,ModeId.IDLE,bf,valueToWrite,true);
                     break;
                 case "RESISTANCE":
                     break;
                 case "FAN_SPEED":
                     defaultValue = 0.0;
-                    valueToWrite = 0.0;//Invalid value
-                    verifyBitfield(fanSpeedcmd,ModeId.RUNNING,bf,valueToWrite,false,defaultValue);
+                    valueToWrite = -3.0;//Invalid value
+                    verifyBitfield(fanSpeedcmd,ModeId.RUNNING,bf,valueToWrite,false);
                     valueToWrite = 12.0; //set fan speed to 15% of max
-                    verifyBitfield(fanSpeedcmd,ModeId.RUNNING,bf,valueToWrite,true,defaultValue);
+                    verifyBitfield(fanSpeedcmd,ModeId.RUNNING,bf,valueToWrite,true);
                     break;
                 case "VOLUME":
                     break;
@@ -221,9 +221,9 @@ public class TestBitfields extends TestCommons implements TestAll {
                     Thread.sleep(1000);
                     defaultValue = hCmd.getMode();//In this case the default is last mode
                     valueToWrite = 15.0;
-                    verifyBitfield(workoutModeCmd,ModeId.RUNNING,bf,valueToWrite,false,defaultValue);
+                    verifyBitfield(workoutModeCmd,ModeId.RUNNING,bf,valueToWrite,false);
                     valueToWrite = ModeId.PAUSE; //Pause Mode
-                    verifyBitfield(workoutModeCmd,ModeId.RUNNING,bf,valueToWrite,true,defaultValue);
+                    verifyBitfield(workoutModeCmd,ModeId.RUNNING,bf,valueToWrite,true);
                     break;
                 case "AUDIO_SOURCE":
                     break;
@@ -232,16 +232,16 @@ public class TestBitfields extends TestCommons implements TestAll {
                 case "AGE":
                     valueToWrite = 2.0; //invalid value
                     defaultValue = 35.0;
-                    verifyBitfield(ageCmd,ModeId.IDLE,bf,valueToWrite,false,defaultValue);
+                    verifyBitfield(ageCmd,ModeId.IDLE,bf,valueToWrite,false);
                     valueToWrite = 18.0; //set age to 20 years old
-                    verifyBitfield(ageCmd,ModeId.IDLE,bf,valueToWrite,true,defaultValue);
+                    verifyBitfield(ageCmd,ModeId.IDLE,bf,valueToWrite,true);
                     break;
                 case "WEIGHT":
                     valueToWrite = 20.0; //invalid value
                     defaultValue = 83.91;
-                    verifyBitfield(weightCmd,ModeId.IDLE,bf,valueToWrite,false,defaultValue);
+                    verifyBitfield(weightCmd,ModeId.IDLE,bf,valueToWrite,false);
                     valueToWrite = 68.0; //set weight to 20 years old
-                    verifyBitfield(weightCmd,ModeId.IDLE,bf,valueToWrite,true,defaultValue);
+                    verifyBitfield(weightCmd,ModeId.IDLE,bf,valueToWrite,true);
                     break;
                 case "GEARS":
                     break;
@@ -252,19 +252,19 @@ public class TestBitfields extends TestCommons implements TestAll {
                 case "BV_FREQUENCY":
                     break;
                 case "IDLE_TIMEOUT":
-                    valueToWrite = 1; //set timeout to 9secs to go from pause to IDLE
-                    defaultValue = 1;
-                    verifyBitfield(idleTimeOutCmd,ModeId.IDLE,bf,valueToWrite,false,defaultValue);
+                    valueToWrite = -4.0; //set timeout to 9secs to go from pause to IDLE
+                    defaultValue = 1.0;
+                    verifyBitfield(idleTimeOutCmd,ModeId.IDLE,bf,valueToWrite,false);
                     valueToWrite = 9.0; //set timeout to 9 secs to go from pause to IDLE
-                    verifyBitfield(idleTimeOutCmd,ModeId.IDLE,bf,valueToWrite,true,defaultValue);
+                    verifyBitfield(idleTimeOutCmd,ModeId.IDLE,bf,valueToWrite,true);
                     break;
                 case "PAUSE_TIMEOUT":
-                    valueToWrite = 1; //set timeout to 9secs to go from pause to IDLE
-                    defaultValue = 1;
-                    verifyBitfield(pauseTimeOutCmd,ModeId.IDLE,bf,valueToWrite,false,defaultValue);
+                    valueToWrite = -9.0; //set timeout to 9secs to go from pause to IDLE
+                    defaultValue = 1.0;
+                    verifyBitfield(pauseTimeOutCmd,ModeId.IDLE,bf,valueToWrite,false);
                     valueToWrite = 10.0; //set timeout to 5secs to go from pause to IDLE
                     defaultValue = 0.0;
-                    verifyBitfield(pauseTimeOutCmd,ModeId.PAUSE,bf,valueToWrite,true,defaultValue);
+                    verifyBitfield(pauseTimeOutCmd,ModeId.PAUSE,bf,valueToWrite,true);
                     break;
                 case "SYSTEM_UNITS":
                     break;
@@ -310,7 +310,7 @@ public class TestBitfields extends TestCommons implements TestAll {
         return res;
     }
     //Helper function to test bitfields
-    private void verifyBitfield(FecpCommand cmd, ModeId modeId,BitFieldId bitFieldId, Object valueToWrite, boolean validValue,Object defaultVal) throws InvalidCommandException, InvalidBitFieldException {
+    private void verifyBitfield(FecpCommand cmd, ModeId modeId, BitFieldId bitFieldId, Object valueToWrite, boolean validValue) throws InvalidCommandException, InvalidBitFieldException {
         long time=1000;
         if(bitFieldId.name() =="KPH" || bitFieldId.name() =="GRADE")
         {
@@ -342,12 +342,21 @@ public class TestBitfields extends TestCommons implements TestAll {
         else
         { appendMessage("<br>using INVALID value "+ valueToWrite);
 
-            if (hCmd.toString().equals(String.valueOf(defaultVal))) {
-                appendMessage("<br><br><font color = #00ff00>* PASS *</font><br><br> value " + hCmd.toString() + " read from brainboard matches value default value " + defaultVal + " for bitfield " + bitFieldId.name() + "<br>");
+            if (hCmd.toString().equals(String.valueOf(valueToWrite))) {
+                appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br> invalid value " + hCmd.toString() + " read from brainboard should have not been written for bitfield " + bitFieldId.name() + "<br>");
+
             } else {
-                appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br> value " + hCmd.toString() + " read from brainboard DOESN'T match value " + defaultVal + " for bitfield " + bitFieldId.name() + "<br>");
+                appendMessage("<br><br><font color = #00ff00>* PASS *</font><br><br> invalid value " + valueToWrite + " was not written to brainboard for bitfield " + bitFieldId.name()+" value "+hCmd.toString() + " was written instead<br>");
             }
         }
+        try {
+            ((WriteReadDataCmd) cmd.getCommand()).removeReadDataField(bitFieldId);
+            mSFitSysCntrl.getFitProCntrl().addCmd(cmd);
+            Thread.sleep(1000);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
 

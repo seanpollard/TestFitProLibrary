@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.ifit.sfit.sparky.R;
+import com.ifit.sfit.sparky.testsdrivers.AllTests;
 import com.ifit.sfit.sparky.testsdrivers.BitfieldsTest;
 import com.ifit.sfit.sparky.testsdrivers.InclineTest;
 import com.ifit.sfit.sparky.testsdrivers.IntegrationTest;
@@ -31,6 +32,7 @@ public class ManageTests extends Activity implements View.OnClickListener {
         findViewById(R.id.bIncline).setOnClickListener(this);
         findViewById(R.id.bIntegration).setOnClickListener(this);
         findViewById(R.id.bPhysicalKeys).setOnClickListener(this);
+        findViewById(R.id.bAllTests).setOnClickListener(this);
     }
 
     @Override
@@ -56,6 +58,10 @@ public class ManageTests extends Activity implements View.OnClickListener {
                 Intent bitfieldsTest = new Intent(ManageTests.this, BitfieldsTest.class);
                 startActivity(bitfieldsTest);
             break;
+            case R.id.bAllTests:
+                Intent allTests = new Intent(ManageTests.this, AllTests.class);
+                startActivity(allTests);
+                break;
         }
     }
 }

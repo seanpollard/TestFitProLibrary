@@ -683,7 +683,7 @@ public class TestIncline extends TestCommons implements TestAll {
              mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
              Thread.sleep(3000);    //Wait a little while to get past 0, but not to max incline
 
-            appendMessage("Status of setting incline to " + maxIncline + "% (Max Incline): " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>");
+             appendMessage("Status of setting incline to " + maxIncline + "% (Max Incline): " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>");
 
              //Set Mode to Running
              ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.RUNNING);

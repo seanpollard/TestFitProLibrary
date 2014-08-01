@@ -89,15 +89,20 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
  
          String ageResults;
  
-         ageResults = "<br><br>------------------------AGE TEST RESULTS------------------------<br><br>";
-         ageResults += Calendar.getInstance().getTime() + "<br><br>";
+         ageResults = "\n\n------------------------AGE TEST RESULTS------------------------\n\n";
+         ageResults += Calendar.getInstance().getTime() + "\n\n";
+
+         appendMessage("<br><br>------------------------AGE TEST RESULTS------------------------<br><br>");
+         appendMessage(Calendar.getInstance().getTime() + "<br><br>");
  
          double age;
          double prevAge;
  
  
          age = hCmd.getAge();
-         ageResults += "The default age is set to " + age + " years old<br>";
+         ageResults += "The default age is set to " + age + " years old\n";
+
+         appendMessage("The default age is set to " + age + " years old<br>");
  
          //Set age to min=18 and increment by 1 up to maxage= 95
  
@@ -118,8 +123,10 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
                  }
              System.out.println(elapsedTime);
  
-             ageResults += "Status of setting the Age to " + i + ": " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>";
- 
+             ageResults += "Status of setting the Age to " + i + ": " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
+
+             appendMessage("Status of setting the Age to " + i + ": " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>");
+
             /*
              if(age == 80)
              {
@@ -129,13 +136,19 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
      */
              if(age == i){
  //            if(age == 13){
-                 ageResults += "<br>* PASS *<br><br>";
-                 ageResults += "Current Age is set to: " + age + " years old (age should really be " + i + ")<br>";
+                 ageResults += "\n* PASS *\n\n";
+                 ageResults += "Current Age is set to: " + age + " years old (age should really be " + i + ")\n";
+
+                 appendMessage("<br>* PASS *<br><br>");
+                 appendMessage("Current Age is set to: " + age + " years old (age should really be " + i + ")<br>");
                  failureCounter++;
              }
              else{
-                 ageResults += "<br><font color = #ff0000>* FAIL *</font><br><br>";
-                 ageResults += "Current Age is set to: " + age + " years old, but should be set to: " + i + " years old<br>";
+                 ageResults += "\n<font color = #ff0000>* FAIL *</font>\n\n";
+                 ageResults += "Current Age is set to: " + age + " years old, but should be set to: " + i + " years old\n";
+
+                 appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>");
+                 appendMessage("Current Age is set to: " + age + " years old, but should be set to: " + i + " years old<br>");
              }
              mSFitSysCntrl.getFitProCntrl().removeCmd(wrCmd);
          }
@@ -161,14 +174,17 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
          String weightResults;
          System.out.println("NOW RUNNING WEIGHT TEST<br>");
  
-         weightResults = "<br><br>------------------------WEIGHT TEST RESULTS------------------------<br><br>";
-         weightResults += Calendar.getInstance().getTime() + "<br><br>";
- 
+         weightResults = "\n\n------------------------WEIGHT TEST RESULTS------------------------\n\n";
+         weightResults += Calendar.getInstance().getTime() + "\n\n";
+         appendMessage("<br><br>------------------------WEIGHT TEST RESULTS------------------------<br><br>");
+         appendMessage(Calendar.getInstance().getTime() + "<br><br>");
          double weight;
  
  
          weight = hCmd.getWeight();
-         weightResults += "The default weight is set to " + weight + " kilograms<br>";
+         weightResults += "The default weight is set to " + weight + " kilograms\n";
+         appendMessage("The default weight is set to " + weight + " kilograms<br>");
+
          double diff;
  
          //Set weight to 50 kg and increment by 10 up to 175 kg (max is 400lbs = 181 kg)
@@ -179,22 +195,33 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
              //need more time for weight controller
              Thread.sleep(1000);
  
-             weightResults += "<br>Status of setting the Weight to " + i + ": " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>";
- 
+             weightResults += "\nStatus of setting the Weight to " + i + ": " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
+             appendMessage("<br>Status of setting the Weight to " + i + ": " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>");
+
              weight = hCmd.getWeight();
              diff = Math.abs(weight - i);
  
            if(diff < i*.01) // if values are within 1% of each other
            {
-                 weightResults += "<br>* PASS *<br><br>";
-                 weightResults += "Current Weight is set to: " + weight + " kilograms should be set to: " + i + " kilograms<br>";
-                 weightResults+="set and read values have a difference of "+diff+" which is within 1% tolerance<br>";
-             }
+                 weightResults += "\n* PASS *\n\n";
+                 weightResults += "Current Weight is set to: " + weight + " kilograms should be set to: " + i + " kilograms\n";
+                 weightResults+="set and read values have a difference of "+diff+" which is within 1% tolerance\n";
+
+               appendMessage("<br>* PASS *<br><br>");
+               appendMessage("Current Weight is set to: " + weight + " kilograms should be set to: " + i + " kilograms<br>");
+               appendMessage("set and read values have a difference of "+diff+" which is within 1% tolerance<br>");
+
+
+           }
              else{
-                 weightResults += "<br><font color = #ff0000>* FAIL *</font><br><br>";
-                 weightResults += "Current Weight is set to: " + weight + " kilograms, but should be set to: " + i + " kilograms<br>";
-                 weightResults+="set and read values have a difference of "+diff+" which is outside the 1% tolerance<br>";
- 
+                 weightResults += "\n<font color = #ff0000>* FAIL *</font>\n\n";
+                 weightResults += "Current Weight is set to: " + weight + " kilograms, but should be set to: " + i + " kilograms\n";
+                 weightResults+="set and read values have a difference of "+diff+" which is outside the 1% tolerance\n";
+
+               appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>");
+               appendMessage("Current Weight is set to: " + weight + " kilograms, but should be set to: " + i + " kilograms<br>");
+               appendMessage("set and read values have a difference of "+diff+" which is outside the 1% tolerance<br>");
+
            }
          }
          mSFitSysCntrl.getFitProCntrl().removeCmd(wrCmd);
@@ -211,10 +238,12 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
          //read System Config data from Brainboard
          //try to output all values from System Device and Device Info
          String titleString;
-         String systemString = null;
+         String systemString = "";
  
-         titleString = "<br>----------------------SYSTEM CONFIGURATION TEST----------------------<br><br>";
-         titleString += Calendar.getInstance().getTime() + "<br><br>";
+         titleString = "\n----------------------SYSTEM CONFIGURATION TEST----------------------\n\n";
+         appendMessage("<br>----------------------SYSTEM CONFIGURATION TEST----------------------<br><br>");
+         titleString += Calendar.getInstance().getTime() + "\n\n";
+         appendMessage(Calendar.getInstance().getTime() + "<br><br>");
  
          double maxIncline;
          double minIncline;
@@ -251,11 +280,15 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
          {
              if(brainboardLines[i].equals(inputLines[i]))
              {
-                 systemString += "<br>Brainboard " + brainboardLines[i] + "<br>Keyboard Input " + inputLines[i] + "<br><font color = #00ff00>* PASS *</font><br><br>";
+                 systemString += "\nBrainboard " + brainboardLines[i] + "\nKeyboard Input " + inputLines[i] + "\n\n* PASS *\n\n";
+                 appendMessage("<br>Brainboard " + brainboardLines[i] + "<br>Keyboard Input " + inputLines[i] + "<br><font color = #00ff00>* PASS *</font><br><br>");
+
              }
              else
              {
-                 systemString += "<br>Brainboard " + brainboardLines[i] + "<br> Keyboard Input " + inputLines[i] + "<br><br><font color = #ff0000>* FAIL *</font><br><br>";
+                 systemString += "\nBrainboard " + brainboardLines[i] + "\n Keyboard Input " + inputLines[i] + "\n\n* FAIL *\n\n";
+                 appendMessage("<br>Brainboard " + brainboardLines[i] + "<br>Keyboard Input " + inputLines[i] + "<br><br><font color = #ff0000>* FAIL *</font><br><br>");
+
              }
          }
  
@@ -274,29 +307,36 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
          //Delay for 60 seconds
          //Verify Pause timeout by reading the mode and ensuring it is in Results mode
          System.out.println("NOW PAUSE/IDLE TIMEOUT TEST<br>");
- 
+         String results = "";
          double pauseTimeout = 0;
          double idleTimeout = 0;
          String prevMode="";
  
          appendMessage("<br><br>------------------------PAUSE TIMEOUT TEST RESULTS------------------------<br><br>");
+         results += "\n\n------------------------PAUSE TIMEOUT TEST RESULTS------------------------\n\n";
          appendMessage(Calendar.getInstance().getTime() + "<br><br>");
- 
+         results+=Calendar.getInstance().getTime() + "\n\n";
+
          appendMessage("Current pause timeout is: "+hCmd.getPauseTimeout()+"<br>");
+         results+="Current pause timeout is: "+hCmd.getPauseTimeout()+"\n";
          appendMessage("Current idle timeout is: "+hCmd.getIdleTimeout()+"<br>");
+         results+="Current idle timeout is: "+hCmd.getIdleTimeout()+"\n";
          appendMessage("Current Mode: " + hCmd.getMode()+"<br>");
+         results+="Current Mode: " + hCmd.getMode()+"\n";
  
  
          //Set pause timeout to 30 secs
          appendMessage("Setting the pause timeout to 30 secs...<br>");
+         results+="Setting the pause timeout to 30 secs...\n";
          ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.PAUSE_TIMEOUT, 30);//set pause timeout to 30 secs
          mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
          Thread.sleep(1000);
          appendMessage("<br>Status of setting the Pause timeout to 30 secs:  "+ (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>");
- 
+         results+="\nStatus of setting the Pause timeout to 30 secs:  "+ (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
          pauseTimeout = hCmd.getPauseTimeout();
          idleTimeout = hCmd.getIdleTimeout();
          appendMessage("New pause timeout is: "+pauseTimeout+"<br>");
+         results+="New pause timeout is: "+pauseTimeout+"\n";
  
          //Set mode to Running
          ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.RUNNING);
@@ -305,7 +345,9 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
  
  
          appendMessage("Status of setting the Mode to Running: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>");
+         results+="Status of setting the Mode to Running: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
          appendMessage("Current Mode: "+hCmd.getMode()+"<br>");
+         results+="Current Mode: "+hCmd.getMode()+"\n";
  
          //Set mode to Pause
          ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.PAUSE);
@@ -313,26 +355,34 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
          Thread.sleep(1000);
  
          appendMessage("Status of setting the Mode to Pause: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>");
+         results+="Status of setting the Mode to Pause: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
          appendMessage("Current Mode: "+hCmd.getMode()+"<br>");
+         results+="Current Mode: "+hCmd.getMode()+"\n";
  
          //Check each second to see if mode has changed from Pause mode. Also prevents from waiting for longer than the timeout if it doesn't work
          prevMode = hCmd.getMode().getDescription();
          for(long totalTime = 0; totalTime < pauseTimeout+5; totalTime++){
              Thread.sleep(1000);
              appendMessage("after " + totalTime +" sec(s)the mode is  " + hCmd.getMode().getDescription()+"<br>");
+             results+="after " + totalTime +" sec(s)the mode is  " + hCmd.getMode().getDescription()+"\n";
              if(hCmd.getMode().getDescription() != "Pause Mode"){
                  Thread.sleep(1000);//give time for mode to update before reading it
                  appendMessage("<br>The mode changed from " +prevMode+ " to " + hCmd.getMode().getDescription() + " after " + totalTime + " seconds<br>");
+                 results+="\nThe mode changed from " +prevMode+ " to " + hCmd.getMode().getDescription() + " after " + totalTime + " seconds\n";
                  break;
              }
          }
          if(hCmd.getMode().getDescription() != "Pause Mode"){
              appendMessage("<br><font color = #00ff00>* PASS *</font><br><br>");
+             results+="\n* PASS *\n\n";
              appendMessage("Pause Mode timed out to " + hCmd.getMode().getDescription() + "<br>");
+             results+="Pause Mode timed out to " + hCmd.getMode().getDescription() + "\n";
          }
          else{
              appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>");
-             appendMessage("Pause Mode did not time out after "+pauseTimeout+ " seconds<br>");
+             results+="\n* FAIL *\n\n";
+             appendMessage("Pause Mode did not time out after "+pauseTimeout+ " seconds\n");
+             results+="Pause Mode did not time out after "+pauseTimeout+ " seconds\n";
          }
          //Now wait for the IDLE timeout to happen and change mode from RESULTS to IDLE
          //TODO: verify that bitfields are resetting after IDLE timeout
@@ -340,23 +390,29 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
          for(long totalTime = 0; totalTime < idleTimeout+5; totalTime++){
              Thread.sleep(1000);
              appendMessage("after " + totalTime +" sec(s)the mode is  " + hCmd.getMode().getDescription()+"<br>");
+             results+="after " + totalTime +" sec(s)the mode is  " + hCmd.getMode().getDescription()+"<br>";
              if(hCmd.getMode().name() != "RESULTS"){
                  Thread.sleep(1000);//give time for mode to update before reading it
                  appendMessage("<br>The mode changed from " +prevMode+ " to " + hCmd.getMode().getDescription() + " after " + totalTime + " seconds<br>");
+                results+="\nThe mode changed from " +prevMode+ " to " + hCmd.getMode().getDescription() + " after " + totalTime + " seconds\n";
                  break;
              }
          }
  
          if(hCmd.getMode().name() != "RESULTS"){
              appendMessage("<br><font color = #00ff00>* PASS *</font><br><br>");
+             results+="\n* PASS *\n]\n";
              appendMessage("Results Mode timed out to " + hCmd.getMode().getDescription() + "<br>");
+             results+="Results Mode timed out to " + hCmd.getMode().getDescription() + "\n";
          }
          else{
              appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>");
+             results+="\n* FAIL *\n\n";
              appendMessage("Results mode did not time out after "+idleTimeout+" seconds<br>");
+             results+="Results mode did not time out after "+idleTimeout+" seconds\n";
          }
  
-         return res;
+         return results;
      }
  
      //--------------------------------------------//
@@ -367,6 +423,7 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
      public String testRunningTime() throws Exception{
          //outline for code support #930 in redmine
          
+         String results;
          long runtime = 60; //time for running test (in secs)
          long pauseruntime = 23; //time for running test with pause
  
@@ -374,24 +431,34 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
  
  
          appendMessage("<br><br>------------------------RUNNING TIME TEST RESULTS------------------------<br><br>");
+         results="\n\n------------------------RUNNING TIME TEST RESULTS------------------------\n\n";
+ 
          appendMessage(Calendar.getInstance().getTime() + "<br><br>");
- 
+         results+= Calendar.getInstance().getTime() + "\n\n";
+
          appendMessage("Current pause timeout is: "+hCmd.getPauseTimeout()+"<br>");
+         results+="Current pause timeout is: "+hCmd.getPauseTimeout()+"\n";
+
          appendMessage("Current Mode: "+hCmd.getMode()+"<br>");
- 
+         results+="Current Mode: "+hCmd.getMode()+"\n";
+
+
          //set the pause timeout to 60
          ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.PAUSE_TIMEOUT,60);
          mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
          Thread.sleep(1000);
-         appendMessage("Status of setting pause timeout to 60 secs: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>");
+         appendMessage("Status of setting pause timeout to "+runtime+" secs: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>");
          appendMessage("New pause timeout is: "+hCmd.getPauseTimeout()+"<br>");
- 
+         results+="Status of setting pause timeout to "+runtime+" secs: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
+         results+="New pause timeout is: "+hCmd.getPauseTimeout()+"\n";
          //set the mode to running
          ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.RUNNING);
          mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
          Thread.sleep(100);
          appendMessage("Status of setting mode to running: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>");
          appendMessage("Now wait "+runtime+ " seconds...<br>");
+         results+="Status of setting mode to running: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
+         results+="Now wait "+runtime+ " seconds...\n";
          Thread.sleep(runtime*1000);
 
          //wait 1 minute
@@ -411,13 +478,15 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
          //Test whether the running time is within +/- 2 second of 60 seconds (allow for 1 sec read time)
          if(timeOfRunningTest >= runtime-2 && timeOfRunningTest <= runtime+2) {
              appendMessage("<br><br><font color = #00ff00>* PASS *</font><br><br>");
+             results+="\n\n* PASS *\n\n";
          }
          else {
              appendMessage("<br><br><font color = #ff0000>* FAIL *</font><br><br>");
+             results+="\n\n* FAIL *\n\n";
          }
  
          appendMessage("The running time for this "+runtime+" second test was " + timeOfRunningTest + " seconds<br>");
- 
+         results+="The running time for this "+runtime+" second test was " + timeOfRunningTest + " seconds\n";
          //set mode back to Pause to stop the test
          ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.PAUSE);
          mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
@@ -434,6 +503,7 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
          Thread.sleep(1000);
  
          appendMessage("<br>Pause Test: <br>");
+         results+="\nPause Test: \n";
          //start pause test
          //start running
          //set the mode to running
@@ -442,6 +512,8 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
          Thread.sleep(100);
          appendMessage("Status of setting mode to running: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>");
          appendMessage("Now wait "+pauseruntime+ " seconds...<br>");
+         results+="Status of setting mode to running: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n>";
+         results+="Now wait "+pauseruntime+ " seconds...\n>";
          Thread.sleep(pauseruntime*1000);
          //wait 30 seconds
  //        startime = System.nanoTime();
@@ -457,6 +529,8 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
          Thread.sleep(100);
          appendMessage("Status of setting mode to pause: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>");
          appendMessage("wait 30 seconds...<br>");
+         results+="Status of setting mode to pause: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n>";
+         results+="wait 30 seconds...\n>";
          //wait 30 seconds
          Thread.sleep(30000);
          //go from pause to running
@@ -465,6 +539,8 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
          Thread.sleep(100);
          appendMessage("Status of setting mode to running: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>");
          appendMessage("Now wait "+pauseruntime+ " seconds...<br>");
+         results+="Status of setting mode to running: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
+         results+="Now wait "+pauseruntime+ " seconds...\n";
          Thread.sleep(pauseruntime*1000);
          //wait another 30 seconds for a total of 1 minute expected running time
  //        startime = System.nanoTime();
@@ -482,10 +558,15 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
          if(timeOfPauseTest >= pauseruntime-2 && timeOfPauseTest <= pauseruntime+2){
              appendMessage("<br><br><font color = #00ff00>* PASS *</font><br><br>");
              appendMessage("The total time for this "+pauseruntime+ " sec test with 30 sec pause correctly ran for " + timeOfPauseTest + " secs<br><br>");
-         }
+             results+="\n\n* PASS *\n\n";
+             results+="The total time for this "+pauseruntime+ " sec test with 30 sec pause correctly ran for " + timeOfPauseTest + " secs\n\n";
+     }
          else {
              appendMessage("<br><br><font color = #ff0000>* FAIL *</font><br><br>");
              appendMessage("The total time for this "+pauseruntime+" sec test with 30 sec pause actually ran for " + timeOfPauseTest +"<br><br>");
+             results+="\n\n* FAIL *\n\n";
+             results+="The total time for this "+pauseruntime+ " sec test with 30 sec pause actually ran for " + timeOfPauseTest + " secs\n\n";
+
          }
  
          //set mode back to idle to stop the test
@@ -501,7 +582,7 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
          //end the recurring callback
          mSFitSysCntrl.getFitProCntrl().removeCmd(wrCmd);
  
-         return res;
+         return results;
      }
  
      //--------------------------------------------//
@@ -524,10 +605,11 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
          double currentActualSpeed = 0;
  
          System.out.println("NOW RUNNING MAX SPEED TIME TEST<br>");
-
+         String results="";
          appendMessage("<br>--------------------------MAX SPEED TEST--------------------------<br><br>");
          appendMessage(Calendar.getInstance().getTime() + "<br><br>");
- 
+         results+="<br>--------------------------MAX SPEED TEST--------------------------<br><br>";
+         results+=Calendar.getInstance().getTime() + "<br><br>";
          //TODO: Once Max Speed command is implemented, just change the constant MAX_SPEED to the maxSpeed variable (which reads the value off of the Brainboard)
  
          maxSpeed = hCmd.getMaxSpeed();
@@ -541,10 +623,13 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
          Thread.sleep(1000);
          appendMessage("Status of setting mode to running " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>");
          appendMessage("setting speed to 16 kph...<br>");
+         results+="Status of setting mode to running " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>";
+         results+="setting speed to 16 kph...<br>";
          ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.KPH, 16.0);//replace literal by maxSpeed later on
          mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
          Thread.sleep(1000);
          appendMessage("Status of speed to 16kph: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>");
+         results+="Status of speed to 16kph: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>";
 
          long elapsedTime = 0;
          double seconds = 0;
@@ -557,19 +642,25 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
              seconds = elapsedTime / 1.0E09;
              Thread.sleep(1000);
              appendMessage("actual speed "+currentActualSpeed+" elapsed time " + seconds +" seconds<br>");
+             results+="actual speed "+currentActualSpeed+" elapsed time " + seconds +" seconds<br>";
          }
  
  
          appendMessage("The max speed is " + maxSpeed + "<br>");
          appendMessage("The motor took " + seconds + " seconds to go to max speed<br>");
+         results+="The max speed is " + maxSpeed + "<br>";
+         results+="The motor took " + seconds + " seconds to go to max speed<br>";
  
          if(maxSpeed < 10){
              appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>The Max Speed was not properly read from the brainboard (Max Speed: "+maxSpeed+" kph)<br>");
+             results+="<br><font color = #ff0000>* FAIL *</font><br><br>The Max Speed was not properly read from the brainboard (Max Speed: "+maxSpeed+" kph)<br>";
+
          }
  
          //%5 pass standard with a 23 sec spec from #59
          if((seconds <= 22) || (seconds >= 24)) {
              appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>The motor was off by " + (seconds - 23) + " seconds<br>");
+             results+="<br><font color = #ff0000>* FAIL *</font><br><br>The motor was off by " + (seconds - 23) + " seconds<br>";
          }
  
          else {
@@ -588,22 +679,22 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
          ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.IDLE);
          mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
          Thread.sleep(1000);
-         return res;
+         return results;
      }
      @Override
      public String runAll() {
-
+        String results = "";
          try {
             // this.testAge();
-             this.testMaxSpeedTime();
+             results+=this.testMaxSpeedTime();
             // this.testWeight();
-             this.testRunningTime();
-             this.testPauseIdleTimeout();
+             results+=this.testRunningTime();
+             results+=this.testPauseIdleTimeout();
          }
          catch (Exception ex) {
              ex.printStackTrace();
          }
-         return res;
+         return results;
      }
  
  

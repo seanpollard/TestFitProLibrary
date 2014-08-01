@@ -691,23 +691,8 @@ public abstract class BaseTest extends Activity implements View.OnClickListener,
         else if(v==allTestsButton)
         {
             runTest();
-//            try {
-//                returnString += "\n" + systemString;
-//
-//                outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
-//                outputStream.write((returnString).getBytes());
-//                outputStream.close();
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//            if (returnString.isEmpty()) {
-//                passFail = "<font color = #ff0000>ERROR</font>";
-//            } else if (returnString.contains("FAIL")) {
-//                passFail = "<font color = #ff0000>FAIL</font>";
-//            } else {
-//                passFail = "<font color = #00ff00>PASS</font>";
-//            }
-//            resultView.setText(Html.fromHtml(passFail));
+
+
 
         }
         if(v == findFailButton) {

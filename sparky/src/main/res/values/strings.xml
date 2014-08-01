@@ -34,6 +34,14 @@
         <item>Run All</item>
     </string-array>
 
+    <string-array name="alltests_array">
+        <item>Motor Tests</item>
+        <item>Integration Tests</item>
+        <item>Incline Tests</item>
+        <item>Bitfields Tests</item>
+        <item>All Tests</item>
+    </string-array>
+
     <string name="app_name">Fit Pro</string>
     <string name="hello_world">Hello world!</string>
     <string name="connect_options">USB</string>
