@@ -393,6 +393,7 @@ public class TestBitfields extends TestCommons implements TestAll {
     @Override
     public String runAll() throws Exception {
 
+       results="";
        results+=this.testBitfieldRdWr();
        results+=this.testBitfieldValuesValidation();
 

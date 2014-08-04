@@ -2,7 +2,6 @@ package com.ifit.sfit.sparky;
 
 import android.app.Activity;
 
-// TODO: Reduce code to the simplest case (send a command) and test that
 public class TestApp extends Activity {//implements View.OnClickListener, SystemStatusListener {
 //
 //    /*
