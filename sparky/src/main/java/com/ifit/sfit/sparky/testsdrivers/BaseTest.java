@@ -690,10 +690,8 @@ public abstract class BaseTest extends Activity implements View.OnClickListener,
         }
         else if(v==allTestsButton)
         {
+            resultView.setText(" ");
             runTest();
-
-
-
         }
         if(v == findFailButton) {
             try{
@@ -760,6 +758,19 @@ public abstract class BaseTest extends Activity implements View.OnClickListener,
             mToast.cancel();
         }
     }
+
+//    @Override
+//    public boolean onKeyDown(int keyCode, KeyEvent event) {
+//        boolean result = false;
+//        switch (keyCode)
+//        {
+//            case KeyEvent.KEYCODE_BACK:
+//            Intent myIntent = new Intent(BaseTest.this, ManageTests.class);
+//            startActivity(myIntent);
+//            result = false;
+//        }
+//        return result;
+//    }
 
     @Override
     protected void onPause() {

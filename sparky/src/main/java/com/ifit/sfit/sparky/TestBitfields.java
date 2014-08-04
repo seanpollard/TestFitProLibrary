@@ -112,7 +112,7 @@ public class TestBitfields extends TestCommons implements TestAll {
                     appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br> NO Exception thrown when trying to read unsupported bitfield:  "+bf.name()+ "<br>");
 
                     results+="Status trying to read unsupported bitfield: "+ bf.name() +" " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
-                    results+="\n<font color = #ff0000>* FAIL *</font>\n\n NO Exception thrown when trying to read unsupported bitfield:  "+bf.name()+ "\n";
+                    results+="\n* FAIL *\n\n NO Exception thrown when trying to read unsupported bitfield:  "+bf.name()+ "\n";
 
                 }
                 catch (Exception ex)
@@ -123,7 +123,7 @@ public class TestBitfields extends TestCommons implements TestAll {
                     appendMessage("Details: " + ex.toString() +"<br><br>");
 
                     results+="Status trying to read unsupported bitfield: "+ bf.name() +" "+ (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
-                    results+="\n\n<font color = #00ff00>* PASS *</font>\n\n Exception thrown when trying to read unsupported bitfield:  "+bf.name()+ "\n";
+                    results+="\n\n* PASS *\n\n Exception thrown when trying to read unsupported bitfield:  "+bf.name()+ "\n";
                     results+="Details: " + ex.toString() +"\n\n";
                     //Remove bitfield so system can throw exception for next invalid bitfiled
                     ((WriteReadDataCmd)wrCmd.getCommand()).removeReadDataField(bf);
@@ -148,7 +148,7 @@ public class TestBitfields extends TestCommons implements TestAll {
                 Thread.sleep(1000);
                 appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br> NO Exception thrown when trying to write read-only bitfield:  " + b.name() + "<br>");
                
-                results+="\n<font color = #ff0000>* FAIL *</font>\n\n NO Exception thrown when trying to write read-only bitfield:  " + b.name() + "\n";
+                results+="\n* FAIL *\n\n NO Exception thrown when trying to write read-only bitfield:  " + b.name() + "\n";
 
             }
             catch (Exception ex)
@@ -157,7 +157,7 @@ public class TestBitfields extends TestCommons implements TestAll {
                 appendMessage("<br><br><font color = #00ff00>* PASS *</font><br><br> Exception thrown when trying to write read-only bitfield:  "+b.name()+ "<br>");
                 appendMessage(" Details: " + ex.getMessage() +"<br><br>");
 
-                results+="\n\n<font color = #00ff00>* PASS *</font>\n\n Exception thrown when trying to write read-only bitfield:  "+b.name()+ "\n";
+                results+="\n\n* PASS *\n\n Exception thrown when trying to write read-only bitfield:  "+b.name()+ "\n";
                 results+=" Details: " + ex.getMessage() +"\n\n";
 
             }

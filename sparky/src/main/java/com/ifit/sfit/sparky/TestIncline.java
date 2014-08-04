@@ -142,8 +142,8 @@ public class TestIncline extends TestCommons implements TestAll {
 
                 //Set value for the incline
                 ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(BitFieldId.GRADE, j);
-               mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
-                Thread.sleep(50);
+                mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+                Thread.sleep(1000);
 
                 //Check status of the command to send the incline
                 appendMessage("Status of sending incline " + j + "%: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>");
@@ -191,14 +191,14 @@ public class TestIncline extends TestCommons implements TestAll {
                 {
                     appendMessage("<br><font color = #00ff00>* PASS *</font><br><br>");
 
-                    results+="\n<font color = #00ff00>* PASS *</font>\n\n";
+                    results+="\n* PASS *\n\n";
 
                 }
                 else
                 {
                     appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>The incline is off by " + (j - actualInlcine) + "%<br><br>");
 
-                    results+="\n<font color = #ff0000>* FAIL *</font>\n\nThe incline is off by " + (j - actualInlcine) + "%\n\n";
+                    results+="\n* FAIL *\n\nThe incline is off by " + (j - actualInlcine) + "%\n\n";
 
                 }
                 Thread.sleep(3000);
@@ -319,7 +319,7 @@ public class TestIncline extends TestCommons implements TestAll {
             appendMessage("<br><font color = #00ff00>* PASS *</font><br><br>");
             appendMessage("The incline value from Min Incline to Max Incline was reset to " + minToMaxIncline1 + "%<br>");
 
-            results+="\n<font color = #00ff00>* PASS *</font>\n\n";
+            results+="\n* PASS *\n\n";
             results+="The incline value from Min Incline to Max Incline was reset to " + minToMaxIncline1 + "%\n";
 
         }
@@ -327,7 +327,7 @@ public class TestIncline extends TestCommons implements TestAll {
             appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>");
             appendMessage("The Incline value from Min Incline to Max Incline did not stop when the Stop button was pressed<br>");
 
-            results+="\n<font color = #ff0000>* FAIL *</font>\n\n";
+            results+="\n* FAIL *\n\n";
             results+="The Incline value from Min Incline to Max Incline did not stop when the Stop button was pressed\n";
 
         }
@@ -347,9 +347,9 @@ public class TestIncline extends TestCommons implements TestAll {
         {
             currentActualIncline = hCmd.getActualIncline();
             Thread.sleep(300);
-            appendMessage("Current Incline is: " + currentActualIncline+ " goal: " + maxIncline+" time elapsed: "+seconds);
+            appendMessage("Current Incline is: " + currentActualIncline+ " goal: " + maxIncline+" time elapsed: "+seconds+"<br>");
 
-            results+="Current Incline is: " + currentActualIncline+ " goal: " + maxIncline+" time elapsed: "+seconds;
+            results+="Current Incline is: " + currentActualIncline+ " goal: " + maxIncline+" time elapsed: "+seconds+"\n";
 
             elapsedTime = System.nanoTime() - startime;
             seconds = elapsedTime / 1.0E09;
@@ -492,7 +492,7 @@ public class TestIncline extends TestCommons implements TestAll {
             appendMessage("<br><font color = #00ff00>* PASS *</font><br><br>");
             appendMessage("The Incline went to " + testIncline + " and did not change when the mode was changed to Running<br>");
 
-            results+="\n<font color = #00ff00>* PASS *</font>\n\n";
+            results+="\n* PASS *\n\n";
             results+="The Incline went to " + testIncline + " and did not change when the mode was changed to Running\n";
         }
         else{
@@ -500,14 +500,14 @@ public class TestIncline extends TestCommons implements TestAll {
                 appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>");
                 appendMessage("Mode didn't change to Running<br>");
 
-                results+="\n<font color = #ff0000>* FAIL *</font>\n\n";
+                results+="\n* FAIL *\n\n";
                 results+="Mode didn't change to Running\n";
             }
             if(currentIncline1 != currentIncline2) {
                 appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>");
                 appendMessage("Incline should be " + currentIncline1 + "%, but is " + currentIncline2 + "%<br>");
 
-                results+="\n<font color = #ff0000>* FAIL *</font>\n\n";
+                results+="\n* FAIL *\n\n";
                 results+="Incline should be " + currentIncline1 + "%, but is " + currentIncline2 + "%\n";
             }
             if(currentIncline1!= testIncline || currentIncline2 != testIncline) {
@@ -515,7 +515,7 @@ public class TestIncline extends TestCommons implements TestAll {
                 appendMessage("The incline did not go to " + testIncline + " %<br>");
                 appendMessage("The incline was at " + currentIncline1 + " % before mode change and " + currentIncline2 + " % afterwards <br>");
 
-                results+="\n<font color = #ff0000>* FAIL *</font>\n\n";
+                results+="\n* FAIL *\n\n";
                 results+="The incline did not go to " + testIncline + " %\n";
                 results+="The incline was at " + currentIncline1 + " % before mode change and " + currentIncline2 + " % afterwards \n";
             }
@@ -603,9 +603,9 @@ public class TestIncline extends TestCommons implements TestAll {
         {
             currentActualIncline = hCmd.getActualIncline();
             Thread.sleep(300);
-            appendMessage("Current Incline is: " + currentActualIncline+ " goal: " + currentIncline+" time elapsed: "+seconds);
+            appendMessage("Current Incline is: " + currentActualIncline+ " goal: " + currentIncline+" time elapsed: "+seconds+"<br>");
 
-            results+="Current Incline is: " + currentActualIncline+ " goal: " + currentIncline+" time elapsed: "+seconds;
+            results+="Current Incline is: " + currentActualIncline+ " goal: " + currentIncline+" time elapsed: "+seconds+"\n";
 
             elapsedTime = System.nanoTime() - startime;
             seconds = elapsedTime / 1.0E09;
@@ -643,9 +643,9 @@ public class TestIncline extends TestCommons implements TestAll {
             {
                 currentActualIncline = hCmd.getActualIncline();
                 Thread.sleep(300);
-                appendMessage("Current Incline is: " + currentActualIncline+ " goal: " + currentIncline+" time elapsed: "+seconds);
+                appendMessage("Current Incline is: " + currentActualIncline+ " goal: " + currentIncline+" time elapsed: "+seconds+"<br>");
 
-                results+="Current Incline is: " + currentActualIncline+ " goal: " + currentIncline+" time elapsed: "+seconds;
+                results+="Current Incline is: " + currentActualIncline+ " goal: " + currentIncline+" time elapsed: "+seconds+"\n";
 
                 elapsedTime = System.nanoTime() - startime;
                 seconds = elapsedTime / 1.0E09;
@@ -660,14 +660,14 @@ public class TestIncline extends TestCommons implements TestAll {
                 appendMessage("<br><font color = #00ff00>* PASS *</font><br><br>");
                 appendMessage("At Incline " +currentIncline+", Current speed is " + currentSpeed + " mph<br>");
 
-                results+="\n<font color = #00ff00>* PASS *</font>\n\n";
+                results+="\n* PASS *\n\n";
                 results+="At Incline " +currentIncline+", Current speed is " + currentSpeed + " mph\n";
             }
             else if (( i<= 0 && i >= 15) && currentSpeed != 12.0) {
                 appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>");
                 appendMessage("At Incline " +currentIncline+" Current speed should be 12 MPH, but it is " + currentSpeed + " mph<br>");
 
-                results+="\n<font color = #ff0000>* FAIL *</font>\n\n";
+                results+="\n* FAIL *\n\n";
                 results+="At Incline " +currentIncline+" Current speed should be 12 MPH, but it is " + currentSpeed + " mph\n";
             }
 
@@ -676,14 +676,14 @@ public class TestIncline extends TestCommons implements TestAll {
                 appendMessage("<br><font color = #00ff00>* PASS *</font><br><br>");
                 appendMessage("At Incline " +currentIncline+", Current speed is " + currentSpeed + " mph<br>");
 
-                results+="\n<font color = #00ff00>* PASS *</font>\n\n";
+                results+="\n* PASS *\n\n";
                 results+="At Incline " +currentIncline+", Current speed is " + currentSpeed + " mph\n";
             }
             else if (( i<= 15.5 && i >= 25) && currentSpeed !=8.0) {
                 appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>");
                 appendMessage("At Incline " +currentIncline+" Current speed should be 8 MPH, but it is " + currentSpeed + " mph<br>");
 
-                results+="\n<font color = #ff0000>* FAIL *</font>\n\n";
+                results+="\n* FAIL *\n\n";
                 results+="At Incline " +currentIncline+" Current speed should be 8 MPH, but it is " + currentSpeed + " mph\n";
             }
 
@@ -692,14 +692,14 @@ public class TestIncline extends TestCommons implements TestAll {
                 appendMessage("<br><font color = #00ff00>* PASS *</font><br><br>");
                 appendMessage("At Incline " +currentIncline+", Current speed is " + currentSpeed + " mph<br>");
 
-                results+="\n<font color = #00ff00>* PASS *</font>\n\n";
+                results+="\n* PASS *\n\n";
                 results+="At Incline " +currentIncline+", Current speed is " + currentSpeed + " mph\n";
             }
             else if (( i<= 25.5 && i >= 40) && currentSpeed != 6) {
                 appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>");
                 appendMessage("At Incline " +currentIncline+" Current speed should be 6 MPH, but it is " + currentSpeed + " mph<br>");
 
-                results+="\n<font color = #ff0000>* FAIL *</font>\n\n";
+                results+="\n* FAIL *\n\n";
                 results+="At Incline " +currentIncline+" Current speed should be 6 MPH, but it is " + currentSpeed + " mph\n";
             }
 
@@ -708,14 +708,14 @@ public class TestIncline extends TestCommons implements TestAll {
                 appendMessage("<br><font color = #00ff00>* PASS *</font><br><br>");
                 appendMessage("At Incline " +currentIncline+", Current speed is " + currentSpeed + " mph<br>");
 
-                results+="\n<font color = #00ff00>* PASS *</font>\n\n";
+                results+="\n* PASS *\n\n";
                 results+="At Incline " +currentIncline+", Current speed is " + currentSpeed + " mph\n";
             }
             else if (( i<= 0 && i >= -1) && currentSpeed != 9.0) {
                 appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>");
                 appendMessage("At Incline " +currentIncline+" Current speed should be 9 MPH, but it is " + currentSpeed + " mph<br>");
 
-                results+="\n<font color = #ff0000>* FAIL *</font>\n\n";
+                results+="\n* FAIL *\n\n";
                 results+="At Incline " +currentIncline+" Current speed should be 9 MPH, but it is " + currentSpeed + " mph\n";
             }
 
@@ -724,14 +724,14 @@ public class TestIncline extends TestCommons implements TestAll {
                 appendMessage("<br><font color = #00ff00>* PASS *</font><br><br>");
                 appendMessage("At Incline " +currentIncline+", Current speed is " + currentSpeed + " mph<br>");
 
-                results+="\n<font color = #00ff00>* PASS *</font>\n\n";
+                results+="\n* PASS *\n\n";
                 results+="At Incline " +currentIncline+", Current speed is " + currentSpeed + " mph\n";
             }
             else if ( (i<= -1 && i >= -2) && currentSpeed != 8.5) {
                 appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>");
                 appendMessage("At Incline " +currentIncline+" Current speed should be 8.5 MPH, but it is " + currentSpeed + " mph<br>");
 
-                results+="\n<font color = #ff0000>* FAIL *</font>\n\n";
+                results+="\n* FAIL *\n\n";
                 results+="At Incline " +currentIncline+" Current speed should be 8.5 MPH, but it is " + currentSpeed + " mph\n";
             }
 
@@ -740,14 +740,14 @@ public class TestIncline extends TestCommons implements TestAll {
                 appendMessage("<br><font color = #00ff00>* PASS *</font><br><br>");
                 appendMessage("At Incline " +currentIncline+", Current speed is " + currentSpeed + " mph<br>");
 
-                results+="\n<font color = #00ff00>* PASS *</font>\n\n";
+                results+="\n* PASS *\n\n";
                 results+="At Incline " +currentIncline+", Current speed is " + currentSpeed + " mph\n";
             }
             else if ( (i<= -2 && i >= -3) && currentSpeed != 8.0) {
                 appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>");
                 appendMessage("At Incline " +currentIncline+" Current speed should be 8.0 MPH, but it is " + currentSpeed + " mph<br>");
 
-                results+="\n<font color = #ff0000>* FAIL *</font>\n\n";
+                results+="\n* FAIL *\n\n";
                 results+="At Incline " +currentIncline+" Current speed should be 8.0 MPH, but it is " + currentSpeed + " mph\n";
             }
 
@@ -756,14 +756,14 @@ public class TestIncline extends TestCommons implements TestAll {
                 appendMessage("<br><font color = #00ff00>* PASS *</font><br><br>");
                 appendMessage("At Incline " +currentIncline+", Current speed is " + currentSpeed + " mph<br>");
 
-                results+="\n<font color = #00ff00>* PASS *</font>\n\n";
+                results+="\n* PASS *\n\n";
                 results+="At Incline " +currentIncline+", Current speed is " + currentSpeed + " mph\n";
             }
             else if ( (i<= -3.5 && i >= -4.5) && currentSpeed != 7.0) {
                 appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>");
                 appendMessage("At Incline " +currentIncline+" Current speed should be 7.0 MPH, but it is " + currentSpeed + " mph<br>");
 
-                results+="\n<font color = #ff0000>* FAIL *</font>\n\n";
+                results+="\n* FAIL *\n\n";
                 results+="At Incline " +currentIncline+" Current speed should be 7.0 MPH, but it is " + currentSpeed + " mph\n";
             }
 
@@ -772,14 +772,14 @@ public class TestIncline extends TestCommons implements TestAll {
                 appendMessage("<br><font color = #00ff00>* PASS *</font><br><br>");
                 appendMessage("At Incline " +currentIncline+", Current speed is " + currentSpeed + " mph<br>");
 
-                results+="\n<font color = #00ff00>* PASS *</font>\n\n";
+                results+="\n* PASS *\n\n";
                 results+="At Incline " +currentIncline+", Current speed is " + currentSpeed + " mph\n";
             }
             else if ( (i<= -5 && i >= -6) && currentSpeed != 6.0) {
                 appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>");
                 appendMessage("At Incline " +currentIncline+" Current speed should be 6.0 MPH, but it is " + currentSpeed + " mph<br>");
 
-                results+="\n<font color = #ff0000>* FAIL *</font>\n\n";
+                results+="\n* FAIL *\n\n";
                 results+="At Incline " +currentIncline+" Current speed should be 6.0 MPH, but it is " + currentSpeed + " mph\n";
             }
             //>15% to 25% = 8 mph
@@ -787,14 +787,14 @@ public class TestIncline extends TestCommons implements TestAll {
                 appendMessage("<br><font color = #00ff00>* PASS *</font><br><br>");
                 appendMessage("At Incline " +currentIncline+", Current speed is " + currentSpeed + " mph<br>");
 
-                results+="\n<font color = #00ff00>* PASS *</font>\n\n";
+                results+="\n* PASS *\n\n";
                 results+="At Incline " +currentIncline+", Current speed is " + currentSpeed + " mph\n";
             }
             else if ( (i> 15 && i <= 25) && currentSpeed != 8.0) {
                 appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>");
                 appendMessage("At Incline " +currentIncline+" Current speed should be 6.0 MPH, but it is " + currentSpeed + " mph<br>");
 
-                results+="\n<font color = #ff0000>* FAIL *</font>\n\n";
+                results+="\n* FAIL *\n\n";
                 results+="At Incline " +currentIncline+" Current speed should be 6.0 MPH, but it is " + currentSpeed + " mph\n";
             }
             //>25% to 40% = 6 mph
@@ -802,14 +802,14 @@ public class TestIncline extends TestCommons implements TestAll {
                 appendMessage("<br><font color = #00ff00>* PASS *</font><br><br>");
                 appendMessage("At Incline " +currentIncline+", Current speed is " + currentSpeed + " mph<br>");
 
-                results+="\n<font color = #00ff00>* PASS *</font>\n\n";
+                results+="\n* PASS *\n\n";
                 results+="At Incline " +currentIncline+", Current speed is " + currentSpeed + " mph\n";
             }
             else if ( (i> 25 && i <= 40) && currentSpeed != 6.0) {
                 appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>");
                 appendMessage("At Incline " +currentIncline+" Current speed should be 6.0 MPH, but it is " + currentSpeed + " mph<br>");
 
-                results+="\n<font color = #ff0000>* FAIL *</font>\n\n";
+                results+="\n* FAIL *\n\n";
                 results+="At Incline " +currentIncline+" Current speed should be 6.0 MPH, but it is " + currentSpeed + " mph\n";
             }
 
@@ -872,14 +872,14 @@ public class TestIncline extends TestCommons implements TestAll {
             appendMessage("Checking incline will reach set value...<br>");
 
             results+="Checking incline will reach set value...\n";
-             //Wait for the incline motor to go to 5%
+             //Wait for the incline motor to go setIncline
              startime= System.nanoTime();
              do
              {
                  actualIncline = hCmd.getActualIncline();
                  Thread.sleep(300);
-                 appendMessage("Current Incline is: " + actualIncline+ " goal: " + setIncline+" time elapsed: "+seconds);
-                 results+="Current Incline is: " + actualIncline+ " goal: " + setIncline+" time elapsed: "+seconds;
+                 appendMessage("Current Incline is: " + actualIncline+ " goal: " + setIncline+" time elapsed: "+seconds+"<br>");
+                 results+="Current Incline is: " + actualIncline+ " goal: " + setIncline+" time elapsed: "+seconds+"\n";
                  elapsedTime = System.nanoTime() - startime;
                  seconds = elapsedTime / 1.0E09;
              } while(setIncline!=actualIncline && seconds < 60);//Do while the incline hasn't reached its target point. Break the  loop if it took more than a minute to reach target incline
@@ -935,14 +935,14 @@ public class TestIncline extends TestCommons implements TestAll {
                 appendMessage("<br><font color = #00ff00>* PASS *</font><br><br>");
                 appendMessage("Actual Incline is currently at " + actualIncline + "% which is between 0% and max incline<br>");
 
-                results+="\n<font color = #00ff00>* PASS *</font>\n\n";
+                results+="\n* PASS *\n\n";
                 results+="Actual Incline is currently at " + actualIncline + "% which is between 0% and max incline\n";
              }
              else {
                 appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>");
                 appendMessage("Actual Incline should be between 0% and " + maxIncline + "%, but it is currently at " + actualIncline + "%<br>");
 
-                results+="\n<font color = #ff0000>* FAIL *</font>\n\n";
+                results+="\n* FAIL *\n\n";
                 results+="Actual Incline should be between 0% and " + maxIncline + "%, but it is currently at " + actualIncline + "%\n";
              }
 
@@ -971,14 +971,14 @@ public class TestIncline extends TestCommons implements TestAll {
                  appendMessage("<br><font color = #00ff00>* PASS *</font><br><br>");
                  appendMessage("Actual Incline after DMK put back is at " + actualIncline + "% which is the same as when the key was pulled<br>");
 
-                 results+="\n<font color = #00ff00>* PASS *</font>\n\n";
+                 results+="\n* PASS *\n\n";
                  results+="Actual Incline after DMK put back is at " + actualIncline + "% which is the same as when the key was pulled\n";
              }
              else {
                 appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>");
                 appendMessage("Actual Incline should be " + actualIncline + "%, but it is currently at " + hCmd.getActualIncline() + "%<br>");
 
-                results+="\n<font color = #ff0000>* FAIL *</font>\n\n";
+                results+="\n* FAIL *\n\n";
                 results+="Actual Incline should be " + actualIncline + "%, but it is currently at " + hCmd.getActualIncline() + "%\n";
              }
 
@@ -1002,11 +1002,11 @@ public class TestIncline extends TestCommons implements TestAll {
     public String runAll() {
         String results="";
         try {
+           results+=this.testInclineRetentionDmkRecall();
            results+=this.testInclineController();
            results+=this.testStopIncline();
            results+=this.testRetainedIncline();
            results+=this.testSpeedInclineLimit();
-           results+=this.testInclineRetentionDmkRecall();
         }
         catch (Exception ex) {
             ex.printStackTrace();

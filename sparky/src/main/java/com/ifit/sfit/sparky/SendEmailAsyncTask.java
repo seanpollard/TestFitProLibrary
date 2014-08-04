@@ -18,7 +18,7 @@ import javax.mail.MessagingException;
  */
 public class SendEmailAsyncTask extends AsyncTask<Void, Void, Boolean> {
     //Set up default email with username and password
-    Mail m = new Mail("phil.icontesting@gmail.com", "icon2014");
+    Mail m = new Mail("fitprotesting.icon@gmail.com", "fitprotest2014");
     DateFormat dateFormat = new SimpleDateFormat("EEE, d MMM hh:mm:ss a");
 
     public SendEmailAsyncTask(String toString) {
@@ -28,7 +28,7 @@ public class SendEmailAsyncTask extends AsyncTask<Void, Void, Boolean> {
         String[] toArr = {toString};
         m.setTo(toArr);
         //Who the email is from
-        m.setFrom("phil.icontesting@gmail.com");
+        m.setFrom("fitprotesting.icon@gmail.com");
         //Email subject
         m.setSubject("FitPro Automation Test Results: " + dateFormat.format(Calendar.getInstance().getTime()));
 //        m.setBody("see attachment");
@@ -45,7 +45,7 @@ public class SendEmailAsyncTask extends AsyncTask<Void, Void, Boolean> {
             }
         } catch(Exception e) {
             //Toast.makeText(MailApp.this, "There was a problem sending the email.", Toast.LENGTH_LONG).show();
-            Log.e("philsTestApp", "Could not send email", e);
+            Log.e("FitPro Test App", "Could not send email", e);
         }
 
     }

@@ -1,5 +1,6 @@
 package com.ifit.sfit.sparky.testsdrivers;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.View;
@@ -124,6 +125,29 @@ public class AllTests extends BaseTest implements View.OnClickListener, AdapterV
                             runAll();
                             break;
                     }
+                    try {
+                        returnString += "\n" + systemString;
+
+                        outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
+                        outputStream.write((returnString).getBytes());
+                        outputStream.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    if (returnString.isEmpty()) {
+                        passFail = "<font color = #ff0000>ERROR</font>";
+                    } else if (returnString.contains("FAIL")) {
+                        passFail = "<font color = #ff0000>FAIL</font>";
+                    } else {
+                        passFail = "<font color = #00ff00>PASS</font>";
+                    }
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            resultView.setText(Html.fromHtml(passFail));
+                        }
+                    });
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -149,6 +173,7 @@ public class AllTests extends BaseTest implements View.OnClickListener, AdapterV
     @Override
     public String runAll() throws Exception {
 
+        returnString="";
         returnString = g.runAll();
         returnString += m.runAll();
         returnString += i.runAll();

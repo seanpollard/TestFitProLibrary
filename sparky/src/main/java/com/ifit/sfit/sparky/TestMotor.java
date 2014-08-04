@@ -147,7 +147,7 @@ public class TestMotor extends TestCommons implements TestAll {
         results+="The current speed after 5 seconds running is: " + currentSpeed + "\n";
         results+="The ACTUAL speed after 5 seconds running is: " + actualspeed + "\n";
 
-        if (currentSpeed == 1.0) {
+        if (currentSpeed == 2.0) {
             appendMessage("<br><font color = #00ff00>* PASS *</font><br><br>");
             appendMessage("Speed correctly started at 2.0 kph<br>");
 
@@ -509,19 +509,19 @@ public class TestMotor extends TestCommons implements TestAll {
 
         currentSpeed = hCmd.getSpeed();// Read speed again
 
-        if (currentSpeed == 1.0) {
+        if (currentSpeed == 2.0) {
             appendMessage("<br><font color = #00ff00>* PASS *</font><br><br>");
-            appendMessage("The speed should be 1.0 kph and it is currently set at: " + currentSpeed + " kph<br>");
+            appendMessage("The speed should be 2.0 kph and it is currently set at: " + currentSpeed + " kph<br>");
 
             results+="\n* PASS *\n\n";
-            results+="The speed should be 1.0 kph and it is currently set at: " + currentSpeed + " kph\n";
+            results+="The speed should be 2.0 kph and it is currently set at: " + currentSpeed + " kph\n";
 
         } else {
            appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>");
-           appendMessage("The speed should be 1.0 kph, but it is currently set at: " + currentSpeed + " kph<br>");
+           appendMessage("The speed should be 2.0 kph, but it is currently set at: " + currentSpeed + " kph<br>");
            
            results+="\n* FAIL *\n\n";
-           results+="The speed should be 1.0 kph, but it is currently set at: " + currentSpeed + " kph\n";
+           results+="The speed should be 2.0 kph, but it is currently set at: " + currentSpeed + " kph\n";
 
         }
 
@@ -573,6 +573,10 @@ public class TestMotor extends TestCommons implements TestAll {
         String currentMode;
         final int NUM_TESTS = 1;
         double roundedJ;
+        long elapsedTime = 0;
+        double seconds = 0;
+        long startime = 0;
+        double actualSpeed = 0;
 
         appendMessage("<br>--------------------------SPEED TEST RESULTS--------------------------<br><br>");
         appendMessage(Calendar.getInstance().getTime() + "<br><br>");
@@ -620,6 +624,19 @@ public class TestMotor extends TestCommons implements TestAll {
                 mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
                 Thread.sleep(1000);
 
+/* THIS PART WILL BE UNCOMMENTED ONCE ACTUAL SPEED IS ACCURATE
+                startime= System.nanoTime();
+                do
+                {
+                    actualSpeed = hCmd.getActualSpeed();
+                    Thread.sleep(300);
+                    appendMessage("Current Speed is: " + actualSpeed+ " goal: " + j+" time elapsed: "+seconds+"<br>");
+                    results+="Current Speed is: " + actualSpeed+ " goal: " + j+" time elapsed: "+seconds+"\n";
+                    elapsedTime = System.nanoTime() - startime;
+                    seconds = elapsedTime / 1.0E09;
+                } while(j!=actualSpeed && seconds < 20);//Do while the incline hasn't reached its point yet or took more than 20 secs
+
+*/
                 if (roundedJ == 0) {
                     Thread.sleep(3000);
                 } else if (roundedJ < MAX_SPEED && roundedJ > 0) {
@@ -840,7 +857,7 @@ public class TestMotor extends TestCommons implements TestAll {
         
         results+="Status of changing speed to 16kph " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
         results+="current speed after setting it to max and before waiting 22 secs is: " + hCmd.getSpeed() + " actual speed is " + hCmd.getActualSpeed() + "\n";
-        results+="now waiting 22 secs...\n ";
+        results+="now waiting 22 secs...\n";
         
         Thread.sleep(22000);    //Wait for Max Speed
         appendMessage("current speed after 22 secs and before going into pause mode is: " + hCmd.getSpeed() + " actual speed is " + hCmd.getActualSpeed() + "<br>");
@@ -861,12 +878,12 @@ public class TestMotor extends TestCommons implements TestAll {
         appendMessage("Status of Setting mode to PAUSE (simulate Stop key: " + wrCmd.getCommand().getStatus().getStsId().getDescription() + "<br>");
         appendMessage("Current Mode is: " + hCmd.getMode() + "<br>");
         appendMessage("After aprox 5 secs in pause mode Current Speed is: " + hCmd.getSpeed() + " actual speed is " + hCmd.getActualSpeed() + "<br>");
-        appendMessage("About to try to set speed to Max... This action SHOULD NOT CHANGE the speed!<br> ");
+        appendMessage("About to try to set speed to Max... This action SHOULD NOT CHANGE the speed!<br>");
 
         results+="Status of Setting mode to PAUSE (simulate Stop key: " + wrCmd.getCommand().getStatus().getStsId().getDescription() + "\n";
         results+="Current Mode is: " + hCmd.getMode() + "\n";
         results+="After aprox 5 secs in pause mode Current Speed is: " + hCmd.getSpeed() + " actual speed is " + hCmd.getActualSpeed() + "\n";
-        results+="About to try to set speed to Max... This action SHOULD NOT CHANGE the speed!\n ";
+        results+="About to try to set speed to Max... This action SHOULD NOT CHANGE the speed!\n";
         
         ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(BitFieldId.KPH, maxSpeed);
         mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
