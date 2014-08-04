@@ -39,6 +39,7 @@ public class TestBitfields extends TestCommons implements TestAll {
     private SystemDevice MainDevice;
     private  FecpCommand wrCmd;
     private  FecpCommand rdCmd;
+    private String results="";
 
     public TestBitfields(FecpController fecpController, BaseTest act, SFitSysCntrl ctrl) {
         //Get controller sent from the main activity (TestApp)
@@ -84,6 +85,10 @@ public class TestBitfields extends TestCommons implements TestAll {
         appendMessage("<br><br>----------------------------BITFIELDS TEST RESULTS----------------------------<br><br>");
         appendMessage("------Testing Unsupported Bitfields------<br><br>"); //to store results of test
 
+        results+="\n\n----------------------------BITFIELDS TEST RESULTS----------------------------\n\n";
+        results+="------Testing Unsupported Bitfields------\n\n"; //to store results of test
+
+
         ArrayList<BitFieldId> supportedBitFields = new ArrayList<BitFieldId>(MainDevice.getInfo().getSupportedBitfields());
         ArrayList<BitFieldId> supportedRdBitFields = new ArrayList<BitFieldId>(MainDevice.getInfo().getSupportedReadOnlyBitfields());
 
@@ -97,13 +102,18 @@ public class TestBitfields extends TestCommons implements TestAll {
                 //Try to read a value from this bitfeld and verify that it throws exception
                 try{
                     appendMessage("current bitfield: "+ bf.name()+"<br>");
+                    
+                    results+="current bitfield: "+ bf.name()+"\n";
 
                     ((WriteReadDataCmd)wrCmd.getCommand()).addReadBitField(bf);
                     mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
                     Thread.sleep(1000);
                     appendMessage("Status trying to read unsupported bitfield: "+ bf.name() +" " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>");
-
                     appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br> NO Exception thrown when trying to read unsupported bitfield:  "+bf.name()+ "<br>");
+
+                    results+="Status trying to read unsupported bitfield: "+ bf.name() +" " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
+                    results+="\n<font color = #ff0000>* FAIL *</font>\n\n NO Exception thrown when trying to read unsupported bitfield:  "+bf.name()+ "\n";
+
                 }
                 catch (Exception ex)
                 {
@@ -111,6 +121,10 @@ public class TestBitfields extends TestCommons implements TestAll {
                     appendMessage("Status trying to read unsupported bitfield: "+ bf.name() +" "+ (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>");
                     appendMessage("<br><br><font color = #00ff00>* PASS *</font><br><br> Exception thrown when trying to read unsupported bitfield:  "+bf.name()+ "<br>");
                     appendMessage("Details: " + ex.toString() +"<br><br>");
+
+                    results+="Status trying to read unsupported bitfield: "+ bf.name() +" "+ (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
+                    results+="\n\n<font color = #00ff00>* PASS *</font>\n\n Exception thrown when trying to read unsupported bitfield:  "+bf.name()+ "\n";
+                    results+="Details: " + ex.toString() +"\n\n";
                     //Remove bitfield so system can throw exception for next invalid bitfiled
                     ((WriteReadDataCmd)wrCmd.getCommand()).removeReadDataField(bf);
                     mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
@@ -120,6 +134,8 @@ public class TestBitfields extends TestCommons implements TestAll {
         }
 
         appendMessage("------Testing Read/Write Access for Supported READ-ONLY Bitfields------<br><br>"); //to store results of test
+
+        results+="------Testing Read/Write Access for Supported READ-ONLY Bitfields------\n\n"; //to store results of test
 
         //Loop through all readonly supported fields
         for(BitFieldId b: supportedRdBitFields)
@@ -131,12 +147,19 @@ public class TestBitfields extends TestCommons implements TestAll {
                 mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
                 Thread.sleep(1000);
                 appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br> NO Exception thrown when trying to write read-only bitfield:  " + b.name() + "<br>");
+               
+                results+="\n<font color = #ff0000>* FAIL *</font>\n\n NO Exception thrown when trying to write read-only bitfield:  " + b.name() + "\n";
+
             }
             catch (Exception ex)
             {
                 ex.printStackTrace();
                 appendMessage("<br><br><font color = #00ff00>* PASS *</font><br><br> Exception thrown when trying to write read-only bitfield:  "+b.name()+ "<br>");
                 appendMessage(" Details: " + ex.getMessage() +"<br><br>");
+
+                results+="\n\n<font color = #00ff00>* PASS *</font>\n\n Exception thrown when trying to write read-only bitfield:  "+b.name()+ "\n";
+                results+=" Details: " + ex.getMessage() +"\n\n";
+
             }
         }
         //set mode back to idle to stop the test
@@ -150,7 +173,7 @@ public class TestBitfields extends TestCommons implements TestAll {
         mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
         Thread.sleep(1000);
         mSFitSysCntrl.getFitProCntrl().removeCmd(wrCmd);
-        return res;
+        return results;
     }
     //-------------------------------------------------------------------------------//
     //   Test input values for each bitfield - testBitfieldValuesValidation()        //
@@ -165,6 +188,9 @@ public class TestBitfields extends TestCommons implements TestAll {
     {
         System.out.println("NOW RUNNING READ/WRITE ACCESS FOR SUPPORTED BITFIELDS...<br>");
         appendMessage("------Testing Read/Write Access with valid values for Supported WRITE/READ Bitfields------<br><br>"); //to store results of test
+       
+        results+="------Testing Read/Write Access with valid values for Supported WRITE/READ Bitfields------\n\n"; //to store results of test
+
         ArrayList<BitFieldId> supportedWrBitFields = new ArrayList<BitFieldId>(MainDevice.getInfo().getSupportedWriteBitfields());
 
         FecpCommand fanSpeedcmd = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
@@ -192,13 +218,11 @@ public class TestBitfields extends TestCommons implements TestAll {
             switch (bf.name()) {
                 case "KPH":
                     valueToWrite = -5.0;//Invalid value
-                    defaultValue = 1.0;
                     verifyBitfield(kphCmd,ModeId.RUNNING,bf,valueToWrite,false);
                     valueToWrite = 3.0;
                     verifyBitfield(kphCmd,ModeId.RUNNING,bf,valueToWrite,true);
                     break;
                 case "GRADE":
-                    defaultValue = 0.0;
                     valueToWrite = 45.0;//Invalid value
                     verifyBitfield(gradeCmd,ModeId.IDLE,bf,valueToWrite,false);
                     valueToWrite = 5.0;
@@ -207,7 +231,6 @@ public class TestBitfields extends TestCommons implements TestAll {
                 case "RESISTANCE":
                     break;
                 case "FAN_SPEED":
-                    defaultValue = 0.0;
                     valueToWrite = -3.0;//Invalid value
                     verifyBitfield(fanSpeedcmd,ModeId.RUNNING,bf,valueToWrite,false);
                     valueToWrite = 12.0; //set fan speed to 15% of max
@@ -219,7 +242,6 @@ public class TestBitfields extends TestCommons implements TestAll {
                     ((WriteReadDataCmd) workoutModeCmd.getCommand()).addReadBitField(bf);
                     mSFitSysCntrl.getFitProCntrl().addCmd(workoutModeCmd);
                     Thread.sleep(1000);
-                    defaultValue = hCmd.getMode();//In this case the default is last mode
                     valueToWrite = 15.0;
                     verifyBitfield(workoutModeCmd,ModeId.RUNNING,bf,valueToWrite,false);
                     valueToWrite = ModeId.PAUSE; //Pause Mode
@@ -231,14 +253,12 @@ public class TestBitfields extends TestCommons implements TestAll {
                     break;
                 case "AGE":
                     valueToWrite = 2.0; //invalid value
-                    defaultValue = 35.0;
                     verifyBitfield(ageCmd,ModeId.IDLE,bf,valueToWrite,false);
                     valueToWrite = 18.0; //set age to 20 years old
                     verifyBitfield(ageCmd,ModeId.IDLE,bf,valueToWrite,true);
                     break;
                 case "WEIGHT":
                     valueToWrite = 20.0; //invalid value
-                    defaultValue = 83.91;
                     verifyBitfield(weightCmd,ModeId.IDLE,bf,valueToWrite,false);
                     valueToWrite = 68.0; //set weight to 20 years old
                     verifyBitfield(weightCmd,ModeId.IDLE,bf,valueToWrite,true);
@@ -253,17 +273,14 @@ public class TestBitfields extends TestCommons implements TestAll {
                     break;
                 case "IDLE_TIMEOUT":
                     valueToWrite = -4.0; //set timeout to 9secs to go from pause to IDLE
-                    defaultValue = 1.0;
                     verifyBitfield(idleTimeOutCmd,ModeId.IDLE,bf,valueToWrite,false);
                     valueToWrite = 9.0; //set timeout to 9 secs to go from pause to IDLE
                     verifyBitfield(idleTimeOutCmd,ModeId.IDLE,bf,valueToWrite,true);
                     break;
                 case "PAUSE_TIMEOUT":
                     valueToWrite = -9.0; //set timeout to 9secs to go from pause to IDLE
-                    defaultValue = 1.0;
                     verifyBitfield(pauseTimeOutCmd,ModeId.IDLE,bf,valueToWrite,false);
                     valueToWrite = 10.0; //set timeout to 5secs to go from pause to IDLE
-                    defaultValue = 0.0;
                     verifyBitfield(pauseTimeOutCmd,ModeId.PAUSE,bf,valueToWrite,true);
                     break;
                 case "SYSTEM_UNITS":
@@ -307,7 +324,7 @@ public class TestBitfields extends TestCommons implements TestAll {
         ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.IDLE);
         mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
         Thread.sleep(1000);
-        return res;
+        return results;
     }
     //Helper function to test bitfields
     private void verifyBitfield(FecpCommand cmd, ModeId modeId, BitFieldId bitFieldId, Object valueToWrite, boolean validValue) throws InvalidCommandException, InvalidBitFieldException {
@@ -333,20 +350,33 @@ public class TestBitfields extends TestCommons implements TestAll {
         }
         if(validValue) {
             appendMessage("<br>using VALID value "+ valueToWrite);
+           
+            results+="\nusing VALID value "+ valueToWrite;
             if (hCmd.toString().equals(String.valueOf(valueToWrite))) {
                 appendMessage("<br><br><font color = #00ff00>* PASS *</font><br><br> value " + hCmd.toString() + " read from brainboard matches value " + valueToWrite + " written to bitfield " + bitFieldId.name() + "<br>");
+               
+                results+="\n\n* PASS *\n\n value " + hCmd.toString() + " read from brainboard matches value " + valueToWrite + " written to bitfield " + bitFieldId.name() + "\n";
+            
             } else {
                 appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br> value " + hCmd.toString() + " read from brainboard DOESN'T match value " + valueToWrite + " written to bitfield " + bitFieldId.name() + "<br>");
+               
+                results+="\n* FAIL *\n\n value " + hCmd.toString() + " read from brainboard DOESN'T match value " + valueToWrite + " written to bitfield " + bitFieldId.name() + "\n";
             }
         }
         else
         { appendMessage("<br>using INVALID value "+ valueToWrite);
+            
+            results+="\nusing INVALID value "+ valueToWrite;
 
             if (hCmd.toString().equals(String.valueOf(valueToWrite))) {
                 appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br> invalid value " + hCmd.toString() + " read from brainboard should have not been written for bitfield " + bitFieldId.name() + "<br>");
+                
+                results+="\n* FAIL *\n\n invalid value " + hCmd.toString() + " read from brainboard should have not been written for bitfield " + bitFieldId.name() + "\n";
 
             } else {
                 appendMessage("<br><br><font color = #00ff00>* PASS *</font><br><br> invalid value " + valueToWrite + " was not written to brainboard for bitfield " + bitFieldId.name()+" value "+hCmd.toString() + " was written instead<br>");
+                results+="\n\n* PASS *\n\n invalid value " + valueToWrite + " was not written to brainboard for bitfield " + bitFieldId.name()+" value "+hCmd.toString() + " was written instead\n";
+
             }
         }
         try {
@@ -363,9 +393,9 @@ public class TestBitfields extends TestCommons implements TestAll {
     @Override
     public String runAll() throws Exception {
 
-        this.testBitfieldRdWr();
-        this.testBitfieldValuesValidation();
+       results+=this.testBitfieldRdWr();
+       results+=this.testBitfieldValuesValidation();
 
-        return res;
+        return results;
     }
 }
