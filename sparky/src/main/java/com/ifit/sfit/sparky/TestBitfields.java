@@ -82,6 +82,9 @@ public class TestBitfields extends TestCommons implements TestAll {
     public String testBitfieldRdWr() throws Exception {
         System.out.println("NOW RUNNING READ ACCESS & UNSUPPORTED BITFIELDS TEST...<br>");
         Object valueToWrite = 10;
+
+        double timeOfTest = 0; //how long test took in seconds
+        long startTestTimer = System.nanoTime();
         appendMessage("<br><br>----------------------------BITFIELDS TEST RESULTS----------------------------<br><br>");
         appendMessage("------Testing Unsupported Bitfields------<br><br>"); //to store results of test
 
@@ -173,6 +176,12 @@ public class TestBitfields extends TestCommons implements TestAll {
         mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
         Thread.sleep(1000);
         mSFitSysCntrl.getFitProCntrl().removeCmd(wrCmd);
+
+        timeOfTest = System.nanoTime() - startTestTimer;
+        timeOfTest = timeOfTest / 1.0E09;
+
+        appendMessage("<br>This test took a total of"+timeOfTest+"secs <br>");
+        results+="\nThis test took a total of"+timeOfTest+"secs \n";
         return results;
     }
     //-------------------------------------------------------------------------------//
@@ -209,7 +218,8 @@ public class TestBitfields extends TestCommons implements TestAll {
 
         //Loop through all read/write supported fields, write invalid value and verify read value from brainboard is the default value
         // Then write a valid value and verify it by reading it from brainboard
-
+        double timeOfTest = 0; //how long test took in seconds
+        long startTestTimer = System.nanoTime();
         for (BitFieldId bf : supportedWrBitFields) {
             //All Write/Read bitfields are: KPH, GRADE, RESISTANCE, FAN_SPEED,VOLUME, WORKOUT_MODE, AUDIO_SOURCE, WORKOUT, AGE, WEIGHT, GEARS
             //TRANS_MAX, BV_VOLUME, BV_FREQUENCY IDLE_TIMEOUT, PAUSE_TIMEOUT, SYSTEM_UNITS, GENDER, FIRST_NAME, LAST_NAME, IFIT_USER_NAME,
@@ -218,6 +228,8 @@ public class TestBitfields extends TestCommons implements TestAll {
             switch (bf.name()) {
                 case "KPH":
                     valueToWrite = -5.0;//Invalid value
+                    verifyBitfield(kphCmd,ModeId.RUNNING,bf,valueToWrite,false);
+                    valueToWrite = 25.0;//Invalid value
                     verifyBitfield(kphCmd,ModeId.RUNNING,bf,valueToWrite,false);
                     valueToWrite = 3.0;
                     verifyBitfield(kphCmd,ModeId.RUNNING,bf,valueToWrite,true);
@@ -313,6 +325,7 @@ public class TestBitfields extends TestCommons implements TestAll {
             }
             // mSFitSysCntrl.getFitProCntrl().removeCmd(cmd);
             // Thread.sleep(1000);
+
         }
 //set mode back to idle to stop the test
         ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.PAUSE);
@@ -324,6 +337,12 @@ public class TestBitfields extends TestCommons implements TestAll {
         ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.IDLE);
         mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
         Thread.sleep(1000);
+
+        timeOfTest = System.nanoTime() - startTestTimer;
+        timeOfTest = timeOfTest / 1.0E09;
+
+        appendMessage("<br>This test took a total of"+timeOfTest+"secs <br>");
+        results+="\nThis test took a total of"+timeOfTest+"secs \n";
         return results;
     }
     //Helper function to test bitfields

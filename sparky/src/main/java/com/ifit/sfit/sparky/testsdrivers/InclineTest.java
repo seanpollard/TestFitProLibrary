@@ -6,6 +6,7 @@ import android.text.Html;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 
 import com.ifit.sfit.sparky.R;
@@ -41,6 +42,7 @@ public class InclineTest extends BaseTest implements View.OnClickListener, Adapt
     void runTest() {
 
         final TestIncline t = new TestIncline(fecpController, (BaseTest) context, this.mSFitSysCntrl);
+        final ScrollView scrollview = ((ScrollView) findViewById(R.id.scrollView));
 
         t.setUpdateResultViewListener(new TestMotor.UpdateResultView() {
             @Override
@@ -49,6 +51,12 @@ public class InclineTest extends BaseTest implements View.OnClickListener, Adapt
                     @Override
                     public void run() {
                         testingView.setText(Html.fromHtml(msg));
+                        scrollview.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                scrollview.fullScroll(ScrollView.FOCUS_DOWN);
+                            }
+                        });
                     }
                 });
 

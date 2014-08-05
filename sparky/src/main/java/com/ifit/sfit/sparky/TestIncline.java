@@ -101,6 +101,8 @@ public class TestIncline extends TestCommons implements TestAll {
         double minIncline;
         double currentActualIncline;
         double transMax;
+        double timeOfTest = 0; //how long test took in seconds
+        long startTestTimer = System.nanoTime();
 
         minIncline = hCmd.getMinIncline();
         maxIncline = hCmd.getMaxIncline();
@@ -215,6 +217,12 @@ public class TestIncline extends TestCommons implements TestAll {
         ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.IDLE);
         mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
         Thread.sleep(1000);
+
+        timeOfTest = System.nanoTime() - startTestTimer;
+        timeOfTest = timeOfTest / 1.0E09;
+
+        appendMessage("<br>This test took a total of"+timeOfTest+"secs <br>");
+        results+="\nThis test took a total of"+timeOfTest+"secs \n";
         return results;
     }
 
@@ -251,7 +259,8 @@ public class TestIncline extends TestCommons implements TestAll {
         double currentActualIncline;
         long elapsedTime = 0, startime = 0;
         double seconds = 0;
-
+        double timeOfTest = 0; //how long test took in seconds
+        long startTestTimer = System.nanoTime();
 
         maxIncline = hCmd.getMaxIncline();
 
@@ -379,14 +388,14 @@ public class TestIncline extends TestCommons implements TestAll {
             appendMessage("<br><font color = #00ff00>* PASS *</font><br><br>");
             appendMessage("The incline value from Max Incline to Min Incline was reset to " + maxToMinIncline1 + "%<br>");
 
-            results+="\n<font color = #00ff00>* PASS *</font>\n\n";
+            results+="\n* PASS *\n\n";
             results+="The incline value from Max Incline to Min Incline was reset to " + maxToMinIncline1 + "%\n";
         }
         else{
             appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>");
             appendMessage("The Incline value from Max Incline to Min Incline did not stop when the Stop button was pressed<br>");
 
-            results+="\n<font color = #ff0000>* FAIL *</font>\n\n";
+            results+="\n* FAIL *\n\n";
             results+="The Incline value from Max Incline to Min Incline did not stop when the Stop button was pressed\n";
         }
     //set mode back to idle to stop the test
@@ -399,6 +408,12 @@ public class TestIncline extends TestCommons implements TestAll {
         ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.IDLE);
         mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
         Thread.sleep(1000);
+
+        timeOfTest = System.nanoTime() - startTestTimer;
+        timeOfTest = timeOfTest / 1.0E09;
+
+        appendMessage("<br>This test took a total of"+timeOfTest+"secs <br>");
+        results+="\nThis test took a total of"+timeOfTest+"secs \n";
         return results;
     }
 
@@ -427,6 +442,9 @@ public class TestIncline extends TestCommons implements TestAll {
         String currentMode;
         double currentActualIncline =0;
 
+        double timeOfTest = 0; //how long test took in seconds
+        long startTestTimer = System.nanoTime();
+
         currentMode = "Current Mode is: " + hCmd.getMode();
         appendMessage(currentMode + "<br>");
 
@@ -454,9 +472,9 @@ public class TestIncline extends TestCommons implements TestAll {
         {
             currentActualIncline = hCmd.getActualIncline();
             Thread.sleep(300);
-            appendMessage("Current Incline is: " + currentActualIncline+ " goal: " + setIncline+" time elapsed: "+seconds);
+            appendMessage("Current Incline is: " + currentActualIncline+ " goal: " + setIncline+" time elapsed: "+seconds+"<br>");
 
-            results+="Current Incline is: " + currentActualIncline+ " goal: " + setIncline+" time elapsed: "+seconds;
+            results+="Current Incline is: " + currentActualIncline+ " goal: " + setIncline+" time elapsed: "+seconds+"\n";
             elapsedTime = System.nanoTime() - startime;
             seconds = elapsedTime / 1.0E09;
         } while(setIncline!=currentActualIncline && seconds < 60);//Do while the incline hasn't reached its target point. Break the  loop if it took more than a minute to reach target incline
@@ -532,6 +550,11 @@ public class TestIncline extends TestCommons implements TestAll {
         mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
         Thread.sleep(1000);
 
+        timeOfTest = System.nanoTime() - startTestTimer;
+        timeOfTest = timeOfTest / 1.0E09;
+
+        appendMessage("<br>This test took a total of"+timeOfTest+"secs <br>");
+        results+="\nThis test took a total of"+timeOfTest+"secs \n";
         return results;
     }
 
@@ -566,6 +589,9 @@ public class TestIncline extends TestCommons implements TestAll {
         long startime = 0;
         double setIncline =0;
         double currentSpeed = 0;
+
+        double timeOfTest = 0; //how long test took in seconds
+        long startTestTimer = System.nanoTime();
         String results="";
         System.out.println("NOW RUNNING SPEED INCLINE LIMIT TEST<br>");
 
@@ -580,7 +606,7 @@ public class TestIncline extends TestCommons implements TestAll {
         mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
         Thread.sleep(1000);
         appendMessage("Status of setting mode tu running: " + wrCmd.getCommand().getStatus().getStsId().getDescription() + "<br>");
-        appendMessage("current mode: "+hCmd.getMode());
+        appendMessage("current mode: "+hCmd.getMode()+"\n");
 
         results+="Status of setting mode tu running: " + wrCmd.getCommand().getStatus().getStsId().getDescription() + "\n";
         results+="current mode: "+hCmd.getMode()+"\n";
@@ -824,7 +850,13 @@ public class TestIncline extends TestCommons implements TestAll {
         ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.IDLE);
         mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
         Thread.sleep(1000);
-        return res;
+
+        timeOfTest = System.nanoTime() - startTestTimer;
+        timeOfTest = timeOfTest / 1.0E09;
+
+        appendMessage("<br>This test took a total of"+timeOfTest+"secs <br>");
+        results+="\nThis test took a total of"+timeOfTest+"secs \n";
+        return results;
     }
 
     //--------------------------------------------//
@@ -844,6 +876,16 @@ public class TestIncline extends TestCommons implements TestAll {
              //Read actual Incline to verify the console has correct current incline
             String results="";
              System.out.println("NOW RUNNING INCLINE RETENTION AFTER DMK TEST<br>");
+        long elapsedTime = 0;
+        double seconds = 0;
+        long startime = 0;
+        double setIncline = 0;
+
+        double actualIncline;
+        double maxIncline;
+
+        double timeOfTest = 0; //how long test took in seconds
+        long startTestTimer = System.nanoTime();
 
             appendMessage("<br>----------------------INCLINE RETENTION AFTER DMK TEST RESULTS----------------------<br><br>");
             appendMessage(Calendar.getInstance().getTime() + "<br><br>");
@@ -851,8 +893,6 @@ public class TestIncline extends TestCommons implements TestAll {
             results+="\n----------------------INCLINE RETENTION AFTER DMK TEST RESULTS----------------------\n\n";
             results+=Calendar.getInstance().getTime() + "\n\n";
 
-             double actualIncline;
-             double maxIncline;
 
              //Set Incline to 0
              ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.GRADE, 0);
@@ -863,11 +903,6 @@ public class TestIncline extends TestCommons implements TestAll {
             appendMessage("Status of setting incline to 0%: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>");
 
             results+="Status of setting incline to 0%: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
-
-            long elapsedTime = 0;
-             double seconds = 0;
-             long startime = 0;
-             double setIncline = 0;
 
             appendMessage("Checking incline will reach set value...<br>");
 
@@ -995,6 +1030,11 @@ public class TestIncline extends TestCommons implements TestAll {
              //end the recurring callback
              mSFitSysCntrl.getFitProCntrl().removeCmd(wrCmd);
 
+        timeOfTest = System.nanoTime() - startTestTimer;
+        timeOfTest = timeOfTest / 1.0E09;
+
+        appendMessage("<br>This test took a total of"+timeOfTest+"secs <br>");
+        results+="\nThis test took a total of"+timeOfTest+"secs \n";
              return results;
          }
 
@@ -1002,11 +1042,11 @@ public class TestIncline extends TestCommons implements TestAll {
     public String runAll() {
         String results="";
         try {
-           results+=this.testInclineRetentionDmkRecall();
-           results+=this.testInclineController();
-           results+=this.testStopIncline();
-           results+=this.testRetainedIncline();
-           results+=this.testSpeedInclineLimit();
+          results+=this.testInclineRetentionDmkRecall();
+          results+=this.testRetainedIncline();
+          results+=this.testSpeedInclineLimit();
+          results+=this.testStopIncline();
+          results+=this.testInclineController();
         }
         catch (Exception ex) {
             ex.printStackTrace();

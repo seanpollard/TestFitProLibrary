@@ -6,6 +6,7 @@ import android.text.Html;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 
 import com.ifit.sfit.sparky.R;
@@ -51,6 +52,7 @@ public class AllTests extends BaseTest implements View.OnClickListener, AdapterV
          m = new TestMotor(fecpController, (BaseTest) context, this.mSFitSysCntrl);
          i = new TestIntegration(fecpController, (BaseTest) context, this.mSFitSysCntrl);
          g = new TestIncline(fecpController, (BaseTest) context, this.mSFitSysCntrl);
+        final ScrollView scrollview = ((ScrollView) findViewById(R.id.scrollView));
 
         b.setUpdateResultViewListener(new TestBitfields.UpdateResultView() {
             @Override
@@ -59,6 +61,12 @@ public class AllTests extends BaseTest implements View.OnClickListener, AdapterV
                     @Override
                     public void run() {
                         testingView.setText(Html.fromHtml(msg));
+                    }
+                });
+                scrollview.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        scrollview.fullScroll(ScrollView.FOCUS_DOWN);
                     }
                 });
 
@@ -73,6 +81,12 @@ public class AllTests extends BaseTest implements View.OnClickListener, AdapterV
                     @Override
                     public void run() {
                         testingView.setText(Html.fromHtml(msg));
+                        scrollview.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                scrollview.fullScroll(ScrollView.FOCUS_DOWN);
+                            }
+                        });
                     }
                 });
 
@@ -86,6 +100,12 @@ public class AllTests extends BaseTest implements View.OnClickListener, AdapterV
                     @Override
                     public void run() {
                         testingView.setText(Html.fromHtml(msg));
+                        scrollview.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                scrollview.fullScroll(ScrollView.FOCUS_DOWN);
+                            }
+                        });
                     }
                 });
 
@@ -99,6 +119,12 @@ public class AllTests extends BaseTest implements View.OnClickListener, AdapterV
                     @Override
                     public void run() {
                         testingView.setText(Html.fromHtml(msg));
+                        scrollview.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                scrollview.fullScroll(ScrollView.FOCUS_DOWN);
+                            }
+                        });
                     }
                 });
 
@@ -173,12 +199,12 @@ public class AllTests extends BaseTest implements View.OnClickListener, AdapterV
     @Override
     public String runAll() throws Exception {
 
-        returnString="";
-        returnString = g.runAll();
-        returnString += m.runAll();
-        returnString += i.runAll();
-        returnString += b.runAll();
+        String results ="";
+        results += g.runAll();
+        results += m.runAll();
+        results += i.runAll();
+        results += b.runAll();
 
-        return returnString;
+        return results;
     }
 }

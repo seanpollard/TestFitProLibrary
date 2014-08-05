@@ -97,7 +97,8 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
  
          double age;
          double prevAge;
- 
+         double timeOfTest = 0; //how long test took in seconds
+         long startTestTimer = System.nanoTime();
  
          age = hCmd.getAge();
          ageResults += "The default age is set to " + age + " years old\n";
@@ -152,6 +153,11 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
              }
              mSFitSysCntrl.getFitProCntrl().removeCmd(wrCmd);
          }
+         timeOfTest = System.nanoTime() - startTestTimer;
+         timeOfTest = timeOfTest / 1.0E09;
+
+         appendMessage("<br>This test took a total of"+timeOfTest+"secs <br>");
+         ageResults+="\nThis test took a total of"+timeOfTest+"secs \n";
          return ageResults;
      }
      //--------------------------------------------//
@@ -179,7 +185,8 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
          appendMessage("<br><br>------------------------WEIGHT TEST RESULTS------------------------<br><br>");
          appendMessage(Calendar.getInstance().getTime() + "<br><br>");
          double weight;
- 
+         double timeOfTest = 0; //how long test took in seconds
+         long startTestTimer = System.nanoTime();
  
          weight = hCmd.getWeight();
          weightResults += "The default weight is set to " + weight + " kilograms\n";
@@ -224,7 +231,49 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
 
            }
          }
+         appendMessage("<br><br>---------------Out of Range Weight Values------------------<br><br>");
+         weightResults+="\n\n---------------Out of Range Weight Values------------------\n\n";
+         //Set weight to 1 kg and increment by 5
+//         for(double i = 0; i <=220; i+=5) {
+//
+//             //Jump to beyond max invalid weights
+//             if(i >= 45)
+//             {
+//                 i=181;
+//             }
+//             ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(BitFieldId.WEIGHT, i);
+//             mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+//             //need more time for weight controller
+//             Thread.sleep(1000);
+//
+//             weightResults += "\nStatus of setting the Weight to " + i + ": " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
+//             appendMessage("<br>Status of setting the Weight to " + i + ": " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>");
+//
+//             weight = hCmd.getWeight();
+//
+//             if(weight !=i) // i is invalid weight so it should not have been written
+//             {
+//                 weightResults += "\n* PASS *\n\n";
+//                 weightResults += "Current Weight is set to: " + weight + " kilograms. Invalid value " + i + " kilograms was not written!\n";
+//
+//                 appendMessage("<br>* PASS *<br><br>");
+//                 appendMessage("Current Weight is set to: " + weight + " kilograms. Invalid value " + i + " kilograms was not written!\n");
+//             }
+//             else{
+//                 weightResults += "\n<font color = #ff0000>* FAIL *</font>\n\n";
+//                 weightResults += "Current Weight is set to: " + weight + " which matches invalid value " + i + " kilograms\n";
+//
+//                 appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>");
+//                 appendMessage("Current Weight is set to: " + weight + " which matches invalid value " + i + " kilograms\n");
+//
+//             }
+//         }
          mSFitSysCntrl.getFitProCntrl().removeCmd(wrCmd);
+         timeOfTest = System.nanoTime() - startTestTimer;
+         timeOfTest = timeOfTest / 1.0E09;
+
+         appendMessage("<br>This test took a total of"+timeOfTest+"secs <br>");
+         weightResults+="\nThis test took a total of"+timeOfTest+"secs \n";
          return weightResults;
      }
  
@@ -249,7 +298,9 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
          double minIncline;
          double maxSpeed;
          double minSpeed;
- 
+         double timeOfTest = 0; //how long test took in seconds
+         long startTestTimer = System.nanoTime();
+
          maxIncline = hCmd.getMaxIncline();
          minIncline = hCmd.getMinIncline();
  
@@ -293,7 +344,12 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
          }
  
          systemString = titleString + systemString;
- 
+
+         timeOfTest = System.nanoTime() - startTestTimer;
+         timeOfTest = timeOfTest / 1.0E09;
+
+         appendMessage("<br>This test took a total of"+timeOfTest+"secs <br>");
+         systemString+="\nThis test took a total of"+timeOfTest+"secs \n";
          return systemString;
      }
      //--------------------------------------------//
@@ -309,9 +365,13 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
          //Verify Pause timeout by reading the mode and ensuring it is in Results mode
          System.out.println("NOW PAUSE/IDLE TIMEOUT TEST<br>");
          String results = "";
-         double pauseTimeout = 0;
-         double idleTimeout = 0;
+         double pauseTimeout;
+         double idleTimeout;
+         double [] setPauseTimeout ={30,15};
+         double [] setIdleTimeout = {10,5};
          String prevMode="";
+         double timeOfTest = 0; //how long test took in seconds
+         long startTestTimer = System.nanoTime();
 
          appendMessage("<br><br>------------------------PAUSE TIMEOUT TEST RESULTS------------------------<br><br>");
          results += "\n\n------------------------PAUSE/IDLE TIMEOUT TEST RESULTS------------------------\n\n";
@@ -327,92 +387,106 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
 
 
          //Set pause timeout to 30 secs
-         appendMessage("Setting the pause timeout to 30 secs...<br>");
-         results+="Setting the pause timeout to 30 secs...\n";
-         ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.PAUSE_TIMEOUT, 30);//set pause timeout to 30 secs
-         mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
-         Thread.sleep(1000);
-         appendMessage("<br>Status of setting the Pause timeout to 30 secs:  "+ (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>");
-         results+="\nStatus of setting the Pause timeout to 30 secs:  "+ (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
-         pauseTimeout = hCmd.getPauseTimeout();
-         idleTimeout = hCmd.getIdleTimeout();
-         appendMessage("New pause timeout is: "+pauseTimeout+"<br>");
-         results+="New pause timeout is: "+pauseTimeout+"\n";
-
-         //Set mode to Running
-         ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.RUNNING);
-        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
-         Thread.sleep(1000);
-
-
-         appendMessage("Status of setting the Mode to Running: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>");
-         results+="Status of setting the Mode to Running: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
-         appendMessage("Current Mode: "+hCmd.getMode()+"<br>");
-         results+="Current Mode: "+hCmd.getMode()+"\n";
-
-         //Set mode to Pause
-         ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.PAUSE);
-        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
-         Thread.sleep(1000);
-
-         appendMessage("Status of setting the Mode to Pause: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>");
-         results+="Status of setting the Mode to Pause: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
-         appendMessage("Current Mode: "+hCmd.getMode()+"<br>");
-         results+="Current Mode: "+hCmd.getMode()+"\n";
-
-         //Check each second to see if mode has changed from Pause mode. Also prevents from waiting for longer than the timeout if it doesn't work
-         prevMode = hCmd.getMode().getDescription();
-         for(long totalTime = 0; totalTime < pauseTimeout+5; totalTime++){
+         for(int i = 0; i<setPauseTimeout.length; i++) {
+             appendMessage("Setting the pause timeout to " + setPauseTimeout[i] + " secs...<br>");
+             results += "Setting the pause timeout to "+ setPauseTimeout[i] + " secs...\n";
+             ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(BitFieldId.PAUSE_TIMEOUT, setPauseTimeout[i]);//set pause timeout to 30 secs
+             mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
              Thread.sleep(1000);
-             appendMessage("after " + totalTime +" sec(s)the mode is  " + hCmd.getMode().getDescription()+"<br>");
-             results+="after " + totalTime +" sec(s)the mode is  " + hCmd.getMode().getDescription()+"\n";
-             if(hCmd.getMode().getDescription() != "Pause Mode"){
-                 Thread.sleep(1000);//give time for mode to update before reading it
-                 appendMessage("<br>The mode changed from " +prevMode+ " to " + hCmd.getMode().getDescription() + " after " + totalTime + " seconds<br>");
-                 results+="\nThe mode changed from " +prevMode+ " to " + hCmd.getMode().getDescription() + " after " + totalTime + " seconds\n";
-                 break;
+             appendMessage("<br>Status of setting the Pause timeout to "+ setPauseTimeout[i] +" secs:  " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>");
+             results += "\nStatus of setting the Pause timeout to "+ setPauseTimeout[i] +" secs:  " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
+
+             appendMessage("Setting the Idle timeout to " + setIdleTimeout[i] + " secs...<br>");
+             results += "Setting the Idle timeout to "+ setIdleTimeout[i] + " secs...\n";
+             ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(BitFieldId.IDLE_TIMEOUT, setIdleTimeout[i]);//set pause timeout to 30 secs
+             mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+             Thread.sleep(1000);
+             appendMessage("<br>Status of setting the Idle timeout to "+ setIdleTimeout[i] +" secs:  " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>");
+             results += "\nStatus of setting the Idle timeout to "+ setIdleTimeout[i] +" secs:  " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
+             pauseTimeout = hCmd.getPauseTimeout();
+             idleTimeout = hCmd.getIdleTimeout();
+             appendMessage("New pause timeout is: " + pauseTimeout + "<br>");
+             results += "New pause timeout is: " + pauseTimeout + "\n";
+             appendMessage("New Idle timeout is: " + idleTimeout + "<br>");
+             results += "New Idle timeout is: " + idleTimeout + "\n";
+
+             //Set mode to Running
+             ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.RUNNING);
+             mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+             Thread.sleep(1000);
+
+
+             appendMessage("Status of setting the Mode to Running: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>");
+             results += "Status of setting the Mode to Running: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
+             appendMessage("Current Mode: " + hCmd.getMode() + "<br>");
+             results += "Current Mode: " + hCmd.getMode() + "\n";
+
+             //Set mode to Pause
+             ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.PAUSE);
+             mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+             Thread.sleep(1000);
+
+             appendMessage("Status of setting the Mode to Pause: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>");
+             results += "Status of setting the Mode to Pause: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
+             appendMessage("Current Mode: " + hCmd.getMode() + "<br>");
+             results += "Current Mode: " + hCmd.getMode() + "\n";
+
+             //Check each second to see if mode has changed from Pause mode. Also prevents from waiting for longer than the timeout if it doesn't work
+             prevMode = hCmd.getMode().getDescription();
+             for (long totalTime = 0; totalTime < pauseTimeout + 5; totalTime++) {
+                 Thread.sleep(1000);
+                 appendMessage("after " + totalTime + " sec(s)the mode is  " + hCmd.getMode().getDescription() + "<br>");
+                 results += "after " + totalTime + " sec(s)the mode is  " + hCmd.getMode().getDescription() + "\n";
+                 if (hCmd.getMode().getDescription() != "Pause Mode") {
+                     Thread.sleep(1000);//give time for mode to update before reading it
+                     appendMessage("<br>The mode changed from " + prevMode + " to " + hCmd.getMode().getDescription() + " after " + totalTime + " seconds<br>");
+                     results += "\nThe mode changed from " + prevMode + " to " + hCmd.getMode().getDescription() + " after " + totalTime + " seconds\n";
+                     break;
+                 }
+             }
+             if (hCmd.getMode().getDescription() != "Pause Mode") {
+                 appendMessage("<br><font color = #00ff00>* PASS *</font><br><br>");
+                 results += "\n* PASS *\n\n";
+                 appendMessage("Pause Mode timed out to " + hCmd.getMode().getDescription() + "<br>");
+                 results += "\nPause Mode timed out to " + hCmd.getMode().getDescription() + "\n";
+             } else {
+                 appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>");
+                 results += "\n* FAIL *\n\n";
+                 appendMessage("Pause Mode did not time out after " + pauseTimeout + " seconds\n");
+                 results += "\nPause Mode did not time out after " + pauseTimeout + " seconds\n";
+             }
+             //Now wait for the IDLE timeout to happen and change mode from RESULTS to IDLE
+             //TODO: verify that bitfields are resetting after IDLE timeout
+             prevMode = hCmd.getMode().getDescription();
+             for (long totalTime = 0; totalTime < idleTimeout + 5; totalTime++) {
+                 Thread.sleep(1000);
+                 appendMessage("after " + totalTime + " sec(s)the mode is  " + hCmd.getMode().getDescription() + "<br>");
+                 results += "after " + totalTime + " sec(s)the mode is  " + hCmd.getMode().getDescription() + "\n";
+                 if (hCmd.getMode().name() != "RESULTS") {
+                     Thread.sleep(1000);//give time for mode to update before reading it
+                     appendMessage("<br>The mode changed from " + prevMode + " to " + hCmd.getMode().getDescription() + " after " + totalTime + " seconds<br>");
+                     results += "\nThe mode changed from " + prevMode + " to " + hCmd.getMode().getDescription() + " after " + totalTime + " seconds\n";
+                     break;
+                 }
+             }
+
+             if (hCmd.getMode().name() != "RESULTS") {
+                 appendMessage("<br><font color = #00ff00>* PASS *</font><br><br>");
+                 results += "\n* PASS *\n\n";
+                 appendMessage("Results Mode timed out to " + hCmd.getMode().getDescription() + "<br>");
+                 results += "Results Mode timed out to " + hCmd.getMode().getDescription() + "\n";
+             } else {
+                 appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>");
+                 results += "\n* FAIL *\n\n";
+                 appendMessage("Results mode did not time out after " + idleTimeout + " seconds<br>");
+                 results += "Results mode did not time out after " + idleTimeout + " seconds\n";
              }
          }
-         if(hCmd.getMode().getDescription() != "Pause Mode"){
-             appendMessage("<br><font color = #00ff00>* PASS *</font><br><br>");
-             results+="\n* PASS *\n\n";
-             appendMessage("Pause Mode timed out to " + hCmd.getMode().getDescription() + "<br>");
-             results+="\nPause Mode timed out to " + hCmd.getMode().getDescription() + "\n";
-         }
-         else{
-             appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>");
-             results+="\n* FAIL *\n\n";
-             appendMessage("Pause Mode did not time out after "+pauseTimeout+ " seconds\n");
-             results+="\nPause Mode did not time out after "+pauseTimeout+ " seconds\n";
-         }
-         //Now wait for the IDLE timeout to happen and change mode from RESULTS to IDLE
-         //TODO: verify that bitfields are resetting after IDLE timeout
-         prevMode = hCmd.getMode().getDescription();
-         for(long totalTime = 0; totalTime < idleTimeout+5; totalTime++){
-             Thread.sleep(1000);
-             appendMessage("after " + totalTime +" sec(s)the mode is  " + hCmd.getMode().getDescription()+"<br>");
-             results+="after " + totalTime +" sec(s)the mode is  " + hCmd.getMode().getDescription()+"\n";
-             if(hCmd.getMode().name() != "RESULTS"){
-                 Thread.sleep(1000);//give time for mode to update before reading it
-                 appendMessage("<br>The mode changed from " +prevMode+ " to " + hCmd.getMode().getDescription() + " after " + totalTime + " seconds<br>");
-                results+="\nThe mode changed from " +prevMode+ " to " + hCmd.getMode().getDescription() + " after " + totalTime + " seconds\n";
-                 break;
-             }
-         }
+         timeOfTest = System.nanoTime() - startTestTimer;
+         timeOfTest = timeOfTest / 1.0E09;
 
-         if(hCmd.getMode().name() != "RESULTS"){
-             appendMessage("<br><font color = #00ff00>* PASS *</font><br><br>");
-             results+="\n* PASS *\n\n";
-             appendMessage("Results Mode timed out to " + hCmd.getMode().getDescription() + "<br>");
-             results+="Results Mode timed out to " + hCmd.getMode().getDescription() + "\n";
-         }
-         else{
-             appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>");
-             results+="\n* FAIL *\n\n";
-             appendMessage("Results mode did not time out after "+idleTimeout+" seconds<br>");
-             results+="Results mode did not time out after "+idleTimeout+" seconds\n";
-         }
- 
+         appendMessage("<br>This test took a total of"+timeOfTest+"secs <br>");
+         results+="\nThis test took a total of"+timeOfTest+"secs \n";
          return results;
      }
  
@@ -421,13 +495,28 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
      //Testing Running Time
      //
      //--------------------------------------------//
-     public String testRunningTime() throws Exception{
+     public String testRunningTime(String runType) throws Exception{
          //outline for code support #930 in redmine
          
          String results;
-         long runtime = 60; //time for running test (in secs)
-         long pauseruntime = 23; //time for running test with pause
- 
+
+         long runtime; //time for running test (in secs)
+         long pauseruntime; //time for running test with pause in secs
+
+        switch (runType)
+        {
+            case "m":
+                runtime = 14400; // 4 hours (in secs)
+                pauseruntime=1800; // Half an hour
+            break;
+
+            default:
+                runtime = 60; // 60 secs
+                pauseruntime=23; // 23 secs
+            break;
+        }
+         double timeOfTest = 0; //how long test took in seconds
+         long startTestTimer = System.nanoTime();
          System.out.println("RUNNING-TIME TEST<br>");
  
  
@@ -582,7 +671,11 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
          Thread.sleep(1000);
          //end the recurring callback
          mSFitSysCntrl.getFitProCntrl().removeCmd(wrCmd);
- 
+         timeOfTest = System.nanoTime() - startTestTimer;
+         timeOfTest = timeOfTest / 1.0E09;
+
+         appendMessage("<br>This test took a total of"+timeOfTest+"secs <br>");
+         results+="\nThis test took a total of"+timeOfTest+"secs \n";
          return results;
      }
  
@@ -604,7 +697,9 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
          
          double maxSpeed;
          double currentActualSpeed = 0;
- 
+         double timeOfTest = 0; //how long test took in seconds
+         long startTestTimer = System.nanoTime();
+
          System.out.println("NOW RUNNING MAX SPEED TIME TEST<br>");
          String results="";
          appendMessage("<br>--------------------------MAX SPEED TEST--------------------------<br><br>");
@@ -684,6 +779,12 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
          ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.IDLE);
          mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
          Thread.sleep(1000);
+
+         timeOfTest = System.nanoTime() - startTestTimer;
+         timeOfTest = timeOfTest / 1.0E09;
+
+         appendMessage("<br>This test took a total of"+timeOfTest+"secs <br>");
+         results+="\nThis test took a total of"+timeOfTest+"secs \n";
          return results;
      }
      @Override
@@ -693,7 +794,7 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
             // this.testAge();
              results+=this.testMaxSpeedTime();
             // this.testWeight();
-             results+=this.testRunningTime();
+             results+=this.testRunningTime(" ");
              results+=this.testPauseIdleTimeout();
          }
          catch (Exception ex) {

@@ -92,8 +92,12 @@ public class TestMotor extends TestCommons implements TestAll {
 //        //read speed received into this code which should be target speed
 //        //check against constant variable of 1.0 mph
 //        //make sure formatting is right for verification for english or metric units
+
+
         String results ="";
         double actualspeed = 0;
+        double timeOfTest = 0; //how long test took in seconds
+        long startTestTimer = System.nanoTime();
 
         appendMessage("<br><br>----------------------START SPEED TEST RESULTS----------------------<br><br>");
         appendMessage(Calendar.getInstance().getTime() + "<br><br>");
@@ -181,6 +185,12 @@ public class TestMotor extends TestCommons implements TestAll {
         mSFitSysCntrl.getFitProCntrl().removeCmd(wrCmd);
         Thread.sleep(1000);
 
+        timeOfTest = System.nanoTime() - startTestTimer;
+        timeOfTest = timeOfTest / 1.0E09;
+
+        appendMessage("<br>This test took a total of"+timeOfTest+"secs <br>");
+        results+="\nThis test took a total of"+timeOfTest+"secs \n";
+
 //        double actualSpeed = 0;
 //        while(true)
 //        {
@@ -194,7 +204,8 @@ public class TestMotor extends TestCommons implements TestAll {
 //            if(hCmd.getIncline() == 0)
 //                break;
 //
-//        }
+//        }        appendMessage("<br>This test took a total of"+timeOfTest+"secs <br>");
+
         return results;
 
     }
@@ -218,6 +229,8 @@ public class TestMotor extends TestCommons implements TestAll {
         double setSpeed = 10;// speed to use in the test in KPH
         double expectedDistance = 250; //
         long time = 90; // time to run test in seconds (1.5 mins in this case)
+        double timeOfTest = 0; //how long test took in seconds
+        long startTestTimer = System.nanoTime();
 
         String results="";
 
@@ -302,6 +315,12 @@ public class TestMotor extends TestCommons implements TestAll {
         mSFitSysCntrl.getFitProCntrl().removeCmd(wrCmd);
         Thread.sleep(1000);
 
+        timeOfTest = System.nanoTime() - startTestTimer;
+        timeOfTest = timeOfTest / 1.0E09;
+
+        appendMessage("<br>This test took a total of"+timeOfTest+"secs <br>");
+        results+="\nThis test took a total of"+timeOfTest+"secs \n";
+
         return results;
     }
 
@@ -320,6 +339,8 @@ public class TestMotor extends TestCommons implements TestAll {
 
         String results="";
         System.out.println("**************** MODES TEST ****************");
+        double timeOfTest = 0; //how long test took in seconds
+        long startTestTimer = System.nanoTime();
 
         appendMessage("<br><br>----------------------------MODE TEST RESULTS----------------------------<br><br>");
         appendMessage(Calendar.getInstance().getTime() + "<br><br>");
@@ -362,6 +383,11 @@ public class TestMotor extends TestCommons implements TestAll {
                 results+=runModesTest(Modes, wrCmd);
                 break;
         }
+        timeOfTest = System.nanoTime() - startTestTimer;
+        timeOfTest = timeOfTest / 1.0E09;
+
+        appendMessage("<br>This test took a total of"+timeOfTest+"secs <br>");
+        results+="\nThis test took a total of"+timeOfTest+"secs \n";
        return results;
     }
 
@@ -422,7 +448,8 @@ public class TestMotor extends TestCommons implements TestAll {
         String results="";
         double actualspeed = 0;
         double setSpeed = 5;//speed to be used in this test
-
+        double timeOfTest = 0; //how long test took in seconds
+        long startTestTimer = System.nanoTime();
         appendMessage("<br><br>----------------------PAUSE/RESUME SPEED TEST RESULTS----------------------<br><br>");
         appendMessage(Calendar.getInstance().getTime() + "<br><br>");
 
@@ -545,7 +572,11 @@ public class TestMotor extends TestCommons implements TestAll {
 
         mSFitSysCntrl.getFitProCntrl().removeCmd(wrCmd);
         Thread.sleep(1000);
+         timeOfTest = System.nanoTime() - startTestTimer;
+         timeOfTest = timeOfTest / 1.0E09;
 
+         appendMessage("<br>This test took a total of"+timeOfTest+"secs <br>");
+         results+="\nThis test took a total of"+timeOfTest+"secs \n";
         return results;
     }
 
@@ -577,6 +608,8 @@ public class TestMotor extends TestCommons implements TestAll {
         double seconds = 0;
         long startime = 0;
         double actualSpeed = 0;
+        double timeOfTest = 0; //how long test took in seconds
+        long startTestTimer = System.nanoTime();
 
         appendMessage("<br>--------------------------SPEED TEST RESULTS--------------------------<br><br>");
         appendMessage(Calendar.getInstance().getTime() + "<br><br>");
@@ -702,7 +735,11 @@ public class TestMotor extends TestCommons implements TestAll {
             Thread.sleep(1000);
 
         }
+        timeOfTest = System.nanoTime() - startTestTimer;
+        timeOfTest = timeOfTest / 1.0E09;
 
+        appendMessage("<br>This test took a total of"+timeOfTest+"secs <br>");
+        results+="\nThis test took a total of"+timeOfTest+"secs \n";
         return results;
     }
 
@@ -720,6 +757,8 @@ public class TestMotor extends TestCommons implements TestAll {
         long time = 60; //seconds
         double incline = 0;// Incline in % grade
         double weight = 83.91; //weight in Kgs
+        double timeOfTest = 0; //how long test took in seconds
+        long startTestTimer = System.nanoTime();
 
         System.out.println("NOW RUNNING CALORIES TEST<br>");
         appendMessage("<br><br>----------------------------CALORIE TEST----------------------------<br>");
@@ -796,6 +835,11 @@ public class TestMotor extends TestCommons implements TestAll {
         results+="The test took " + ((stopTimer) / 1000) + " seconds\n";
         //stop the call back
         mFecpController.removeCmd(wrCmd);
+        timeOfTest = System.nanoTime() - startTestTimer;
+        timeOfTest = timeOfTest / 1.0E09;
+
+        appendMessage("<br>This test took a total of"+timeOfTest+"secs <br>");
+        results+="\nThis test took a total of"+timeOfTest+"secs \n";
         return results;
     }
 
@@ -822,7 +866,8 @@ public class TestMotor extends TestCommons implements TestAll {
         double maxSpeed = 16.0; //TODO: Hardcoded because our console only reaches 15.0 KPH
         double[] actualSpeeds = new double[4];
         boolean alwaysLess = true;
-
+        double timeOfTest = 0; //how long test took in seconds
+        long startTestTimer = System.nanoTime();
         appendMessage("<br><br>----------------------PWM OVERSHOOT TEST RESULTS----------------------<br><br>");
         appendMessage(Calendar.getInstance().getTime() + "<br><br>");
 
@@ -953,7 +998,11 @@ public class TestMotor extends TestCommons implements TestAll {
         ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.IDLE);
         mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
         Thread.sleep(1000);
+        timeOfTest = System.nanoTime() - startTestTimer;
+        timeOfTest = timeOfTest / 1.0E09;
 
+        appendMessage("<br>This test took a total of"+timeOfTest+"secs <br>");
+        results+="\nThis test took a total of"+timeOfTest+"secs \n";
         return results;
     }
 

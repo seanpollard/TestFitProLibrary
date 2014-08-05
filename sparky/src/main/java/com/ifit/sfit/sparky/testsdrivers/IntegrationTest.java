@@ -6,6 +6,7 @@ import android.text.Html;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 
 import com.ifit.sfit.sparky.R;
@@ -41,7 +42,7 @@ import com.ifit.sfit.sparky.TestMotor;
      void runTest() {
 
          final TestIntegration t = new TestIntegration(fecpController, (BaseTest) context, this.mSFitSysCntrl);
-
+         final ScrollView scrollview = ((ScrollView) findViewById(R.id.scrollView));
          t.setUpdateResultViewListener(new TestMotor.UpdateResultView() {
              @Override
              public void onUpdate(final String msg) {
@@ -49,8 +50,15 @@ import com.ifit.sfit.sparky.TestMotor;
                      @Override
                      public void run() {
                          testingView.setText(Html.fromHtml(msg));
+                         scrollview.post(new Runnable() {
+                             @Override
+                             public void run() {
+                                 scrollview.fullScroll(ScrollView.FOCUS_DOWN);
+                             }
+                         });
                      }
                  });
+
 
              }
          });
@@ -66,7 +74,10 @@ import com.ifit.sfit.sparky.TestMotor;
                              returnString = t.testMaxSpeedTime();
                              break;
                          case "Running Time":
-                             returnString = t.testRunningTime();
+                             returnString = t.testRunningTime(" ");
+                             break;
+                         case "Mar Running Time":
+                             returnString = t.testRunningTime("m");
                              break;
                          case "Pause/Idle Timeout":
                              returnString = t.testPauseIdleTimeout();

@@ -23,6 +23,7 @@
     <string-array name="integration_array">
         <item>Max Speed</item>
         <item>Running Time</item>
+        <item>Mar Running Time</item>
         <item>Pause/Idle Timeout</item>
         <item>Run All</item>
 

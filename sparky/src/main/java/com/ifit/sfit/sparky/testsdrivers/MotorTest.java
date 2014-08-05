@@ -6,6 +6,7 @@ import android.text.Html;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 
 import com.ifit.sfit.sparky.R;
@@ -40,6 +41,7 @@ public class MotorTest extends BaseTest implements AdapterView.OnItemSelectedLis
     void runTest() {
 
         final TestMotor t = new TestMotor(fecpController, (BaseTest) context, this.mSFitSysCntrl);
+        final ScrollView scrollview = ((ScrollView) findViewById(R.id.scrollView));
 
         t.setUpdateResultViewListener(new TestMotor.UpdateResultView() {
             @Override
@@ -48,6 +50,12 @@ public class MotorTest extends BaseTest implements AdapterView.OnItemSelectedLis
                     @Override
                     public void run() {
                         testingView.setText(Html.fromHtml(msg));
+                        scrollview.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                scrollview.fullScroll(ScrollView.FOCUS_DOWN);
+                            }
+                        });
                     }
                 });
 
