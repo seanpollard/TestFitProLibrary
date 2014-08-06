@@ -85,6 +85,9 @@ public class InclineTest extends BaseTest implements View.OnClickListener, Adapt
                         case "Incline Controller":
                             returnString = t.testInclineController();
                             break;
+                        case "400 ms Pause":
+                            returnString = t.testIncline400msPause();
+                            break;
                         case "Run All":
                             returnString = t.runAll();
                             break;

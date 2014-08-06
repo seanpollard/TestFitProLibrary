@@ -8,6 +8,7 @@ import com.ifit.sparky.fecp.interpreter.bitField.BitFieldId;
 import com.ifit.sparky.fecp.interpreter.bitField.converter.ModeId;
 import com.ifit.sparky.fecp.interpreter.command.CommandId;
 import com.ifit.sparky.fecp.interpreter.command.WriteReadDataCmd;
+import com.ifit.sparky.fecp.interpreter.status.StatusId;
 
 import java.nio.ByteBuffer;
 import java.util.Calendar;
@@ -1038,10 +1039,148 @@ public class TestIncline extends TestCommons implements TestAll {
              return results;
          }
 
+    public String testIncline400msPause() throws Exception
+    {
+        String results="";
+        System.out.println("NOW RUNNING INCLINE 400 ms PAUSE TEST<br>");
+        long elapsedTime = 0;
+        double seconds = 0;
+        long startime = 0;
+        double setIncline = 0;
+
+
+        double actualIncline;
+        double maxIncline;
+
+        double timeOfTest = 0; //how long test took in seconds
+        long startTestTimer = System.nanoTime();
+
+        appendMessage("<br>----------------------400 ms INCLINE PAUSE DIRECTION TEST----------------------<br><br>");
+        appendMessage(Calendar.getInstance().getTime() + "<br><br>");
+
+        results+="\n----------------------400 ms INCLINE PAUSE DIRECTION TEST----------------------\n\n";
+        results+=Calendar.getInstance().getTime() + "\n\n";
+
+
+        //Set Incline to 0
+        startime= System.nanoTime();
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.GRADE, 0);
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+        //Wait until command was successfully sent
+        while(wrCmd.getCommand().getStatus().getStsId()!= StatusId.DONE) {
+            elapsedTime = System.nanoTime() - startime;
+        }
+        //Check status of the command to receive the incline
+        appendMessage("Status of setting incline to 0%: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>");
+
+        results+="Status of setting incline to 0%: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
+
+        appendMessage("Checking incline will reach set value...<br>");
+
+        results+="Checking incline will reach set value...\n";
+        //Wait for the incline motor to go setIncline
+        startime= System.nanoTime();
+        do
+        {
+            actualIncline = hCmd.getActualIncline();
+            Thread.sleep(350);
+            appendMessage("Current Incline is: " + actualIncline+ " goal: " + setIncline+" time elapsed: "+seconds+"<br>");
+            results+="Current Incline is: " + actualIncline+ " goal: " + setIncline+" time elapsed: "+seconds+"\n";
+            elapsedTime = System.nanoTime() - startime;
+            seconds = elapsedTime / 1.0E09;
+        } while(setIncline!=actualIncline && seconds < 60);//Do while the incline hasn't reached its target point. Break the  loop if it took more than a minute to reach target incline
+
+        double incline1=0;
+        double incline2=0.1;
+        double aIncline1=0;
+        double aIncline2 = 0;
+        double timeMillisecs = 0;
+
+        appendMessage("Set incline to 5% <br>");
+        results+="Set incline to 5% \n";
+
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.GRADE, 5);
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+        Thread.sleep(2000);
+       // appendMessage("Status of setting incline to 5%: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>");
+        results+="Status of setting incline to 5%: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
+
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.GRADE, 0);
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+        startime= System.nanoTime();
+        while(wrCmd.getCommand().getStatus().getStsId()!= StatusId.DONE) {
+            elapsedTime = System.nanoTime() - startime;
+        }
+        int count = 0; //To count how many times this do-while loop is repeated
+
+      // If incline1 < incline2 it means that is still moving towards first incline set ( 5 in our case)
+      // And it has not stopped to change directions
+        appendMessage("Checking if incline has stopped.. <br>");
+        results+="Checking if incline has stopped.. \n";
+       do
+        {
+            incline1= hCmd.getActualIncline();
+            Thread.sleep(350);
+            incline2 = hCmd.getActualIncline();
+            appendMessage(" incline1: "+incline1+" incline 2: "+incline2+"<br>");
+            results+=" incline1: "+incline1+" incline 2: "+incline2+"\n";
+            count++;
+        } while(incline1<incline2);
+        startime = System.nanoTime();
+
+        // At this point the inclined stopped to change directions
+        // Once incline1 != incline2, it means it is moving again in the opposite direction.
+        aIncline1 = hCmd.getActualIncline();
+        results+="Incline has stopped! current incline is"+aIncline1+"\n";
+        while(incline1==incline2)
+        {
+            incline1= hCmd.getActualIncline();
+            Thread.sleep(50);
+            incline2 = hCmd.getActualIncline();
+           appendMessage(" incline1: "+incline1+" incline 2: "+incline2+" elapsed time: "+elapsedTime+ "<br>");
+           results+=" incline1: "+incline1+" incline 2: "+incline2+"\n";
+            count++;
+        }
+        elapsedTime = System.nanoTime()-startime;
+        aIncline2 = hCmd.getActualIncline();
+        timeMillisecs = elapsedTime/1.0E06;
+        appendMessage("Pause time was "+timeMillisecs+" milliseconds<br>");
+        results+="Pause time was "+timeMillisecs+" milliseconds\n";
+        count = 0;
+
+        if(timeMillisecs > 400 && timeMillisecs < 600)
+        {
+            if(aIncline2 < aIncline1) {
+                results +="\n* PASS *\n\n";
+                results+="Elapsed time was "+timeMillisecs+" ms which is within the valid range of 400-600 ms and the incline changed direction!\n";
+                appendMessage("<br><font color = #00ff00>* PASS *</font><br><br>");
+                appendMessage("Elapsed time was "+timeMillisecs+" ms which is within the valid range of 400-600 ms and the incline changed direction!<br>");
+
+            }
+            else
+            {
+                results +="\n* FAIL *\n\n";
+                results+="Elapsed time was "+timeMillisecs+" ms which is within the valid range of 400-600 ms BUT incline DIDN'T changed direction!\n";
+                appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>");
+                appendMessage("Elapsed time was "+timeMillisecs+" ms which is within the valid range of 400-600 ms BUT incline DIDN'T changed direction!<br>");
+            }
+        }
+        else
+        {
+            results +="\n* FAIL *\n\n";
+            results+="Elapsed time was "+timeMillisecs+" ms which is out of the valid range of 400-600 ms\n";
+            appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>");
+            appendMessage("Elapsed time was "+timeMillisecs+" ms which is out of the valid range of 400-600 ms<br>");
+
+        }
+        return results;
+    }
+
         @Override
     public String runAll() {
         String results="";
         try {
+          results+=this.testIncline400msPause();
           results+=this.testInclineRetentionDmkRecall();
           results+=this.testRetainedIncline();
           results+=this.testSpeedInclineLimit();
