@@ -23,6 +23,8 @@
             android:windowSoftInputMode="stateHidden"/>
         <activity android:name=".testsdrivers.BitfieldsTest"
             android:windowSoftInputMode="stateHidden"/>
+        <activity android:name=".testsdrivers.TreadmillKeyCodesTest"
+            android:windowSoftInputMode="stateHidden"/>
         <activity android:name=".testsdrivers.AllTests"
             android:windowSoftInputMode="stateHidden"/>
         <activity android:windowSoftInputMode="stateHidden"

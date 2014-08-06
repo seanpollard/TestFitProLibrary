@@ -214,7 +214,7 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
                  weightResults += "Current Weight is set to: " + weight + " kilograms should be set to: " + i + " kilograms\n";
                  weightResults+="set and read values have a difference of "+diff+" which is within 1% tolerance\n";
 
-               appendMessage("<br>* PASS *<br><br>");
+               appendMessage("<br><font color = #00ff00>* PASS *</font><br><br>");
                appendMessage("Current Weight is set to: " + weight + " kilograms should be set to: " + i + " kilograms<br>");
                appendMessage("set and read values have a difference of "+diff+" which is within 1% tolerance<br>");
 
@@ -537,7 +537,7 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
          ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.PAUSE_TIMEOUT,60);
          mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
          Thread.sleep(1000);
-         appendMessage("Status of setting pause timeout to "+runtime+" secs: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>");
+         appendMessage("Status of setting pause timeout to 60 secs: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>");
          appendMessage("New pause timeout is: "+hCmd.getPauseTimeout()+"<br>");
          results+="Status of setting pause timeout to "+runtime+" secs: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
          results+="New pause timeout is: "+hCmd.getPauseTimeout()+"\n";
