@@ -150,7 +150,7 @@ public class TestBitfields extends TestCommons implements TestAll {
                 mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
                 Thread.sleep(1000);
                 appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br> NO Exception thrown when trying to write read-only bitfield:  " + b.name() + "<br>");
-               
+
                 results+="\n* FAIL *\n\n NO Exception thrown when trying to write read-only bitfield:  " + b.name() + "\n";
 
             }
@@ -218,6 +218,8 @@ public class TestBitfields extends TestCommons implements TestAll {
 
         //Loop through all read/write supported fields, write invalid value and verify read value from brainboard is the default value
         // Then write a valid value and verify it by reading it from brainboard
+
+
         double timeOfTest = 0; //how long test took in seconds
         long startTestTimer = System.nanoTime();
         for (BitFieldId bf : supportedWrBitFields) {
@@ -225,6 +227,7 @@ public class TestBitfields extends TestCommons implements TestAll {
             //TRANS_MAX, BV_VOLUME, BV_FREQUENCY IDLE_TIMEOUT, PAUSE_TIMEOUT, SYSTEM_UNITS, GENDER, FIRST_NAME, LAST_NAME, IFIT_USER_NAME,
             //HEIGHT, KPH_GOAL, GRADE_GOAL, RESISTANCE_GOAL, WATT_GOAL, RPM_GOAL, DISTANCE_GOAL,PULSE_GOAL
 
+            //TODO: Make sure to test one invalid value from below and from above valid range for each  bitfield
             switch (bf.name()) {
                 case "KPH":
                     valueToWrite = -5.0;//Invalid value

@@ -9,6 +9,7 @@ import com.ifit.sparky.fecp.interpreter.bitField.converter.ModeId;
 import com.ifit.sparky.fecp.interpreter.command.CommandId;
 import com.ifit.sparky.fecp.interpreter.command.WriteReadDataCmd;
 
+import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.util.Calendar;
 
@@ -61,6 +62,7 @@ public class TestMotor extends TestCommons implements TestAll {
                 ((WriteReadDataCmd) rdCmd.getCommand()).addReadBitField(BitFieldId.ACTUAL_KPH);
                 ((WriteReadDataCmd) rdCmd.getCommand()).addReadBitField(BitFieldId.MAX_KPH);
                 ((WriteReadDataCmd) rdCmd.getCommand()).addReadBitField(BitFieldId.GRADE);
+                ((WriteReadDataCmd) rdCmd.getCommand()).addReadBitField(BitFieldId.ACTUAL_INCLINE);
                 ((WriteReadDataCmd) rdCmd.getCommand()).addReadBitField(BitFieldId.DISTANCE);
                 ((WriteReadDataCmd) rdCmd.getCommand()).addReadBitField(BitFieldId.WORKOUT_MODE);
                 //  ((WriteReadDataCmd) rdCmd.getCommand()).addReadBitField(BitFieldId.WEIGHT);
@@ -430,11 +432,7 @@ public class TestMotor extends TestCommons implements TestAll {
     //          Testing Pause/Resume Speed        //
     //                                            //
     //--------------------------------------------//
-    /*
-        Future tests include
-    * TODO: Testing with different speeds
-    * TODO: Test with English units and verify it does proper conversion
-    * */
+
 
      public String testPauseResume() throws Exception {
         System.out.println("**************** PAUSE/RESUME TEST ****************");
@@ -586,9 +584,7 @@ public class TestMotor extends TestCommons implements TestAll {
     //                                            //
     //--------------------------------------------//
 
-    /* Future tests include
-    * TODO: read actual parameters from brainboard (when it becomes available on next SparkyAndroidLib release, current release is 0.0.9 as of 7/2/14)
-    * */
+
     public String testSpeedController() throws Exception {
         System.out.println("**************** SPEED CONTROLLER TEST ****************");
         final double MAX_SPEED = 16; //hardcode the value until we can read it
@@ -843,6 +839,257 @@ public class TestMotor extends TestCommons implements TestAll {
         return results;
     }
 
+    public String testCals() throws Exception
+    {
+        /*
+        * Calories Formula
+        *
+        *   Parameters:
+        *       M = Mass (kg)
+        *       S = Speed (m/s)
+        *       G = Percent grade (m/m)
+        *       T = time spent at that pace and grade (sec)
+        *       VO2 = Volume of oxygeb consumed (ml/kg/sec)
+        *       n1 = Constant
+        *       n2 = Constant
+        *                                               | 0.1, S < 1.8 m/s              | 1.8, S < 1.8 m/s
+        *   VO2 = n1*S + n2*S*G + 0.583333   where n1 = |                      &   n2 = |
+        *                                               | 0.2, S >= 1.8 m/s             | 0.9, S >= 1.8 m/s
+        *
+        *   kcal burned = (VO2 * M/1000) * 5T
+        *
+        *   kcal burned = ( (n1*S + n2*S*G + 0.583333) * M/1000) * 5T
+        *
+        * */
+
+
+        String results="";
+
+        //Parameters for the calories tests
+        long time = 60;           //Time to be used for the test (in secs)
+        double rCalories; //Calories read as result of the test
+        BigDecimal  resultCalories; // rCalories formatted to 2 digits
+        double caloriesPersec = 0;
+        double  eCalories;  // Calories expected for the test (calculated with formula)
+        BigDecimal expectedCalories;
+
+        double [] incline ={0,5,10,15};      // Incline to be used for the test (in % grade)
+                                                      //-2,0,5,10,15 % grade respectively
+
+        double [] weight= {115,185,400}; //weight to be used for the test (in lbs)
+                                                //52.16,83.91 and 181.44 kgs respectively
+
+        double [] speed ={1.6,3.21,4.82,6.43,8.04,9.65};   // Speeds to be used for the test (in kph) ---> 1 kph = 0.28 m/s
+                                                              //0.45,0.90,1.35,1.80,2.25,2.70 m/s respectively or 1,2,3,4,5,6 mph respectively
+        double speedMPH = 0; // To convert to mph
+        double currentSpeed = 0;
+        double currentWeight = 0;
+        double currentActualIncline = 0;
+
+        double n1,n2; // Constants
+        n1=n2=0;
+        int wLen = weight.length;
+        int iLen = incline.length;
+        int sLen = speed.length;
+        double [] expectedCalsArray = new double[wLen*iLen*sLen];
+        double [] resultsCalsArray = new double[wLen*iLen*sLen];
+        int calsIndex = 0; // Index for expectedCals results
+        long elapsedTime = 0;
+        double seconds = 0;
+        long startime = 0;
+
+
+
+        double timeOfTest = 0; //how long test took in seconds
+        long startTestTimer = System.nanoTime();
+
+
+        System.out.println("NOW RUNNING CALORIES TEST<br>");
+        appendMessage("<br><br>----------------------------CALORIE TEST----------------------------<br>");
+        appendMessage(Calendar.getInstance().getTime() + "<br><br>");
+
+        results+="\n\n----------------------------CALORIE TEST----------------------------\n";
+        results+=Calendar.getInstance().getTime() + "\n\n";
+
+        // For each weight test every incline and for each incline test every speed
+
+        for(int w = 0; w < wLen; w++)  // Weight Loop
+        {
+            appendMessage("<br><br>--------------WEIGHT = "+weight[w]+" lbs--------------<br>");
+            results+="\n--------------WEIGHT = "+weight[w]+" lbs\n";
+            currentWeight = hCmd.getWeight();
+            appendMessage("Weight is currently set to "+currentWeight+" lbs--------------<br>");
+            results+="Weight is currently set to "+currentWeight+" lbs\n";
+        //TODO: Uncomment this part as once we have weight bitfield working again
+//            if(currentWeight!= weight[w]) {
+//                appendMessage("Setting weight to "+weight[w]+" kgs<br>");
+//                results+="Setting weight to "+weight[w]+" kgs\n";
+//
+//                ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(BitFieldId.WEIGHT, weight[w]);
+//                mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+//                Thread.sleep(1000);
+//                currentWeight = hCmd.getWeight();
+//                appendMessage("The status of setting weight is: " + wrCmd.getCommand().getStatus().getStsId().getDescription()+"<br>");
+//                results+="The status of setting weight is: " + wrCmd.getCommand().getStatus().getStsId().getDescription()+"\n";
+//
+//                appendMessage("Weight is currently set to "+currentWeight+" lbs<br>");
+//                results+="Weight is currently set to "+currentWeight+" lbs\n";
+//            }
+
+                    for(int i = 0; i < iLen; i++) //Incline loop
+                    {
+                        currentActualIncline = hCmd.getActualIncline();
+                        appendMessage("Incline is currently set to "+currentActualIncline+" %<br>");
+                        results+="Incline is currently set to "+currentActualIncline+" %\n";
+
+                        if(currentActualIncline != incline[i]) {
+                            appendMessage("Setting speed to " + incline[i] + " %<br>");
+                            results += "Setting speed to " + incline[i] + " %\n";
+
+                            ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(BitFieldId.GRADE, incline[i]);
+                            mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+                            Thread.sleep(1000);
+
+                            appendMessage("The status of setting incline is: " + wrCmd.getCommand().getStatus().getStsId().getDescription() + "<br>");
+                            results += "The status of setting incline is: " + wrCmd.getCommand().getStatus().getStsId().getDescription() + "\n";
+
+                            appendMessage("Waiting for incline to reach set value...<br>");
+                            results += "Waiting for incline to reach set value...\n";
+                            startime = System.nanoTime();
+                            do {
+                                currentActualIncline = hCmd.getActualIncline();
+                                Thread.sleep(350);
+                                appendMessage("Current Incline is: " + currentActualIncline + " goal: " + incline[i] + " time elapsed: " + seconds + "<br>");
+                                results += "Current Incline is: " + currentActualIncline + " goal: " + incline[i] + " time elapsed: " + seconds + "\n";
+                                elapsedTime = System.nanoTime() - startime;
+                                seconds = elapsedTime / 1.0E09;
+                            }
+                            while (incline[i] != currentActualIncline && seconds < 90);//Do while the incline hasn't reached its point yet or took more than 1.5 mins
+                        }
+
+                        appendMessage("<br><br>--------------INCLINE = "+incline[i]+" %--------------<br>");
+                        results+="\n\n--------------INCLINE = "+incline[i]+" %--------------\n";
+
+                        for(int s = 0; s < sLen; s++) // Speed Loop
+                        {
+
+                            // Console has to be in running mode to be able to set speed
+                            ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.RUNNING);
+                            mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+                            Thread.sleep(1000);
+
+                            appendMessage("The status of setting mode to RUNNING is: " + wrCmd.getCommand().getStatus().getStsId().getDescription()+"<br>");
+                            results+="The status of setting mode to RUNNING is: " + wrCmd.getCommand().getStatus().getStsId().getDescription()+"\n";
+
+                            appendMessage("<br><br>--------------SPEED = "+speed[s]+" kph--------------<br>");
+                            results+="\n\n--------------SPEED = "+speed[s]+" kph--------------\n";
+                            currentSpeed = hCmd.getSpeed();
+                            appendMessage("Speed is currently set to "+currentSpeed+" kph<br>");
+                            results+="Speed is currently set to "+currentSpeed+" kph\n";
+
+                            if(currentSpeed != speed[s]) {
+                                appendMessage("Setting speed to "+speed[s]+" kph<br>");
+                                results+="Setting speed to "+speed[s]+" kph\n";
+
+                                ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(BitFieldId.KPH, speed[s]);
+                                mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+                                Thread.sleep(1000);
+
+                                appendMessage("The status of setting speed is: " + wrCmd.getCommand().getStatus().getStsId().getDescription()+"<br>");
+                                results+="The status of setting speed is: " + wrCmd.getCommand().getStatus().getStsId().getDescription()+"\n";
+                                currentSpeed = hCmd.getSpeed();
+                                appendMessage("Speed is currently set to "+currentSpeed+" kph<br>");
+                                results+="Speed is currently set to "+currentSpeed+" kph\n";
+
+                                speedMPH = currentSpeed*0.625; // In MPH
+
+                                n1 = (speedMPH<4) ? 1:2;
+                                n2 = (speedMPH<4) ? 18:9;
+
+                                //                THIS PART WILL BE UNCOMMENTED ONCE ACTUAL SPEED IS ACCURATE
+//                startime= System.nanoTime();
+//                do
+//                {
+//                    actualSpeed = hCmd.getActualSpeed();
+//                    Thread.sleep(350);
+//                    appendMessage("Current Speed is: " + actualSpeed+ " kph goal: " + s+" kph time elapsed: "+seconds+"<br>");
+//                    results+="Current Speed is: " + actualSpeed+ " kph goal: " + s+" kph time elapsed: "+seconds+"\n";
+//                    elapsedTime = System.nanoTime() - startime;
+//                    seconds = elapsedTime / 1.0E09;
+//                } while(j!=actualSpeed && seconds < 20);//Do while the incline hasn't reached its point yet or took more than 20 secs
+
+                                appendMessage("Now wait "+time+" secs...<br>");
+                                results+="Now wait "+time+" secs...\n";
+                                Thread.sleep(time*1000);
+//                            appendMessage("Speed is currently set to "+hCmd.getSpeed()+" kgs<br>");
+//                            results+="Speed is currently set to "+hCmd.getSpeed()+" kgs\n";
+//  //set mode back to idle to stop the test
+                                ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.PAUSE);
+                                mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+                                Thread.sleep(1000);
+
+                                currentWeight = weight[w];    //TODO: Elimiate this line once Levi adds weight bitfiled to config file
+
+                                caloriesPersec=(currentWeight * (n1 * speedMPH * 270 + 350 + (currentActualIncline / 100 * speedMPH * 270 * n2))) / 2640000;
+                                eCalories = caloriesPersec*time;
+                                expectedCalories = new BigDecimal(eCalories);
+                                expectedCalories = expectedCalories.setScale(2, BigDecimal.ROUND_FLOOR);
+
+                                rCalories = hCmd.getCalories();
+                                resultCalories = new BigDecimal(rCalories);
+                                resultCalories = resultCalories.setScale(2, BigDecimal.ROUND_FLOOR);
+
+                                //These values are stored for data comparison (just in case we want to do it)
+                                expectedCalsArray[calsIndex] = eCalories;
+                                resultsCalsArray[calsIndex] = rCalories;
+                                calsIndex++;
+
+                                if( Math.abs(eCalories-rCalories)< eCalories*0.05) // If calories are within 5% of expected, PASS
+                                {
+                                    appendMessage("<br><font color = #00ff00>* PASS *</font><br><br>");
+                                    results+="\n* PASS *\n\n";
+
+                                    appendMessage("Read calories value is: "+resultCalories+" which is within 5% tolerance of expected value "+expectedCalories+"<br>");
+                                    appendMessage("Weight-->"+currentWeight+" lbs, speed-->"+currentSpeed+" kph, incline-->"+currentActualIncline+" %, time-->"+time+" secs<br>");
+                                    results+="Read calories value is: "+resultCalories+" which is within 5% tolerance of expected value "+expectedCalories+"\n";
+                                    results+="Weight-->"+currentWeight+" lbs, speed-->"+currentSpeed+" kph, incline-->"+currentActualIncline+" %, time-->"+time+" secs\n";
+                                }
+                                else
+                                {
+                                    appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>Calories value is:"+resultCalories+" and it should have been "+expectedCalories+" Calories were off by " + (eCalories - rCalories) + "<br><br>");
+                                    results+="\n* FAIL *\n\nCalories value is:"+resultCalories+" and it should have been "+expectedCalories+" Calories were off by " + (eCalories - rCalories) + "\n\n";
+                                    appendMessage("Weight-->"+currentWeight+" lbs, speed-->"+currentSpeed+" kph, incline-->"+currentActualIncline+" %, time-->"+time+" secs<br>");
+                                    results+="Weight-->"+currentWeight+" lbs, speed-->"+currentSpeed+" kph, incline-->"+currentActualIncline+" %, time-->"+time+" secs\n";
+
+                                }
+
+                                //To reset calories value, system must be stopped and set to IDLE
+
+                                ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.RESULTS);
+                                mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+                                Thread.sleep(1000);
+                                ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.IDLE);
+                                mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+                                Thread.sleep(1000);
+
+                                // Give time for incline to calibrate. This is temporary until calibration issue is solved
+                                Thread.sleep(90000);
+
+                            }
+                    }
+
+            }
+
+        }
+
+
+
+       // appendMessage(expectedCalories+" calories are expected at speed of "+setSpeed+ ", incline of "+incline+", time of "+time+" seconds and weight of "+weight+"<br><br>");
+       // results+=expectedCalories+" calories are expected at speed of "+setSpeed+ ", incline of "+incline+", time of "+time+" seconds and weight of "+weight+"\n\n";
+
+        return results;
+    }
+
     //--------------------------------------------//
     //                                            //
     //           Testing PWM Overshoot            //
@@ -1013,10 +1260,10 @@ public class TestMotor extends TestCommons implements TestAll {
             results+=this.testStartSpeed();
             results+=this.testModes("all");
             results+=this.testPauseResume();
-            results+= this.testCalories();
             results+=this.testPwmOvershoot();
             results+=this.testDistance();
             results+=this.testSpeedController();
+            results+= this.testCals();
         } catch (Exception ex) {
             ex.printStackTrace();
         }

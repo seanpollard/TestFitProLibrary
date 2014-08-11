@@ -149,10 +149,11 @@ public class TestPhysicalKeyCodes extends TestCommons implements TestAll {
     @Override
     public String runAll() throws Exception {
 
-        this.testStartKey();
-        this.testStopKey();
-        this.testQuickInclineKeys();
+        String results = "";
+        results+=this.testStartKey();
+        results+=this.testStopKey();
+        results+=this.testQuickInclineKeys();
 
-        return res;
+        return results;
     }
 }

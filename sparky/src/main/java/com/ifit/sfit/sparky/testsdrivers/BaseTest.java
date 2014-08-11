@@ -658,7 +658,7 @@ public abstract class BaseTest extends Activity implements View.OnClickListener,
 
         //Press this button to check the values entered by the user
         if(v == checkValsButton){
-
+            //TODO: Move this test to Integration Test Layout
             configString = "";      //clear out Configuration results for each time the Check Values button is pressed
             //This is on TestIntegration class in SystemConfiguration method
 

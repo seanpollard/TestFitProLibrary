@@ -84,7 +84,8 @@ public class TestTreadmillKeyCodes extends TestCommons implements TestAll {
         //      Testing All Treadmill Keycodes        //
         //                                            //
         //--------------------------------------------//
-
+//TODO: In the past when this tests worked, you could hear the buzzer clicking sound when key command was sent
+//TODO: Write the code for the rest of the Keys to have it ready to go as soon as set_testing_key is working
  public String testStopKey() throws Exception{
             //Redmine Support #925
             //Test Stop button press

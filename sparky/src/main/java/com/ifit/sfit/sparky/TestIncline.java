@@ -163,7 +163,7 @@ public class TestIncline extends TestCommons implements TestAll {
                     results+="Current Incline is: " + currentActualIncline+ " goal: " + j+" time elapsed: "+seconds+"\n";
                     elapsedTime = System.nanoTime() - startime;
                     seconds = elapsedTime / 1.0E09;
-                } while(j!=currentActualIncline && seconds < 90);//Do while the incline hasn't reached its point yet or took more than 1.5 mins
+                } while(j!=currentActualIncline && seconds < 60);//Do while the incline hasn't reached its point yet or took more than 1.5 mins
 
                 currentWorkoutMode = "Workout mode of incline at " + j + "% is " + hCmd.getMode() + "<br>";
                 appendMessage(currentWorkoutMode);
@@ -262,6 +262,7 @@ public class TestIncline extends TestCommons implements TestAll {
         double seconds = 0;
         double timeOfTest = 0; //how long test took in seconds
         long startTestTimer = System.nanoTime();
+        double setIncline = 7;
 
         maxIncline = hCmd.getMaxIncline();
 
@@ -309,7 +310,19 @@ public class TestIncline extends TestCommons implements TestAll {
         //Set Incline to Max Incline
         ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.GRADE, 15);
         mFecpController.addCmd(wrCmd);
-        Thread.sleep(7000);    //Wait for enough time so that the incline does not increase all the way to Max Incline
+        Thread.sleep(1000);
+        startime = System.nanoTime();
+        do
+        {
+            currentActualIncline = hCmd.getActualIncline();
+            Thread.sleep(350);
+            appendMessage("Current Incline is: " + currentActualIncline+ " goal: " + setIncline+" time elapsed: "+seconds+"<br>");
+
+            results+="Current Incline is: " + currentActualIncline+ " goal: " + setIncline+" time elapsed: "+seconds+"\n";
+
+            elapsedTime = System.nanoTime() - startime;
+            seconds = elapsedTime / 1.0E09;
+        } while(minIncline!=currentActualIncline && seconds < 90);//Do while the incline hasn't reached its point yet or took more than 1.5 mins
 
         //Stop
         ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.PAUSE);
@@ -369,12 +382,25 @@ public class TestIncline extends TestCommons implements TestAll {
         //Set Incline to Min Incline
         ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.GRADE, minIncline);
         mFecpController.addCmd(wrCmd);
-        Thread.sleep(7000);    //Wait for enough time so that the incline does not go all the way to Min Incline
+        Thread.sleep(1000);    //Wait for enough time so that the incline does not go all the way to Min Incline
+        setIncline = 5;
+        startime = System.nanoTime();
+        do
+        {
+            currentActualIncline = hCmd.getActualIncline();
+            Thread.sleep(350);
+            appendMessage("Current Incline is: " + currentActualIncline+ " goal: " + setIncline+" time elapsed: "+seconds+"<br>");
+
+            results+="Current Incline is: " + currentActualIncline+ " goal: " + setIncline+" time elapsed: "+seconds+"\n";
+
+            elapsedTime = System.nanoTime() - startime;
+            seconds = elapsedTime / 1.0E09;
+        } while(minIncline!=currentActualIncline && seconds < 90);//Do while the incline hasn't reached its point yet or took more than 1.5 mins
 
         //Stop
         ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.PAUSE);
         mFecpController.addCmd(wrCmd);
-        Thread.sleep(5000);    //Wait for enough time so that the incline does not increase all the way to Max Incline
+        Thread.sleep(1000);    //Wait for enough time so that the incline does not increase all the way to Max Incline
 
         appendMessage("Status of setting mode to Pause: " + wrCmd.getCommand().getStatus().getStsId().getDescription() + "<br>");
 
@@ -551,6 +577,8 @@ public class TestIncline extends TestCommons implements TestAll {
         mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
         Thread.sleep(1000);
 
+        //TODO: At this point if console is home unit, incline should stay the same. If console is club unit, incline resets to 0. Test for those conditions HERE
+
         timeOfTest = System.nanoTime() - startTestTimer;
         timeOfTest = timeOfTest / 1.0E09;
 
@@ -629,7 +657,7 @@ public class TestIncline extends TestCommons implements TestAll {
         do
         {
             currentActualIncline = hCmd.getActualIncline();
-            Thread.sleep(300);
+            Thread.sleep(350);
             appendMessage("Current Incline is: " + currentActualIncline+ " goal: " + currentIncline+" time elapsed: "+seconds+"<br>");
 
             results+="Current Incline is: " + currentActualIncline+ " goal: " + currentIncline+" time elapsed: "+seconds+"\n";
@@ -642,7 +670,19 @@ public class TestIncline extends TestCommons implements TestAll {
         ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(BitFieldId.KPH, 16); // Our motor's speed limit is 16mph
         mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
         Thread.sleep(23000); // give it 23 secs to reach max speed
+/* THIS PART WILL BE UNCOMMENTED ONCE ACTUAL SPEED IS ACCURATE
+                startime= System.nanoTime();
+                do
+                {
+                    actualSpeed = hCmd.getActualSpeed();
+                    Thread.sleep(300);
+                    appendMessage("Current Speed is: " + actualSpeed+ " goal: " + j+" time elapsed: "+seconds+"<br>");
+                    results+="Current Speed is: " + actualSpeed+ " goal: " + j+" time elapsed: "+seconds+"\n";
+                    elapsedTime = System.nanoTime() - startime;
+                    seconds = elapsedTime / 1.0E09;
+                } while(j!=actualSpeed && seconds < 20);//Do while the incline hasn't reached its point yet or took more than 20 secs
 
+*/
         //Start incline at -1, then go to -6
         for(int i = -1; i >= -6; i--) {
             ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(BitFieldId.GRADE, i);
@@ -669,7 +709,7 @@ public class TestIncline extends TestCommons implements TestAll {
             do
             {
                 currentActualIncline = hCmd.getActualIncline();
-                Thread.sleep(300);
+                Thread.sleep(350);
                 appendMessage("Current Incline is: " + currentActualIncline+ " goal: " + currentIncline+" time elapsed: "+seconds+"<br>");
 
                 results+="Current Incline is: " + currentActualIncline+ " goal: " + currentIncline+" time elapsed: "+seconds+"\n";
@@ -680,7 +720,8 @@ public class TestIncline extends TestCommons implements TestAll {
 
 
             currentSpeed = hCmd.getSpeed();
-
+//TODO: Limits change based on home/club units. So Include tests for those cases
+//TODO: Change limits to KPH. Take into consideration the Max Speed to run the limits
 
             //0% to 15% = 12 mph
             if( ( i<= 0 && i >= 15)  && currentSpeed == 12.0) {
@@ -875,13 +916,14 @@ public class TestIncline extends TestCommons implements TestAll {
              //Set mode to Pause
              //Set mode to DMK
              //Read actual Incline to verify the console has correct current incline
-            String results="";
-             System.out.println("NOW RUNNING INCLINE RETENTION AFTER DMK TEST<br>");
+        String results="";
+        System.out.println("NOW RUNNING INCLINE RETENTION AFTER DMK TEST<br>");
         long elapsedTime = 0;
         double seconds = 0;
         long startime = 0;
         double setIncline = 0;
-
+        double inclineAtDMKpull = 0;
+        double inclineAfterDMKpull = 0;
         double actualIncline;
         double maxIncline;
 
@@ -953,7 +995,7 @@ public class TestIncline extends TestCommons implements TestAll {
              appendMessage("Waiting for DMK key to be pulled...<br>");
 
              results+="Waiting for DMK key to be pulled...\n";
-
+            inclineAtDMKpull = hCmd.getActualIncline();
             while(hCmd.getMode()!=ModeId.DMK);
              {
                  // Stay here until DMK Key is pulled
@@ -963,23 +1005,27 @@ public class TestIncline extends TestCommons implements TestAll {
 
              results+="DMK key pulled!\n";
 
+             appendMessage("Waiting 5 secs...<br>");
+
+             results+="Waiting 5 secs...\n";
+              Thread.sleep(5000);
+              inclineAfterDMKpull = hCmd.getActualIncline();
+
         //Read Incline and verify it is not equal to max incline or less than, or equal to, zero
-
-             actualIncline = hCmd.getActualIncline();
-
-             if(actualIncline > 0  && actualIncline <maxIncline){
+        //TODO: Just for formatting, take into account that units incline is in degress and not percent. Does IFIT handle this?
+             if(inclineAfterDMKpull == inclineAtDMKpull){
                 appendMessage("<br><font color = #00ff00>* PASS *</font><br><br>");
-                appendMessage("Actual Incline is currently at " + actualIncline + "% which is between 0% and max incline<br>");
+                appendMessage("Actual Incline before DMK Pulled was: " + inclineAtDMKpull + "which matches actual incline after DMK was put back and waited 5 secs<br>");
 
                 results+="\n* PASS *\n\n";
-                results+="Actual Incline is currently at " + actualIncline + "% which is between 0% and max incline\n";
+                results+="Actual Incline before DMK Pulled was: " + inclineAtDMKpull + "which matches actual incline after DMK was put back and waited 5 secs\n";
              }
              else {
                 appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>");
-                appendMessage("Actual Incline should be between 0% and " + maxIncline + "%, but it is currently at " + actualIncline + "%<br>");
+                appendMessage("Actual Incline should be " + inclineAtDMKpull + "%, but it is currently at " + inclineAfterDMKpull + "%<br>");
 
                 results+="\n* FAIL *\n\n";
-                results+="Actual Incline should be between 0% and " + maxIncline + "%, but it is currently at " + actualIncline + "%\n";
+                results+="Actual Incline should be " + inclineAtDMKpull + "%, but it is currently at " + inclineAfterDMKpull + "%\n";
              }
 
             appendMessage("<br>----------------------DMK RECALL INCLINE TEST RESULTS----------------------<br><br>");

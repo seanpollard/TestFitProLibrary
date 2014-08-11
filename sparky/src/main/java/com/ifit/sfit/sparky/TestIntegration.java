@@ -76,7 +76,7 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
      //Testing Age
      //
      //--------------------------------------------//
-
+//TODO: Include tests for invalid ages ranges both below and above
      public String testAge() throws Exception {
          //Redmine Support #937
          //Read the default Age
@@ -166,9 +166,7 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
      //
      //--------------------------------------------//
  
-     /*
-     TODO: Future test can include testing invalid weights (MAX_WEIGHT< weight < MIN_WEIGHT) and validating default weight
-     */
+
      public String testWeight() throws Exception {
          //Weight is implemented in kilograms with a default weight of 185 lbs =84 kg
          //Redmine Support #942
@@ -357,7 +355,6 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
      //Testing Pause Timeout
      //
      //--------------------------------------------//
-    //TODO: Add more than one pause/idle timeout. USE FOR Loop with timeouts array!
      public String testPauseIdleTimeout() throws Exception{
          //part of redmine #930
          //Set mode to Pause
@@ -367,6 +364,7 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
          String results = "";
          double pauseTimeout;
          double idleTimeout;
+         //setPauseTimeout and setIdleTimeout arrays are parallel arrays so they should be same length and contain same amount of data
          double [] setPauseTimeout ={30,15};
          double [] setIdleTimeout = {10,5};
          String prevMode="";
@@ -502,7 +500,7 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
 
          long runtime; //time for running test (in secs)
          long pauseruntime; //time for running test with pause in secs
-
+        //Maybe test later 5K, 10K, Half-Marathon, Full Marathon cases
         switch (runType)
         {
             case "m":
@@ -752,7 +750,7 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
              results+="\n<font color = #ff0000>* FAIL *</font>\n\nThe Max Speed was not properly read from the brainboard (Max Speed: "+maxSpeed+" kph)\n";
 
          }
- 
+         //TODO: Calculate seconds for pass/pail standard based on Max Speed. For example a 10mph max speed unit might reach max speed quicker than a 15mph max speed unit
          //%5 pass standard with a 23 sec spec from #59
          if((seconds <= 22) || (seconds >= 24)) {
              appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>The motor was off by " + (seconds - 23) + " seconds<br>");
