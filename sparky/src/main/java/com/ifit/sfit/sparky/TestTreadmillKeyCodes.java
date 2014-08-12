@@ -635,7 +635,94 @@ public class TestTreadmillKeyCodes extends TestCommons implements TestAll {
 
         return results;
     }
+ public String testQuickInclineKeys() throws Exception{
+     /*
+     * 1. Read max and min inclines
+     * 2. Use max and min incline values to set max and min keycodes
+     * 3. Send min incline keycode
+     * 4. Check that incline reached set value
+     * 5. Send next quick incline keycode
+     * 6. Repeat steps 4-5 until max incline is reached
+     * */
 
+     String results ="";
+     double currentActualIncline = 0;
+     double maxIncline =  15; //hCmd.getMaxIncline(); // The motor we are using has max incline of 15%
+     double minIncline = hCmd.getMinIncline();
+     long elapsedTime = 0;
+     double seconds = 0;
+     long startime = 0;
+     KeyCodes [] kc = {KeyCodes.INCLINE_NEG_6,KeyCodes.INCLINE_NEG_4, KeyCodes.INCLINE_NEG_2,KeyCodes.INCLINE_0,KeyCodes.INCLINE_5,
+                       KeyCodes.INCLINE_10,KeyCodes.INCLINE_15};
+     double []inclines = {-6,-4,-2,0,5,10,15};
+
+     results += "\n\n------------------QUICK INCLINE KEYS TEST---------------\n\n";
+     results+= Calendar.getInstance().getTime() + "\n\n";
+     appendMessage("<br><br>------------------QUICK INCLINE KEYS TEST------------------<br><br>");
+     appendMessage(Calendar.getInstance().getTime() + "<br><br>");
+
+//TODO: Generalize tests for all consoles. For now assume Incline trainer with max incline 40% and min -6%
+
+
+     Device keyPressTemp = this.MainDevice.getSubDevice(DeviceId.KEY_PRESS);
+
+     if(keyPressTemp != null){
+         Command writeKeyPressCmd = keyPressTemp.getCommand(CommandId.SET_TESTING_KEY);
+         if(writeKeyPressCmd != null){
+             sendKeyCmd = new FecpCommand(writeKeyPressCmd, hCmd);
+             ((SetTestingKeyCmd)sendKeyCmd.getCommand()).setKeyOverride(true);
+             ((SetTestingKeyCmd)sendKeyCmd.getCommand()).setTimeHeld(1000);
+             ((SetTestingKeyCmd)sendKeyCmd.getCommand()).setIsSingleClick(true);
+         }
+     }
+
+      //Loop Through each incline code
+     for(int i=0; i < kc.length; i++)
+     {
+         appendMessage("Sending quick incline keycode: "+kc[i].name()+"<br>");
+         results+="Sending quick incline keycode: "+kc[i].name()+"\n";
+         ((SetTestingKeyCmd)sendKeyCmd.getCommand()).setKeyCode(kc[i]);
+         mSFitSysCntrl.getFitProCntrl().addCmd(sendKeyCmd);
+         Thread.sleep(1000);
+         results += "Status of sending  key command: " + sendKeyCmd.getCommand().getStatus().getStsId().getDescription() + "\n";
+         appendMessage("Status of sending key command: " + sendKeyCmd.getCommand().getStatus().getStsId().getDescription() + "<br>");
+
+        /* This part might be optional. Depends on wheter a command already added exception is thrown or not
+         mSFitSysCntrl.getFitProCntrl().removeCmd(sendKeyCmd);
+         Thread.sleep(1000); */
+
+         startime = System.nanoTime();
+         do
+         {
+             currentActualIncline = hCmd.getActualIncline();
+             Thread.sleep(350);
+             appendMessage("Current Incline is: " + currentActualIncline+ " goal: " + inclines[i]+" time elapsed: "+seconds+"<br>");
+             results+="Current Incline is: " + currentActualIncline+ " goal: " + inclines[i]+" time elapsed: "+seconds+"\n";
+
+             elapsedTime = System.nanoTime() - startime;
+             seconds = elapsedTime / 1.0E09;
+         } while(inclines[i]!=currentActualIncline && seconds < 60);//Do while the incline hasn't reached its point yet or took more than 1 mins
+
+         if(hCmd.getIncline() == currentActualIncline && currentActualIncline == inclines[i] )
+         {
+             appendMessage("<br><font color = #00ff00>* PASS *</font><br><br>");
+             appendMessage("Quick incline correctly set to "+kc[i].name()+"<br>");
+             results+="\n* PASS *\n\n";
+             results+="Quick incline correctly set to "+kc[i].name()+"\n";
+
+         }
+         else
+         {
+             appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>");
+             appendMessage("Quick incline failed to be set to "+kc[i].name()+", current incline is set to "+hCmd.getActualIncline()+"<br>");
+
+             results+="\n* FAIL *\n\n";
+             results+="Quick incline failed to be set to "+kc[i].name()+", current incline is set to "+hCmd.getActualIncline()+"\n";
+         }
+     }
+
+     return results;
+ }
     @Override
     public String runAll() throws Exception {
         //Redmine Support #925
@@ -646,7 +733,7 @@ public class TestTreadmillKeyCodes extends TestCommons implements TestAll {
         keysResults += testStartKey();
         keysResults += testInclineUpKey();
         keysResults += testInclineDownKey();
-//        keysResults += testQuickInclineKeys();
+        keysResults += testQuickInclineKeys();
         keysResults += testSpeedUpKey();
         keysResults += testSpeedDownKey();
 //        keysResults += testQuickSpeedKeys();

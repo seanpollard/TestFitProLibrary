@@ -766,7 +766,7 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
          double seconds = 0;
          long startime = System.nanoTime();
          //Read the actual speed and count elsaped time. Do this until speed has reached MAX
-         while(currentActualSpeed < 16)
+         while(currentActualSpeed < 16) // Replace 16 by maxSpeed once we have a motor that can reach more then 16 kph
          {
              currentActualSpeed = hCmd.getActualSpeed();
              elapsedTime = System.nanoTime() - startime;
@@ -775,8 +775,8 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
              appendMessage("actual speed "+currentActualSpeed+" elapsed time " + seconds +" seconds<br>");
              results+="actual speed "+currentActualSpeed+" elapsed time " + seconds +" seconds\n";
          }
- 
- 
+
+
          appendMessage("The max speed is " + maxSpeed + "<br>");
          appendMessage("The motor took " + seconds + " seconds to go to max speed<br>");
          results+="The max speed is " + maxSpeed + "\n";
