@@ -1260,10 +1260,11 @@ public class TestMotor extends TestCommons implements TestAll {
             results+=this.testStartSpeed();
             results+=this.testModes("all");
             results+=this.testPauseResume();
+            results+=this.testCalories();
             results+=this.testPwmOvershoot();
             results+=this.testDistance();
             results+=this.testSpeedController();
-            results+= this.testCals();
+            //results+= this.testCals();
         } catch (Exception ex) {
             ex.printStackTrace();
         }

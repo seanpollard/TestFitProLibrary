@@ -531,13 +531,13 @@ public class TestTreadmillKeyCodes extends TestCommons implements TestAll {
 
      return results;
  }
-    public String testSpeedDownKey() throws Exception {
+ public String testSpeedDownKey() throws Exception {
         //Testing Speed Up key press
-        //1. Set mode to running
-        //2. Set speed to max
-        //3. Simulate Speed Down key press
-        //4. Validate that Speed went down by 0.1 kph
-        //5. Repeat steps 2-4 until min speed reached
+//        1. Set mode to running
+//        2. Set speed to max
+//        3. Simulate Speed Down key press
+//        4. Validate that Speed went down by 0.1 kph
+//        5. Repeat steps 2-4 until min speed reached
 
 
         String results = "";
@@ -635,6 +635,7 @@ public class TestTreadmillKeyCodes extends TestCommons implements TestAll {
 
         return results;
     }
+
     @Override
     public String runAll() throws Exception {
         //Redmine Support #925
@@ -647,7 +648,7 @@ public class TestTreadmillKeyCodes extends TestCommons implements TestAll {
         keysResults += testInclineDownKey();
 //        keysResults += testQuickInclineKeys();
         keysResults += testSpeedUpKey();
-//        keysResults += testSpeedDownKey();
+        keysResults += testSpeedDownKey();
 //        keysResults += testQuickSpeedKeys();
 //        keysResults += testAgeUpKey();
 //        keysResults += testAgeDownKey();

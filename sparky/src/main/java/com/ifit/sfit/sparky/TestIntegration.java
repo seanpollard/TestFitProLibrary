@@ -111,7 +111,8 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
          long elapsedTime = 0;
          int i;
          long startTime;
-         for(i = 18; i <=95; i+=1) {
+
+         for(i = 18; i <=95; i++) {
              ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(BitFieldId.AGE, i);
              mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
              age = hCmd.getAge();
@@ -128,15 +129,7 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
 
              appendMessage("Status of setting the Age to " + i + ": " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>");
 
-            /*
-             if(age == 80)
-             {
-                 long elapsedTime = System.currentTimeMillis() - startTime;
-                 System.out.println(elapsedTime);
-             }
-     */
              if(age == i){
- //            if(age == 13){
                  ageResults += "\n* PASS *\n\n";
                  ageResults += "Current Age is set to: " + age + " years old (age should really be " + i + ")\n";
 
@@ -153,6 +146,50 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
              }
              mSFitSysCntrl.getFitProCntrl().removeCmd(wrCmd);
          }
+
+
+         appendMessage("<br><br>---------------Out of Range Age Values------------------<br><br>");
+         ageResults+="\n\n---------------Out of Range Age Values------------------\n\n";
+
+//         for(i = 1; i <=105; i++) {
+//             if(i==18)
+//             {
+//                 i=96;
+//             }
+//             ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(BitFieldId.AGE, i);
+//             mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+//             age = hCmd.getAge();
+//             startTime = System.currentTimeMillis();
+//             //Keep reading the value until is the on you set it too or until it has try for long enough (25ms) that
+//             // we can conclude the reading has failed
+//             while(age!=i && elapsedTime < 25){
+//                 age = hCmd.getAge();
+//                 elapsedTime = System.currentTimeMillis() - startTime;
+//             }
+//             System.out.println(elapsedTime);
+//
+//             ageResults += "Status of setting the Age to " + i + ": " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
+//
+//             appendMessage("Status of setting the Age to " + i + ": " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>");
+//
+//             if(age !=i) // i is invalid age so it should not have been written
+//             {
+//                 ageResults += "\n* PASS *\n\n";
+//                 ageResults += "Current age is set to: " + age + " years. Invalid value " + i + " was not written!\n";
+//
+//                 appendMessage("<br>* PASS *<br><br>");
+//                 appendMessage("Current age is set to: " + age + " years. Invalid value " + i + " was not written!\n");
+//             }
+//             else{
+//                 ageResults += "\n<font color = #ff0000>* FAIL *</font>\n\n";
+//                 ageResults += "Current age is set to: " + age + " which matches invalid value " + i + " \n";
+//
+//                 appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>");
+//                 appendMessage("Current age is set to: " + age + " which matches invalid value " + i + " \n");
+//
+//             }
+//             mSFitSysCntrl.getFitProCntrl().removeCmd(wrCmd);
+//         }
          timeOfTest = System.nanoTime() - startTestTimer;
          timeOfTest = timeOfTest / 1.0E09;
 
