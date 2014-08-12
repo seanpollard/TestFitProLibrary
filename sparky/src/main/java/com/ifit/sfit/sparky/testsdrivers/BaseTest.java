@@ -11,6 +11,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -667,26 +668,66 @@ public abstract class BaseTest extends Activity implements View.OnClickListener,
                     "\"\nSerial Number: \""+ serialNumber+"\"\nManufacturing Number: \""+manufactureNumber+
                     "\"\nMax Incline: \""+maxIncline+"\"\nMin. Incline: \""+minIncline+"\"\nMax Speed: \""+maxSpeed+"\"\n" +
                     "Min Speed: \""+minSpeed+"\"\n";
+//
+            final TestIntegration t = new TestIntegration(fecpController, (BaseTest) context, this.mSFitSysCntrl);
+            final ScrollView scrollview = ((ScrollView) findViewById(R.id.scrollView));
 
-            try{
-                TestIntegration system = new TestIntegration(this.fecpController,this,this.mSFitSysCntrl);
-                configString += system.testSystemConfiguration(systemString);
+            t.setUpdateResultViewListener(new TestIntegration.UpdateResultView() {
+                @Override
+                public void onUpdate(final String msg) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            testingView.setText(Html.fromHtml(msg));
+                            scrollview.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    scrollview.fullScroll(ScrollView.FOCUS_DOWN);
+                                }
+                            });
+                        }
+                    });
 
-                //try to write to the file in main from the machine control structure
-                outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
-                outputStream.write((configString).getBytes());
-                outputStream.close();
-            } catch(Exception e){
-                e.printStackTrace();
-            }
-            testingView.setText(configString);
-            if(configString.contains("FAIL")) {
-                passFail = "<font color = #ff0000>FAIL </font>";
-            }
-            else {
-                passFail = "<font color = #00ff00>PASS </font>";
-            }
-            resultView.setText(Html.fromHtml(passFail));
+
+                }
+            });
+
+            Thread th = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+
+                      returnString = t.testSystemConfiguration(systemString);
+                        try {
+                            returnString += "\n" + systemString;
+
+                            outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
+                            outputStream.write((returnString).getBytes());
+                            outputStream.close();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        if (returnString.isEmpty()) {
+                            passFail = "<font color = #ff0000>ERROR</font>";
+                        } else if (returnString.contains("FAIL")) {
+                            passFail = "<font color = #ff0000>FAIL</font>";
+                        } else {
+                            passFail = "<font color = #00ff00>PASS</font>";
+                        }
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                resultView.setText(Html.fromHtml(passFail));
+                            }
+                        });
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            th.start();
         }
         else if(v==allTestsButton)
         {
@@ -739,12 +780,6 @@ public abstract class BaseTest extends Activity implements View.OnClickListener,
             }
 
         }
-
-
-        //Clear out the system device string to re-enter new values for next test
-        systemString = "";
-        //clear out print string to recheck values if needed from a typo
-        returnString = "";
     }
 
     abstract void runTest();

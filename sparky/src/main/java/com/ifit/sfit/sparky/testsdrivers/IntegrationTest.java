@@ -11,7 +11,6 @@ import android.widget.Spinner;
 
 import com.ifit.sfit.sparky.R;
 import com.ifit.sfit.sparky.TestIntegration;
-import com.ifit.sfit.sparky.TestMotor;
 
 /**
     * Created by jc.almonte on 7/30/14.
@@ -43,7 +42,7 @@ import com.ifit.sfit.sparky.TestMotor;
 
          final TestIntegration t = new TestIntegration(fecpController, (BaseTest) context, this.mSFitSysCntrl);
          final ScrollView scrollview = ((ScrollView) findViewById(R.id.scrollView));
-         t.setUpdateResultViewListener(new TestMotor.UpdateResultView() {
+         t.setUpdateResultViewListener(new TestIntegration.UpdateResultView() {
              @Override
              public void onUpdate(final String msg) {
                  runOnUiThread(new Runnable() {

@@ -347,7 +347,7 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
          Device device = new Device();
          String brainboardLines[] = new String[11];
          //Split the user's input string into separate strings to be compared, line by line ("<br>" is the delimiter)
-         String inputLines[] = inputString.split("\r?<br>|\r");
+         String inputLines[] = inputString.split("\r?\n|\r");
  
          brainboardLines[0] = "Console Name: \"" + MainDevice.getSysDevInfo().getConsoleName() + "\"";
          brainboardLines[1] = "Model Number: \"" + MainDevice.getSysDevInfo().getModel() + "\"";

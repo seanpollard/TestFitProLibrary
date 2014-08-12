@@ -11,7 +11,6 @@ import android.widget.Spinner;
 
 import com.ifit.sfit.sparky.R;
 import com.ifit.sfit.sparky.TestIncline;
-import com.ifit.sfit.sparky.TestMotor;
 
 /**
  * Created by jc.almonte on 7/30/14.
@@ -44,7 +43,7 @@ public class InclineTest extends BaseTest implements View.OnClickListener, Adapt
         final TestIncline t = new TestIncline(fecpController, (BaseTest) context, this.mSFitSysCntrl);
         final ScrollView scrollview = ((ScrollView) findViewById(R.id.scrollView));
 
-        t.setUpdateResultViewListener(new TestMotor.UpdateResultView() {
+        t.setUpdateResultViewListener(new TestIncline.UpdateResultView() {
             @Override
             public void onUpdate(final String msg) {
                 runOnUiThread(new Runnable() {

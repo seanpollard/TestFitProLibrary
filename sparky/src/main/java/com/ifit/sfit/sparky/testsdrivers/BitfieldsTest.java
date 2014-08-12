@@ -11,7 +11,6 @@ import android.widget.Spinner;
 
 import com.ifit.sfit.sparky.R;
 import com.ifit.sfit.sparky.TestBitfields;
-import com.ifit.sfit.sparky.TestMotor;
 
 /**
  * Created by jc.almonte on 7/31/14.
@@ -43,7 +42,7 @@ public class BitfieldsTest extends BaseTest implements View.OnClickListener, Ada
 
         final TestBitfields t = new TestBitfields(fecpController, (BaseTest) context, this.mSFitSysCntrl);
         final ScrollView scrollview = ((ScrollView) findViewById(R.id.scrollView));
-        t.setUpdateResultViewListener(new TestMotor.UpdateResultView() {
+        t.setUpdateResultViewListener(new TestBitfields.UpdateResultView() {
             @Override
             public void onUpdate(final String msg) {
                 runOnUiThread(new Runnable() {
