@@ -14,6 +14,7 @@ import com.ifit.sparky.fecp.interpreter.device.Device;
 import com.ifit.sparky.fecp.interpreter.device.DeviceId;
 import com.ifit.sparky.fecp.interpreter.key.KeyCodes;
 
+import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.util.Calendar;
 
@@ -723,6 +724,101 @@ public class TestTreadmillKeyCodes extends TestCommons implements TestAll {
 
      return results;
  }
+ public String testQuickSpeedKeys() throws Exception{
+     /*
+     * 1. Set mode to running
+     * 2. Send quickspeed command
+     * 3. check that set speed has been reached
+     * 4. Repeat steps 4-5 until max speed is reached
+     * */
+
+        String results ="";
+        double currentSpeed = 0;
+        double maxSpeed =  16; //hCmd.getMaxSpee(); // The motor we are using has max speed of 16 kph
+        double minSpeed = hCmd.getMinSpeed();
+        long elapsedTime = 0;
+        double seconds = 0;
+        long startime = 0;
+        double speedMPH = 0;
+        String currentMode = "";
+        BigDecimal roundedResult;
+        KeyCodes [] kc = {KeyCodes.MPH_1, KeyCodes.MPH_2,KeyCodes.MPH_3,KeyCodes.MPH_4,
+                KeyCodes.MPH_5,KeyCodes.MPH_6,KeyCodes.MPH_7,KeyCodes.MPH_8,KeyCodes.MPH_9,KeyCodes.MPH_10};
+
+        results += "\n\n------------------QUICK SPEED KEYS TEST---------------\n\n";
+        results+= Calendar.getInstance().getTime() + "\n\n";
+        appendMessage("<br><br>------------------QUICK SPEED KEYS TEST------------------<br><br>");
+        appendMessage(Calendar.getInstance().getTime() + "<br><br>");
+
+     currentMode = hCmd.getMode().getDescription();
+     results += "Mode currently set to " + currentMode + "\n";
+     appendMessage("Mode currently set to " + currentMode + "<br>");
+     results += "setting the mode to running...\n";
+     appendMessage("setting the mode to running...<br>");
+
+     //set the mode to running
+     ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.RUNNING);
+     mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+     Thread.sleep(1000);
+     results += "Status of changing mode to running: " + wrCmd.getCommand().getStatus().getStsId().getDescription() + "\n";
+     appendMessage("Status of changing mode to running: " + wrCmd.getCommand().getStatus().getStsId().getDescription() + "<br>");
+     currentMode = hCmd.getMode().getDescription();
+
+     results += "Mode currently set to " + currentMode + "\n";
+     appendMessage("Mode currently set to " + currentMode + "<br>");
+
+//TODO: Generalize tests for all consoles. For now assume Incline trainer with max speed of 16 kph
+
+
+        Device keyPressTemp = this.MainDevice.getSubDevice(DeviceId.KEY_PRESS);
+
+        if(keyPressTemp != null){
+            Command writeKeyPressCmd = keyPressTemp.getCommand(CommandId.SET_TESTING_KEY);
+            if(writeKeyPressCmd != null){
+                sendKeyCmd = new FecpCommand(writeKeyPressCmd, hCmd);
+                ((SetTestingKeyCmd)sendKeyCmd.getCommand()).setKeyOverride(true);
+                ((SetTestingKeyCmd)sendKeyCmd.getCommand()).setTimeHeld(1000);
+                ((SetTestingKeyCmd)sendKeyCmd.getCommand()).setIsSingleClick(true);
+            }
+        }
+
+        //Loop Through each quick speed code
+        for(int i=0; i < kc.length; i++)
+        {
+            appendMessage("Sending quick speed keycode: "+kc[i].name()+"<br>");
+            results+="Sending quick speed keycode: "+kc[i].name()+"\n";
+            ((SetTestingKeyCmd)sendKeyCmd.getCommand()).setKeyCode(kc[i]);
+            mSFitSysCntrl.getFitProCntrl().addCmd(sendKeyCmd);
+            Thread.sleep(1000);
+            results += "Status of sending  key command: " + sendKeyCmd.getCommand().getStatus().getStsId().getDescription() + "\n";
+            appendMessage("Status of sending key command: " + sendKeyCmd.getCommand().getStatus().getStsId().getDescription() + "<br>");
+
+        /* This part might be optional. Depends on wheter a command already added exception is thrown or not
+         mSFitSysCntrl.getFitProCntrl().removeCmd(sendKeyCmd);
+         Thread.sleep(1000); */
+            currentSpeed = hCmd.getSpeed();
+            speedMPH = currentSpeed*0.621371; //Convert speed to mph.
+
+            if( Math.abs(speedMPH-(i+1)) < (0.03*(i+1)) ) // Give 3% tolerance to take care of rounding issues
+            {
+                appendMessage("<br><font color = #00ff00>* PASS *</font><br><br>");
+                appendMessage("Quick speed correctly set to "+kc[i].name()+" mph<br>");
+                results+="\n* PASS *\n\n";
+                results+="Quick incline correctly set to "+kc[i].name()+" mph\n";
+
+            }
+            else
+            {
+                appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>");
+                appendMessage("Quick speed failed to be set to "+kc[i].name()+", mph current speed is set to "+hCmd.getSpeed()+"<br>");
+
+                results+="\n* FAIL *\n\n";
+                results+="Quick speed failed to be set to "+kc[i].name()+", current speed is set to "+hCmd.getSpeed()+"\n";
+            }
+        }
+
+        return results;
+    }
     @Override
     public String runAll() throws Exception {
         //Redmine Support #925
@@ -736,7 +832,7 @@ public class TestTreadmillKeyCodes extends TestCommons implements TestAll {
         keysResults += testQuickInclineKeys();
         keysResults += testSpeedUpKey();
         keysResults += testSpeedDownKey();
-//        keysResults += testQuickSpeedKeys();
+        keysResults += testQuickSpeedKeys();
 //        keysResults += testAgeUpKey();
 //        keysResults += testAgeDownKey();
 
