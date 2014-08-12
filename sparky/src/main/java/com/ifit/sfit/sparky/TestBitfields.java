@@ -240,6 +240,8 @@ public class TestBitfields extends TestCommons implements TestAll {
                 case "GRADE":
                     valueToWrite = 45.0;//Invalid value
                     verifyBitfield(gradeCmd,ModeId.IDLE,bf,valueToWrite,false);
+                    valueToWrite = -10.0;//Invalid value
+                    verifyBitfield(gradeCmd,ModeId.IDLE,bf,valueToWrite,false);
                     valueToWrite = 5.0;
                     verifyBitfield(gradeCmd,ModeId.IDLE,bf,valueToWrite,true);
                     break;
@@ -259,6 +261,8 @@ public class TestBitfields extends TestCommons implements TestAll {
                     Thread.sleep(1000);
                     valueToWrite = 15.0;
                     verifyBitfield(workoutModeCmd,ModeId.RUNNING,bf,valueToWrite,false);
+                    valueToWrite = -13.0;
+                    verifyBitfield(workoutModeCmd,ModeId.RUNNING,bf,valueToWrite,false);
                     valueToWrite = ModeId.PAUSE; //Pause Mode
                     verifyBitfield(workoutModeCmd,ModeId.RUNNING,bf,valueToWrite,true);
                     break;
@@ -269,11 +273,15 @@ public class TestBitfields extends TestCommons implements TestAll {
                 case "AGE":
                     valueToWrite = 2.0; //invalid value
                     verifyBitfield(ageCmd,ModeId.IDLE,bf,valueToWrite,false);
+                    valueToWrite = 100; //invalid value
+                    verifyBitfield(ageCmd,ModeId.IDLE,bf,valueToWrite,false);
                     valueToWrite = 18.0; //set age to 20 years old
                     verifyBitfield(ageCmd,ModeId.IDLE,bf,valueToWrite,true);
                     break;
                 case "WEIGHT":
                     valueToWrite = 20.0; //invalid value
+                    verifyBitfield(weightCmd,ModeId.IDLE,bf,valueToWrite,false);
+                    valueToWrite = 200; //invalid value
                     verifyBitfield(weightCmd,ModeId.IDLE,bf,valueToWrite,false);
                     valueToWrite = 68.0; //set weight to 20 years old
                     verifyBitfield(weightCmd,ModeId.IDLE,bf,valueToWrite,true);
