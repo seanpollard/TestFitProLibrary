@@ -819,6 +819,184 @@ public class TestTreadmillKeyCodes extends TestCommons implements TestAll {
 
         return results;
     }
+ public String testAgeUpKey() throws Exception{
+        //Redmine Support #1171
+        //Testing Incline Up key press
+        //1. Initialize Incline to min
+        //2. Simulate Incline Up key press
+        //3. Validate that Incline went up 0.5%
+        //4. Repeat steps 2-3 until max incline reached
+
+        String results ="";
+        double Age1 = 0;
+        double Age2 = 0;
+        double currentAge = 0;
+        long elapsedTime = 0;
+        double seconds = 0;
+        long startime = 0;
+
+
+        results += "\n\n------------------AGE UP KEY TEST---------------\n\n";
+        results+= Calendar.getInstance().getTime() + "\n\n";
+        appendMessage("<br><br>------------------AGE UP KEY TEST------------------<br><br>");
+        appendMessage(Calendar.getInstance().getTime() + "<br><br>");
+
+        currentAge = hCmd.getAge();
+        appendMessage("Current age is set to: "+currentAge+"<br>");
+        results+="Current age is set to: "+currentAge+"\n";
+
+        if(currentAge!=18)
+        {
+            results += "setting the age to 18...\n";
+            appendMessage("setting the mode 18...<br>");
+
+            //set the age to 18
+            ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.AGE, 18);
+            mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+            Thread.sleep(1000);
+            results += "Status of setting age to 18 years old: " + wrCmd.getCommand().getStatus().getStsId().getDescription() + "\n";
+            appendMessage("Status of setting age to 18 years old: " + wrCmd.getCommand().getStatus().getStsId().getDescription() + "<br>");
+        }
+
+        results += "sending the start key command...\n";
+        appendMessage("sending the start key command...<br>");
+        Device keyPressTemp = this.MainDevice.getSubDevice(DeviceId.KEY_PRESS);
+
+        if(keyPressTemp != null){
+            Command writeKeyPressCmd = keyPressTemp.getCommand(CommandId.SET_TESTING_KEY);
+            if(writeKeyPressCmd != null){
+                sendKeyCmd = new FecpCommand(writeKeyPressCmd, hCmd);
+                ((SetTestingKeyCmd)sendKeyCmd.getCommand()).setKeyCode(KeyCodes.AGE_UP);
+                ((SetTestingKeyCmd)sendKeyCmd.getCommand()).setKeyOverride(true);
+                ((SetTestingKeyCmd)sendKeyCmd.getCommand()).setTimeHeld(1000);
+                ((SetTestingKeyCmd)sendKeyCmd.getCommand()).setIsSingleClick(true);
+            }
+        }
+
+        //Increment age by 1 and verify the increment happened. Repeat until max age reached
+
+        for (int i=18; i<=95; i++ )// Go through all valid ages
+        {
+            Age1 = hCmd.getAge();
+            mSFitSysCntrl.getFitProCntrl().addCmd(sendKeyCmd);
+            Thread.sleep(1000);
+            results += "Status of sending Age Up key command: " + sendKeyCmd.getCommand().getStatus().getStsId().getDescription() + "\n";
+            appendMessage("Status of sending Age Up key command: " + sendKeyCmd.getCommand().getStatus().getStsId().getDescription() + "<br>");
+            Age2 = hCmd.getAge();
+
+        /* This part might be optional. Depends on wheter a command already added exception is thrown or not
+         mSFitSysCntrl.getFitProCntrl().removeCmd(sendKeyCmd);
+         Thread.sleep(1000); */
+
+            if((Age2 - Age1) == 1)
+            {
+                appendMessage("<br><font color = #00ff00>* PASS *</font><br><br>");
+                appendMessage("Previous Age: "+Age1+" current age: "+Age2+". Age correclty incremented by "+(Age2-Age1)+" %<br>");
+
+                results+="\n* PASS *\n\n";
+                results+="Previous age: "+Age1+" current age: "+Age2+". Age correclty incremented by "+(Age2-Age1)+" %\n";
+            }
+            else
+            {
+                appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>");
+                appendMessage("Previous age: "+Age1+" current age: "+Age2+". age increment was "+(Age2-Age1)+" % and should have been 1 %<br>");
+
+                results+="\n* FAIL *\n\n";
+                results+="Previous age: "+Age1+" current age: "+Age2+". age increment was "+(Age2-Age1)+" % and should have been 1 %<br>";
+            }
+        }
+
+        return results;
+    }
+ public String testAgeDownKey() throws Exception{
+        //Redmine Support #1171
+        //Testing Incline Up key press
+        //1. Initialize Incline to min
+        //2. Simulate Incline Up key press
+        //3. Validate that Incline went up 0.5%
+        //4. Repeat steps 2-3 until max incline reached
+
+        String results ="";
+        double Age1 = 0;
+        double Age2 = 0;
+        double currentAge = 0;
+        long elapsedTime = 0;
+        double seconds = 0;
+        long startime = 0;
+
+
+        results += "\n\n------------------AGE DOWN KEY TEST---------------\n\n";
+        results+= Calendar.getInstance().getTime() + "\n\n";
+        appendMessage("<br><br>------------------AGE DOWN KEY TEST------------------<br><br>");
+        appendMessage(Calendar.getInstance().getTime() + "<br><br>");
+
+        currentAge = hCmd.getAge();
+        appendMessage("Current age is set to: "+currentAge+"<br>");
+        results+="Current age is set to: "+currentAge+"\n";
+
+        if(currentAge!=95)
+        {
+            results += "setting the age to 95...\n";
+            appendMessage("setting the mode 95...<br>");
+
+            //set the age to 95
+            ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.AGE, 95);
+            mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+            Thread.sleep(1000);
+            results += "Status of setting age to 95 years old: " + wrCmd.getCommand().getStatus().getStsId().getDescription() + "\n";
+            appendMessage("Status of setting age to 95 years old: " + wrCmd.getCommand().getStatus().getStsId().getDescription() + "<br>");
+        }
+
+        results += "sending the start key command...\n";
+        appendMessage("sending the start key command...<br>");
+        Device keyPressTemp = this.MainDevice.getSubDevice(DeviceId.KEY_PRESS);
+
+        if(keyPressTemp != null){
+            Command writeKeyPressCmd = keyPressTemp.getCommand(CommandId.SET_TESTING_KEY);
+            if(writeKeyPressCmd != null){
+                sendKeyCmd = new FecpCommand(writeKeyPressCmd, hCmd);
+                ((SetTestingKeyCmd)sendKeyCmd.getCommand()).setKeyCode(KeyCodes.AGE_DOWN);
+                ((SetTestingKeyCmd)sendKeyCmd.getCommand()).setKeyOverride(true);
+                ((SetTestingKeyCmd)sendKeyCmd.getCommand()).setTimeHeld(1000);
+                ((SetTestingKeyCmd)sendKeyCmd.getCommand()).setIsSingleClick(true);
+            }
+        }
+
+     //Decrement age by 1 and verify the decrement happened. Repeat until min valid age reached
+        for (int i=95; i>=18; i--)// Go through all valid ages
+        {
+            Age1 = hCmd.getAge();
+            mSFitSysCntrl.getFitProCntrl().addCmd(sendKeyCmd);
+            Thread.sleep(1000);
+            results += "Status of sending Age Up key command: " + sendKeyCmd.getCommand().getStatus().getStsId().getDescription() + "\n";
+            appendMessage("Status of sending Age Up key command: " + sendKeyCmd.getCommand().getStatus().getStsId().getDescription() + "<br>");
+            Age2 = hCmd.getAge();
+
+        /* This part might be optional. Depends on wheter a command already added exception is thrown or not
+         mSFitSysCntrl.getFitProCntrl().removeCmd(sendKeyCmd);
+         Thread.sleep(1000); */
+
+            if((Age2 - Age1) == -1)
+            {
+                appendMessage("<br><font color = #00ff00>* PASS *</font><br><br>");
+                appendMessage("Previous Age: "+Age1+" current age: "+Age2+". Age correclty decremented by "+(Age2-Age1)+" %<br>");
+
+                results+="\n* PASS *\n\n";
+                results+="Previous age: "+Age1+" current age: "+Age2+". Age correclty decremented by "+(Age2-Age1)+" %\n";
+            }
+            else
+            {
+                appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>");
+                appendMessage("Previous age: "+Age1+" current age: "+Age2+". age decrement was "+(Age2-Age1)+" % and should have been 1 %<br>");
+
+                results+="\n* FAIL *\n\n";
+                results+="Previous age: "+Age1+" current age: "+Age2+". age decrement was "+(Age2-Age1)+" % and should have been 1 %<br>";
+            }
+        }
+
+        return results;
+    }
+
     @Override
     public String runAll() throws Exception {
         //Redmine Support #925
@@ -833,8 +1011,8 @@ public class TestTreadmillKeyCodes extends TestCommons implements TestAll {
         keysResults += testSpeedUpKey();
         keysResults += testSpeedDownKey();
         keysResults += testQuickSpeedKeys();
-//        keysResults += testAgeUpKey();
-//        keysResults += testAgeDownKey();
+        keysResults += testAgeUpKey();
+        keysResults += testAgeDownKey();
 
         return keysResults;
     }
