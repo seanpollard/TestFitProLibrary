@@ -95,6 +95,8 @@ public class TestTreadmillKeyCodes extends TestCommons implements TestAll {
             //Validate that mode is changed to Pause
 
             String results="";
+            double timeOfTest = 0; //how long test took in seconds
+            long startTestTimer = System.nanoTime();
             String currentMode;
 
             results += "\n\n------------------STOP KEY TEST---------------\n\n";
@@ -174,6 +176,11 @@ public class TestTreadmillKeyCodes extends TestCommons implements TestAll {
             mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
             Thread.sleep(1000);
 
+            timeOfTest = System.nanoTime() - startTestTimer;
+            timeOfTest = timeOfTest / 1.0E09;
+
+            appendMessage("<br>This test took a total of "+timeOfTest+" secs <br>");
+            results+="\nThis test took a total of "+timeOfTest+" secs \n";
 
             return results;
         }
@@ -186,6 +193,8 @@ public class TestTreadmillKeyCodes extends TestCommons implements TestAll {
 //        Change mode to Pause (stop)
 
         String results="";
+        double timeOfTest = 0; //how long test took in seconds
+        long startTestTimer = System.nanoTime();
         String currentMode;
 
         results += "\n\n------------------START KEY TEST---------------\n\n";
@@ -255,6 +264,11 @@ public class TestTreadmillKeyCodes extends TestCommons implements TestAll {
         mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
         Thread.sleep(1000);
 
+        timeOfTest = System.nanoTime() - startTestTimer;
+        timeOfTest = timeOfTest / 1.0E09;
+
+        appendMessage("<br>This test took a total of "+timeOfTest+" secs <br>");
+        results+="\nThis test took a total of "+timeOfTest+" secs \n";
 
         return results;
     }
@@ -267,6 +281,8 @@ public class TestTreadmillKeyCodes extends TestCommons implements TestAll {
      //4. Repeat steps 2-3 until max incline reached
 
      String results ="";
+     double timeOfTest = 0; //how long test took in seconds
+     long startTestTimer = System.nanoTime();
      double currentActualIncline = 0;
      double incline1 = 0;
      double incline2 = 0;
@@ -355,6 +371,12 @@ public class TestTreadmillKeyCodes extends TestCommons implements TestAll {
          }
      }
 
+     timeOfTest = System.nanoTime() - startTestTimer;
+     timeOfTest = timeOfTest / 1.0E09;
+
+     appendMessage("<br>This test took a total of "+timeOfTest+" secs <br>");
+     results+="\nThis test took a total of "+timeOfTest+" secs \n";
+
      return results;
  }
  public String testInclineDownKey() throws Exception{
@@ -366,6 +388,8 @@ public class TestTreadmillKeyCodes extends TestCommons implements TestAll {
         //4. Repeat steps 2-3 until max incline reached
 
         String results ="";
+        double timeOfTest = 0; //how long test took in seconds
+        long startTestTimer = System.nanoTime();
         double currentActualIncline = 0;
         double incline1 = 0;
         double incline2 = 0;
@@ -454,6 +478,12 @@ public class TestTreadmillKeyCodes extends TestCommons implements TestAll {
             }
         }
 
+        timeOfTest = System.nanoTime() - startTestTimer;
+        timeOfTest = timeOfTest / 1.0E09;
+
+        appendMessage("<br>This test took a total of "+timeOfTest+" secs <br>");
+        results+="\nThis test took a total of "+timeOfTest+" secs \n";
+
         return results;
     }
  public String testSpeedUpKey() throws Exception {
@@ -465,6 +495,8 @@ public class TestTreadmillKeyCodes extends TestCommons implements TestAll {
 
 
      String results = "";
+     double timeOfTest = 0; //how long test took in seconds
+     long startTestTimer = System.nanoTime();
      double currentSpeed = 0;
      long elapsedTime = 0;
      double seconds = 0;
@@ -530,6 +562,12 @@ public class TestTreadmillKeyCodes extends TestCommons implements TestAll {
          }
      }
 
+     timeOfTest = System.nanoTime() - startTestTimer;
+     timeOfTest = timeOfTest / 1.0E09;
+
+     appendMessage("<br>This test took a total of "+timeOfTest+" secs <br>");
+     results+="\nThis test took a total of "+timeOfTest+" secs \n";
+
      return results;
  }
  public String testSpeedDownKey() throws Exception {
@@ -542,6 +580,8 @@ public class TestTreadmillKeyCodes extends TestCommons implements TestAll {
 
 
         String results = "";
+        double timeOfTest = 0; //how long test took in seconds
+        long startTestTimer = System.nanoTime();
         double currentSpeed = 0;
         long elapsedTime = 0;
         double seconds = 0;
@@ -634,7 +674,13 @@ public class TestTreadmillKeyCodes extends TestCommons implements TestAll {
             }
         }
 
-        return results;
+     timeOfTest = System.nanoTime() - startTestTimer;
+     timeOfTest = timeOfTest / 1.0E09;
+
+     appendMessage("<br>This test took a total of "+timeOfTest+" secs <br>");
+     results+="\nThis test took a total of "+timeOfTest+" secs \n";
+
+     return results;
     }
  public String testQuickInclineKeys() throws Exception{
      /*
@@ -647,6 +693,8 @@ public class TestTreadmillKeyCodes extends TestCommons implements TestAll {
      * */
 
      String results ="";
+     double timeOfTest = 0; //how long test took in seconds
+     long startTestTimer = System.nanoTime();
      double currentActualIncline = 0;
      double maxIncline =  15; //hCmd.getMaxIncline(); // The motor we are using has max incline of 15%
      double minIncline = hCmd.getMinIncline();
@@ -722,6 +770,12 @@ public class TestTreadmillKeyCodes extends TestCommons implements TestAll {
          }
      }
 
+     timeOfTest = System.nanoTime() - startTestTimer;
+     timeOfTest = timeOfTest / 1.0E09;
+
+     appendMessage("<br>This test took a total of "+timeOfTest+" secs <br>");
+     results+="\nThis test took a total of "+timeOfTest+" secs \n";
+
      return results;
  }
  public String testQuickSpeedKeys() throws Exception{
@@ -733,6 +787,8 @@ public class TestTreadmillKeyCodes extends TestCommons implements TestAll {
      * */
 
         String results ="";
+        double timeOfTest = 0; //how long test took in seconds
+        long startTestTimer = System.nanoTime();
         double currentSpeed = 0;
         double maxSpeed =  16; //hCmd.getMaxSpee(); // The motor we are using has max speed of 16 kph
         double minSpeed = hCmd.getMinSpeed();
@@ -817,16 +873,24 @@ public class TestTreadmillKeyCodes extends TestCommons implements TestAll {
             }
         }
 
-        return results;
+     timeOfTest = System.nanoTime() - startTestTimer;
+     timeOfTest = timeOfTest / 1.0E09;
+
+     appendMessage("<br>This test took a total of "+timeOfTest+" secs <br>");
+     results+="\nThis test took a total of "+timeOfTest+" secs \n";
+
+     return results;
     }
  public String testAgeUpKey() throws Exception{
         //Testing Age Up key press
         //1. Set age to 18
-        //2. Send Age Up key command
-        //3. Validate that Incline went up by 1 year
-        //4. Repeat steps 2-3 until max age is reached
+        //2. Simulate Incline Up key press
+        //3. Validate that Incline went up 0.5%
+        //4. Repeat steps 2-3 until max incline reached
 
         String results ="";
+        double timeOfTest = 0; //how long test took in seconds
+        long startTestTimer = System.nanoTime();
         double Age1 = 0;
         double Age2 = 0;
         double currentAge = 0;
@@ -905,6 +969,12 @@ public class TestTreadmillKeyCodes extends TestCommons implements TestAll {
             }
         }
 
+        timeOfTest = System.nanoTime() - startTestTimer;
+        timeOfTest = timeOfTest / 1.0E09;
+
+        appendMessage("<br>This test took a total of "+timeOfTest+" secs <br>");
+        results+="\nThis test took a total of "+timeOfTest+" secs \n";
+
         return results;
     }
  public String testAgeDownKey() throws Exception{
@@ -916,6 +986,8 @@ public class TestTreadmillKeyCodes extends TestCommons implements TestAll {
         //4. Repeat steps 2-3 until max incline reached
 
         String results ="";
+        double timeOfTest = 0; //how long test took in seconds
+        long startTestTimer = System.nanoTime();
         double Age1 = 0;
         double Age2 = 0;
         double currentAge = 0;
@@ -993,7 +1065,13 @@ public class TestTreadmillKeyCodes extends TestCommons implements TestAll {
             }
         }
 
-        return results;
+     timeOfTest = System.nanoTime() - startTestTimer;
+     timeOfTest = timeOfTest / 1.0E09;
+
+     appendMessage("<br>This test took a total of "+timeOfTest+" secs <br>");
+     results+="\nThis test took a total of "+timeOfTest+" secs \n";
+
+     return results;
     }
 
     @Override

@@ -192,8 +192,8 @@ import java.util.Calendar;
          timeOfTest = System.nanoTime() - startTestTimer;
          timeOfTest = timeOfTest / 1.0E09;
 
-         appendMessage("<br>This test took a total of"+timeOfTest+"secs <br>");
-         ageResults+="\nThis test took a total of"+timeOfTest+"secs \n";
+         appendMessage("<br>This test took a total of "+timeOfTest+" secs <br>");
+         ageResults+="\nThis test took a total of "+timeOfTest+" secs \n";
          return ageResults;
      }
      //--------------------------------------------//
@@ -306,8 +306,8 @@ import java.util.Calendar;
          timeOfTest = System.nanoTime() - startTestTimer;
          timeOfTest = timeOfTest / 1.0E09;
 
-         appendMessage("<br>This test took a total of"+timeOfTest+"secs <br>");
-         weightResults+="\nThis test took a total of"+timeOfTest+"secs \n";
+         appendMessage("<br>This test took a total of "+timeOfTest+" secs <br>");
+         weightResults+="\nThis test took a total of "+timeOfTest+" secs \n";
          return weightResults;
      }
  
@@ -380,8 +380,8 @@ import java.util.Calendar;
          timeOfTest = System.nanoTime() - startTestTimer;
          timeOfTest = timeOfTest / 1.0E09;
 
-         appendMessage("<br>This test took a total of"+timeOfTest+"secs <br>");
-         systemString+="\nThis test took a total of"+timeOfTest+"secs \n";
+         appendMessage("<br>This test took a total of "+timeOfTest+" secs <br>");
+         systemString+="\nThis test took a total of "+timeOfTest+" secs \n";
          return systemString;
      }
      //--------------------------------------------//
@@ -517,8 +517,8 @@ import java.util.Calendar;
          timeOfTest = System.nanoTime() - startTestTimer;
          timeOfTest = timeOfTest / 1.0E09;
 
-         appendMessage("<br>This test took a total of"+timeOfTest+"secs <br>");
-         results+="\nThis test took a total of"+timeOfTest+"secs \n";
+         appendMessage("<br>This test took a total of "+timeOfTest+" secs <br>");
+         results+="\nThis test took a total of "+timeOfTest+" secs \n";
          return results;
      }
  
@@ -706,8 +706,8 @@ import java.util.Calendar;
          timeOfTest = System.nanoTime() - startTestTimer;
          timeOfTest = timeOfTest / 1.0E09;
 
-         appendMessage("<br>This test took a total of"+timeOfTest+"secs <br>");
-         results+="\nThis test took a total of"+timeOfTest+"secs \n";
+         appendMessage("<br>This test took a total of "+timeOfTest+" secs <br>");
+         results+="\nThis test took a total of "+timeOfTest+" secs \n";
          return results;
      }
  
@@ -815,8 +815,8 @@ import java.util.Calendar;
          timeOfTest = System.nanoTime() - startTestTimer;
          timeOfTest = timeOfTest / 1.0E09;
 
-         appendMessage("<br>This test took a total of"+timeOfTest+"secs <br>");
-         results+="\nThis test took a total of"+timeOfTest+"secs \n";
+         appendMessage("<br>This test took a total of "+timeOfTest+" secs <br>");
+         results+="\nThis test took a total of "+timeOfTest+" secs \n";
          return results;
      }
      @Override

@@ -38,6 +38,17 @@
 
     <string-array name="treadmillkeys_array">
         <item>Stop Key</item>
+        <item>Start Key</item>
+        <item>Incline Up</item>
+        <item>Incline Down</item>
+        <item>Speed Up</item>
+        <item>Speed Down</item>
+        <item>Quick Speed</item>
+        <item>Quick Incline</item>
+        <item>Age Up</item>
+        <item>Age Down</item>
+        <item>Run All</item>
+
     </string-array>
 
     <string-array name="alltests_array">

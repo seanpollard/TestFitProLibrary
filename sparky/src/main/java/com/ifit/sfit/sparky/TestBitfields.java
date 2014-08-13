@@ -180,8 +180,8 @@ public class TestBitfields extends TestCommons implements TestAll {
         timeOfTest = System.nanoTime() - startTestTimer;
         timeOfTest = timeOfTest / 1.0E09;
 
-        appendMessage("<br>This test took a total of"+timeOfTest+"secs <br>");
-        results+="\nThis test took a total of"+timeOfTest+"secs \n";
+        appendMessage("<br>This test took a total of "+timeOfTest+" secs <br>");
+        results+="\nThis test took a total of  "+timeOfTest+"  secs \n";
         return results;
     }
     //-------------------------------------------------------------------------------//
@@ -352,8 +352,8 @@ public class TestBitfields extends TestCommons implements TestAll {
         timeOfTest = System.nanoTime() - startTestTimer;
         timeOfTest = timeOfTest / 1.0E09;
 
-        appendMessage("<br>This test took a total of"+timeOfTest+"secs <br>");
-        results+="\nThis test took a total of"+timeOfTest+"secs \n";
+        appendMessage("<br>This test took a total of "+timeOfTest+" secs <br>");
+        results+="\nThis test took a total of "+timeOfTest+" secs \n";
         return results;
     }
     //Helper function to test bitfields

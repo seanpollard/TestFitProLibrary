@@ -190,8 +190,8 @@ public class TestMotor extends TestCommons implements TestAll {
         timeOfTest = System.nanoTime() - startTestTimer;
         timeOfTest = timeOfTest / 1.0E09;
 
-        appendMessage("<br>This test took a total of"+timeOfTest+"secs <br>");
-        results+="\nThis test took a total of"+timeOfTest+"secs \n";
+        appendMessage("<br>This test took a total of "+timeOfTest+" secs <br>");
+        results+="\nThis test took a total of "+timeOfTest+" secs \n";
 
 //        double actualSpeed = 0;
 //        while(true)
@@ -238,12 +238,12 @@ public class TestMotor extends TestCommons implements TestAll {
 
         appendMessage("<br>----------------------------DISTANCE TEST---------------------------<br><br>");
         appendMessage(Calendar.getInstance().getTime() + "<br><br>");
-        appendMessage("Test runs for " +time+ " seconds at a speed of "+setSpeed+" KPH. Expected distance is: "+expectedDistance+" meters");
+        appendMessage("Test runs for " +time+ " seconds at a speed of "+setSpeed+" KPH. Expected distance is: "+expectedDistance+" meters\n");
         appendMessage("Current Mode is: " + hCmd.getMode() + "<br>");
 
         results+="\n----------------------------DISTANCE TEST---------------------------\n\n";
         results+=Calendar.getInstance().getTime() + "\n\n";
-        results+="Test runs for " +time+ " seconds at a speed of "+setSpeed+" KPH. Expected distance is: "+expectedDistance+" meters";
+        results+="Test runs for " +time+ " seconds at a speed of "+setSpeed+" KPH. Expected distance is: "+expectedDistance+" meters\n";
         results+="Current Mode is: " + hCmd.getMode() + "\n";
 
         //set mode to running
@@ -320,8 +320,8 @@ public class TestMotor extends TestCommons implements TestAll {
         timeOfTest = System.nanoTime() - startTestTimer;
         timeOfTest = timeOfTest / 1.0E09;
 
-        appendMessage("<br>This test took a total of"+timeOfTest+"secs <br>");
-        results+="\nThis test took a total of"+timeOfTest+"secs \n";
+        appendMessage("<br>This test took a total of "+timeOfTest+" secs <br>");
+        results+="\nThis test took a total of "+timeOfTest+" secs \n";
 
         return results;
     }
@@ -388,8 +388,8 @@ public class TestMotor extends TestCommons implements TestAll {
         timeOfTest = System.nanoTime() - startTestTimer;
         timeOfTest = timeOfTest / 1.0E09;
 
-        appendMessage("<br>This test took a total of"+timeOfTest+"secs <br>");
-        results+="\nThis test took a total of"+timeOfTest+"secs \n";
+        appendMessage("<br>This test took a total of "+timeOfTest+" secs <br>");
+        results+="\nThis test took a total of "+timeOfTest+" secs \n";
        return results;
     }
 
@@ -573,8 +573,8 @@ public class TestMotor extends TestCommons implements TestAll {
          timeOfTest = System.nanoTime() - startTestTimer;
          timeOfTest = timeOfTest / 1.0E09;
 
-         appendMessage("<br>This test took a total of"+timeOfTest+"secs <br>");
-         results+="\nThis test took a total of"+timeOfTest+"secs \n";
+         appendMessage("<br>This test took a total of "+timeOfTest+" secs <br>");
+         results+="\nThis test took a total of "+timeOfTest+" secs \n";
         return results;
     }
 
@@ -734,8 +734,8 @@ public class TestMotor extends TestCommons implements TestAll {
         timeOfTest = System.nanoTime() - startTestTimer;
         timeOfTest = timeOfTest / 1.0E09;
 
-        appendMessage("<br>This test took a total of"+timeOfTest+"secs <br>");
-        results+="\nThis test took a total of"+timeOfTest+"secs \n";
+        appendMessage("<br>This test took a total of "+timeOfTest+" secs <br>");
+        results+="\nThis test took a total of "+timeOfTest+" secs \n";
         return results;
     }
 
@@ -797,7 +797,8 @@ public class TestMotor extends TestCommons implements TestAll {
         startTimer = System.currentTimeMillis();
         ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(BitFieldId.KPH, setSpeed);
         mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
-
+        appendMessage("Wait "+time+" secs...<br>");
+        results+="Wait "+time+" secs...\n";
         //wait time
         Thread.sleep(time * 1000);
         //read calories
@@ -834,8 +835,8 @@ public class TestMotor extends TestCommons implements TestAll {
         timeOfTest = System.nanoTime() - startTestTimer;
         timeOfTest = timeOfTest / 1.0E09;
 
-        appendMessage("<br>This test took a total of"+timeOfTest+"secs <br>");
-        results+="\nThis test took a total of"+timeOfTest+"secs \n";
+        appendMessage("<br>This test took a total of "+timeOfTest+" secs <br>");
+        results+="\nThis test took a total of "+timeOfTest+" secs \n";
         return results;
     }
 
@@ -1248,7 +1249,7 @@ public class TestMotor extends TestCommons implements TestAll {
         timeOfTest = System.nanoTime() - startTestTimer;
         timeOfTest = timeOfTest / 1.0E09;
 
-        appendMessage("<br>This test took a total of"+timeOfTest+"secs <br>");
+        appendMessage("<br>This test took a total of "+timeOfTest+" secs <br>");
         results+="\nThis test took a total of"+timeOfTest+"secs \n";
         return results;
     }

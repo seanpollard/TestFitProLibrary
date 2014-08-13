@@ -51,12 +51,13 @@ public class TreadmillKeyCodesTest  extends BaseTest implements AdapterView.OnIt
                     @Override
                     public void run() {
                         testingView.setText(Html.fromHtml(msg));
-                        scrollview.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                scrollview.fullScroll(ScrollView.FOCUS_DOWN);
-                            }
-                        });
+                        scrollview.fullScroll(ScrollView.FOCUS_DOWN);
+//                        scrollview.post(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                scrollview.fullScroll(ScrollView.FOCUS_DOWN);
+//                            }
+//                        });
                     }
                 });
 
@@ -73,6 +74,37 @@ public class TreadmillKeyCodesTest  extends BaseTest implements AdapterView.OnIt
                         case "Stop Key":
                             returnString = t.testStopKey();
                             break;
+                        case "Start Key":
+                            returnString = t.testStartKey();
+                            break;
+                        case "Incline Up":
+                            returnString = t.testInclineUpKey();
+                            break;
+                        case "Incline Down":
+                            returnString = t.testInclineDownKey();
+                            break;
+                        case "Speed Up":
+                            returnString = t.testSpeedUpKey();
+                            break;
+                        case "Speed Down":
+                            returnString = t.testSpeedDownKey();
+                            break;
+                        case "Quick Speed":
+                            returnString = t.testQuickSpeedKeys();
+                            break;
+                        case "Quick Incline":
+                            returnString = t.testQuickInclineKeys();
+                            break;
+                        case "Age Up":
+                            returnString = t.testAgeUpKey();
+                            break;
+                        case "Age Down":
+                            returnString = t.testAgeDownKey();
+                            break;
+                        case "Run All":
+                            returnString = t.runAll();
+                            break;
+
                     }
                     try {
                         returnString += "\n" + systemString;

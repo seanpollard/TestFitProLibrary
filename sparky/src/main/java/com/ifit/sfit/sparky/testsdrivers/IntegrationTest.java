@@ -49,12 +49,13 @@ import com.ifit.sfit.sparky.TestIntegration;
                      @Override
                      public void run() {
                          testingView.setText(Html.fromHtml(msg));
-                         scrollview.post(new Runnable() {
-                             @Override
-                             public void run() {
-                                 scrollview.fullScroll(ScrollView.FOCUS_DOWN);
-                             }
-                         });
+                         scrollview.fullScroll(ScrollView.FOCUS_DOWN);
+//                         scrollview.post(new Runnable() {
+//                             @Override
+//                             public void run() {
+//                                 scrollview.fullScroll(ScrollView.FOCUS_DOWN);
+//                             }
+//                         });
                      }
                  });
 
