@@ -465,7 +465,7 @@ public abstract class BaseTest extends Activity implements View.OnClickListener,
                         return false;//invalid data
                     }
                     try {
-                        maxIncline = Integer.parseInt(inputText);
+                        maxIncline = Double.parseDouble(inputText);
                     } catch (NumberFormatException e) {
                         e.printStackTrace();
                     }
@@ -485,7 +485,7 @@ public abstract class BaseTest extends Activity implements View.OnClickListener,
                         inputText = "0";
                     }
 
-                    maxIncline = Integer.parseInt(inputText);
+                    maxIncline = Double.parseDouble(inputText);
                 }
 
             }
@@ -505,7 +505,7 @@ public abstract class BaseTest extends Activity implements View.OnClickListener,
                         return false;//invalid data
                     }
                     try {
-                        minIncline = Integer.parseInt(inputText);
+                        minIncline = Double.parseDouble(inputText);
                     } catch (NumberFormatException e) {
                         e.printStackTrace();
                     }
@@ -525,7 +525,7 @@ public abstract class BaseTest extends Activity implements View.OnClickListener,
                         inputText = "0";
                     }
 
-                    minIncline = Integer.parseInt(inputText);
+                    minIncline = Double.parseDouble(inputText);
                 }
 
             }
@@ -545,7 +545,7 @@ public abstract class BaseTest extends Activity implements View.OnClickListener,
                         return false;//invalid data
                     }
                     try {
-                        maxSpeed = Integer.parseInt(inputText);
+                        maxSpeed = Double.parseDouble(inputText);
                     } catch (NumberFormatException e) {
                         e.printStackTrace();
                     }
@@ -565,7 +565,7 @@ public abstract class BaseTest extends Activity implements View.OnClickListener,
                         inputText = "0";
                     }
 
-                    maxSpeed = Integer.parseInt(inputText);
+                    maxSpeed = Double.parseDouble(inputText);
                 }
 
             }
@@ -585,7 +585,7 @@ public abstract class BaseTest extends Activity implements View.OnClickListener,
                         return false;//invalid data
                     }
                     try {
-                        minSpeed = Integer.parseInt(inputText);
+                        minSpeed = Double.parseDouble(inputText);
                     } catch (NumberFormatException e) {
                         e.printStackTrace();
                     }
@@ -605,7 +605,7 @@ public abstract class BaseTest extends Activity implements View.OnClickListener,
                         inputText = "0";
                     }
 
-                    minSpeed = Integer.parseInt(inputText);
+                    minSpeed = Double.parseDouble(inputText);
                 }
 
             }

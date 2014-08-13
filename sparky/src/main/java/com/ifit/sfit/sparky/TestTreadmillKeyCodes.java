@@ -533,7 +533,7 @@ public class TestTreadmillKeyCodes extends TestCommons implements TestAll {
      return results;
  }
  public String testSpeedDownKey() throws Exception {
-        //Testing Speed Up key press
+        //Testing Speed Down key press
 //        1. Set mode to running
 //        2. Set speed to max
 //        3. Simulate Speed Down key press
@@ -820,12 +820,11 @@ public class TestTreadmillKeyCodes extends TestCommons implements TestAll {
         return results;
     }
  public String testAgeUpKey() throws Exception{
-        //Redmine Support #1171
-        //Testing Incline Up key press
-        //1. Initialize Incline to min
-        //2. Simulate Incline Up key press
-        //3. Validate that Incline went up 0.5%
-        //4. Repeat steps 2-3 until max incline reached
+        //Testing Age Up key press
+        //1. Set age to 18
+        //2. Send Age Up key command
+        //3. Validate that Incline went up by 1 year
+        //4. Repeat steps 2-3 until max age is reached
 
         String results ="";
         double Age1 = 0;

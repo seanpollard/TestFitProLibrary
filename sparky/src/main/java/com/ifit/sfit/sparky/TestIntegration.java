@@ -1,17 +1,16 @@
 package com.ifit.sfit.sparky;
 
 import com.ifit.sfit.sparky.testsdrivers.BaseTest;
- import com.ifit.sparky.fecp.FecpCommand;
- import com.ifit.sparky.fecp.SystemDevice;
- import com.ifit.sparky.fecp.communication.FecpController;
- import com.ifit.sparky.fecp.interpreter.bitField.BitFieldId;
- import com.ifit.sparky.fecp.interpreter.bitField.converter.ModeId;
- import com.ifit.sparky.fecp.interpreter.command.CommandId;
- import com.ifit.sparky.fecp.interpreter.command.WriteReadDataCmd;
- import com.ifit.sparky.fecp.interpreter.device.Device;
- 
- import java.nio.ByteBuffer;
- import java.util.Calendar;
+import com.ifit.sparky.fecp.FecpCommand;
+import com.ifit.sparky.fecp.SystemDevice;
+import com.ifit.sparky.fecp.communication.FecpController;
+import com.ifit.sparky.fecp.interpreter.bitField.BitFieldId;
+import com.ifit.sparky.fecp.interpreter.bitField.converter.ModeId;
+import com.ifit.sparky.fecp.interpreter.command.CommandId;
+import com.ifit.sparky.fecp.interpreter.command.WriteReadDataCmd;
+
+import java.nio.ByteBuffer;
+import java.util.Calendar;
 
 /**
   * Created by jc.almonte on 7/2/14.
@@ -342,9 +341,7 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
          maxSpeed = hCmd.getMaxSpeed();
          minSpeed = hCmd.getMinSpeed();
          Thread.sleep(1000);
- 
-         //Need a new Device object for some of the device info
-         Device device = new Device();
+
          String brainboardLines[] = new String[11];
          //Split the user's input string into separate strings to be compared, line by line ("<br>" is the delimiter)
          String inputLines[] = inputString.split("\r?\n|\r");
@@ -352,10 +349,10 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
          brainboardLines[0] = "Console Name: \"" + MainDevice.getSysDevInfo().getConsoleName() + "\"";
          brainboardLines[1] = "Model Number: \"" + MainDevice.getSysDevInfo().getModel() + "\"";
          brainboardLines[2] = "Part Number: \"" + MainDevice.getSysDevInfo().getPartNumber() + "\"";
-         brainboardLines[3] = "Software Version: \"" + device.getInfo().getSWVersion() + "\"";
-         brainboardLines[4] = "Hardware Version: \"" + device.getInfo().getHWVersion() + "\"";
-         brainboardLines[5] = "Serial Number: \"" + device.getInfo().getSerialNumber() + "\"";
-         brainboardLines[6] = "Manufacturing Number: \"" + device.getInfo().getManufactureNumber() + "\"";
+         brainboardLines[3] = "Software Version: \"" + MainDevice.getInfo().getSWVersion() + "\"";
+         brainboardLines[4] = "Hardware Version: \"" + MainDevice.getInfo().getHWVersion() + "\"";
+         brainboardLines[5] = "Serial Number: \"" + MainDevice.getInfo().getSerialNumber() + "\"";
+         brainboardLines[6] = "Manufacturing Number: \"" + MainDevice.getInfo().getManufactureNumber() + "\"";
          brainboardLines[7] = "Max Incline: \"" + maxIncline + "\"";
          brainboardLines[8] = "Min. Incline: \"" + minIncline + "\"";
          brainboardLines[9] = "Max Speed: \"" + maxSpeed + "\"";
