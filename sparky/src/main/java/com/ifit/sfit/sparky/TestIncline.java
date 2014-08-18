@@ -8,6 +8,7 @@ import com.ifit.sparky.fecp.interpreter.bitField.BitFieldId;
 import com.ifit.sparky.fecp.interpreter.bitField.converter.ModeId;
 import com.ifit.sparky.fecp.interpreter.command.CommandId;
 import com.ifit.sparky.fecp.interpreter.command.WriteReadDataCmd;
+import com.ifit.sparky.fecp.interpreter.device.DeviceId;
 import com.ifit.sparky.fecp.interpreter.status.StatusId;
 
 import java.nio.ByteBuffer;
@@ -27,6 +28,7 @@ public class TestIncline extends TestCommons implements TestAll {
 
     private FecpCommand wrCmd;
     private FecpCommand rdCmd;
+    private FecpCommand calibrateCmd;
     private String currentWorkoutMode = "";
     private double currentIncline = 0.0;
     private double actualInlcine = 0.0;
@@ -53,6 +55,8 @@ public class TestIncline extends TestCommons implements TestAll {
                 //Get current system device
                 MainDevice = this.mFecpController.getSysDev();
                 this.wrCmd = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
+                this.calibrateCmd = new FecpCommand(MainDevice.getSubDevice(DeviceId.GRADE).getCommand(CommandId.CALIBRATE),hCmd);
+
                 this.rdCmd = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd,0,100);
                 ((WriteReadDataCmd)rdCmd.getCommand()).addReadBitField(BitFieldId.MAX_GRADE);
                 ((WriteReadDataCmd)rdCmd.getCommand()).addReadBitField(BitFieldId.MIN_GRADE);
@@ -667,7 +671,7 @@ public class TestIncline extends TestCommons implements TestAll {
         } while(currentIncline!=currentActualIncline && seconds < 60);//Do while the incline hasn't reached its point yet or took more than 1 mins
 
         //set speed to max
-        ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(BitFieldId.KPH, 16); // Our motor's speed limit is 16mph
+        ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(BitFieldId.KPH, 16); // Our motor's speed limit is 16kph
         mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
         Thread.sleep(23000); // give it 23 secs to reach max speed
 /* THIS PART WILL BE UNCOMMENTED ONCE ACTUAL SPEED IS ACCURATE
@@ -1219,6 +1223,15 @@ public class TestIncline extends TestCommons implements TestAll {
             appendMessage("Elapsed time was "+timeMillisecs+" ms which is out of the valid range of 400-600 ms<br>");
 
         }
+        return results;
+    }
+
+    public String testInclineCalibration() throws Exception{
+        String results = "";
+
+        ((WriteReadDataCmd)calibrateCmd.getCommand()).addWriteData(BitFieldId.GRADE,DeviceId.GRADE);
+        mSFitSysCntrl.getFitProCntrl().addCmd(calibrateCmd);
+        Thread.sleep(1000);
         return results;
     }
 

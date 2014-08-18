@@ -11,6 +11,7 @@ import com.ifit.sparky.fecp.interpreter.command.WriteReadDataCmd;
 
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 
@@ -343,6 +344,7 @@ public class TestMotor extends TestCommons implements TestAll {
         System.out.println("**************** MODES TEST ****************");
         double timeOfTest = 0; //how long test took in seconds
         long startTestTimer = System.nanoTime();
+        int currentMode = 0;
 
         appendMessage("<br><br>----------------------------MODE TEST RESULTS----------------------------<br><br>");
         appendMessage(Calendar.getInstance().getTime() + "<br><br>");
@@ -350,39 +352,43 @@ public class TestMotor extends TestCommons implements TestAll {
         results+="\n\n----------------------------MODE TEST RESULTS----------------------------\n\n";
         results+=Calendar.getInstance().getTime() + "\n\n";
 
-        int[] Modes;
+        ModeId [] Modes;
 
         switch (mode) {
             case "IDLE":
             case "DEBUG":
             case "MAINTENANCE":
             case "LOG":
-                Modes = new int[]{1, 5, 1, 6, 1, 7, 1};// idle, debug, idle, log, idle, Maintenance, idle
+                Modes = new ModeId[]{ModeId.IDLE, ModeId.DEBUG, ModeId.IDLE, ModeId.LOG, ModeId.IDLE, ModeId.MAINTENANCE, ModeId.IDLE};
                 appendMessage("<br><br>----------------------------IDLE/DEBUG/MAINTENANCE/LOG MODE TEST RESULTS----------------------------<br><br>");
 
                 results+="\n\n----------------------------IDLE/DEBUG/MAINTENANCE/LOG MODE TEST RESULTS----------------------------\n\n";
 
-                results+=runModesTest(Modes, wrCmd);
+                results+=runModesTest(Modes, wrCmd, true);
                 break;
 
             case "RUNNING":
             case "PAUSE":
             case "RESULTS":
-                Modes = new int[]{2, 3, 2, 3, 4, 1};// running, pause,running, pause,results,idle
+                Modes = new ModeId[]{ModeId.RUNNING,ModeId.PAUSE,ModeId.RUNNING, ModeId.PAUSE, ModeId.RESULTS, ModeId.IDLE};
                 appendMessage("<br><br>----------------------------RUNNING/PAUSE/RESULTS MODE TEST RESULTS----------------------------<br><br>");
 
                 results+="\n\n----------------------------RUNNING/PAUSE/RESULTS MODE TEST RESULTS----------------------------\n\n";
 
-                results+=runModesTest(Modes, wrCmd);
+                results+=runModesTest(Modes, wrCmd, true);
                 break;
 
             default:
-                Modes = new int[]{1, 5, 1, 6, 1, 7, 1, 2, 3, 2, 3, 4, 1};// run both of previous cases if nothing is specified
-                appendMessage("<br><br>----------------------------ALL MODES TEST RESULTS----------------------------<br><br>");
+                Modes = new ModeId[]{ ModeId.IDLE, ModeId.DEBUG, ModeId.IDLE, ModeId.LOG, ModeId.IDLE, ModeId.MAINTENANCE, ModeId.IDLE,
+                                      ModeId.RUNNING,ModeId.PAUSE,ModeId.RUNNING, ModeId.PAUSE, ModeId.RESULTS, ModeId.IDLE };// run both of previous cases if nothing is specified
+                appendMessage("<br><br>----------------------------TESTING VALID MODE TRANSITIONS----------------------------<br><br>");
+                results+="\n\n----------------------------TESTING VALID MODE TRANSITIONS----------------------------\n\n";
 
-                results+="\n\n----------------------------ALL MODES TEST RESULTS----------------------------\n\n";
-
-                results+=runModesTest(Modes, wrCmd);
+                results+=runModesTest(Modes, wrCmd, true);
+                appendMessage("<br><br>----------------------------TESTING INVALID MODE TRANSITIONS----------------------------<br><br>");
+                results+="\n\n----------------------------TESTING INVALID MODE TRANSITIONS----------------------------\n\n";
+                Modes = null; //Initialized inside the Method
+                results+=runModesTest(Modes, wrCmd, false);
                 break;
         }
         timeOfTest = System.nanoTime() - startTestTimer;
@@ -393,35 +399,184 @@ public class TestMotor extends TestCommons implements TestAll {
        return results;
     }
 
-    private String runModesTest(int[] modes, FecpCommand wrCmd) {
+    private String runModesTest(ModeId[] modes, FecpCommand wrCmd, boolean validMode) {
 
       String results="";
-        for (int i = 0; i < modes.length; i++) {
-            try {
-                ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, modes[i]);
-                mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
-                Thread.sleep(1000);
+      ModeId transitionMode = ModeId.UNKNOWN; // Mode to transition to the next state to be tested
+      ModeId currentMode;
+      boolean testFailed = false;
+      ArrayList<String> failedTransitions = new ArrayList<String>(); // To hold failedTransitions
+      String failedTransitionStr = ""; // Value to add to the failed Transitions array
+      int count = 0; // To determine when all modes have been tested
+      int idleCount = 0; //To Count the times we visit idle case
+      /*Count that indicates all invalid transitions were tested.
+      If all invalid transitions pass their tests, this number is 7, if not if will increment by 2 everytime a transition fails*/
+      int doneCount = 7;
+      //This array will help get back to the mode currently being tested once a transition has failed
+      ModeId [] validTransitionsFlow = new ModeId[]{ModeId.IDLE,ModeId.RUNNING,ModeId.PAUSE,ModeId.RESULTS};
 
-                appendMessage("Status of changing mode: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>");
-                appendMessage("Current Mode is: " + hCmd.getMode() + "  and its value is  " + hCmd.getMode().getValue() + "<br><br>");
+        if(validMode) {
+            //Testing valid transitions
+            for (int i = 0; i < modes.length; i++) {
+                try {
+                    currentMode = hCmd.getMode();
+                    ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, modes[i].getValue());
+                    mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+                    Thread.sleep(1000);
 
-                results+="Status of changing mode: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
-                results+="Current Mode is: " + hCmd.getMode() + "  and its value is  " + hCmd.getMode().getValue() + "\n\n";
+                    appendMessage("Status of changing mode: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>");
+                    appendMessage("Current Mode is: " + hCmd.getMode() + "  and its value is  " + hCmd.getMode().getValue() + "<br><br>");
 
-                if (hCmd.getMode().getValue() == modes[i]) {
-                    appendMessage("This mode matches : <br><font color = #00ff00>* PASS *</font><br><br>");
+                    results += "Status of changing mode: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
+                    results += "Current Mode is: " + hCmd.getMode() + "  and its value is  " + hCmd.getMode().getValue() + "\n\n";
 
-                    results+="This mode matches : \n* PASS *\n\n";
-                }
-                    else {
-                    appendMessage("This mode does not match : <br><font color = #ff0000>* FAIL *</font><br><br>");
+                    if (hCmd.getMode().getValue() == modes[i].getValue()) {
+                        appendMessage("<br><font color = #00ff00>* PASS *</font><br><br>Mode succesfully transitioned from "+currentMode+" to: "+hCmd.getMode()+"<br>");
 
-                    results+="This mode does not match : \n* FAIL *\n\n";
+                        results += "\n* PASS *\n\nMode succesfully transitioned from "+currentMode+" to: "+hCmd.getMode()+"\n";
+                    } else {
+                        appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>Mode DID NOT transition from "+currentMode+" to: "+hCmd.getMode()+"<br>");
 
-                }
+                        results += "\n* FAIL *\n\nMode DID NOT transition from "+currentMode+" to: "+hCmd.getMode()+"\n";
+                    }
                 } catch (Exception ex) {
-                ex.printStackTrace();
+                    ex.printStackTrace();
+                }
             }
+        }
+        else
+        {
+
+        // Testing invalid transitions
+        //ISSUES FOUND: Mode can do invalid transitions RUNNING->RESULTS, PAUSE->IDLE
+            do {
+                currentMode = hCmd.getMode();
+                appendMessage("<br><font color = #80C0FF> ********Testing invalid transitions for mode: "+currentMode+"********</font><br><br>");
+                results+="\nTesting invalid transitions for mode: "+currentMode+"\n\n";
+                switch (currentMode.name()) {
+                    case "DEBUG":
+                        transitionMode = ModeId.IDLE;
+                        modes = new ModeId[]{ModeId.RUNNING, ModeId.PAUSE, ModeId.RESULTS,ModeId.LOG,ModeId.MAINTENANCE};
+                        count++;
+                        break;
+                    case "MAINTENANCE":
+                        transitionMode = ModeId.IDLE;
+                        modes = new ModeId[]{ModeId.RUNNING, ModeId.PAUSE, ModeId.RESULTS,ModeId.DEBUG,ModeId.LOG};
+                        count++;
+                        break;
+                    case "LOG":
+                        transitionMode = ModeId.IDLE;
+                        modes = new ModeId[]{ModeId.RUNNING, ModeId.PAUSE, ModeId.RESULTS,ModeId.DEBUG,ModeId.MAINTENANCE};
+                        count++;
+                        break;
+                    case "RUNNING":
+                        transitionMode = ModeId.PAUSE;
+                        modes = new ModeId[]{ModeId.RESULTS,ModeId.IDLE,ModeId.DEBUG, ModeId.LOG, ModeId.MAINTENANCE};
+                        count++;
+                        break;
+                    case "PAUSE":
+                        transitionMode = ModeId.RESULTS;
+                        modes = new ModeId[]{ModeId.IDLE, ModeId.DEBUG, ModeId.LOG, ModeId.MAINTENANCE};
+                        count++;
+                        break;
+                    case "RESULTS":
+                        transitionMode = ModeId.IDLE;
+                        modes = new ModeId[]{ModeId.RUNNING, ModeId.PAUSE, ModeId.DEBUG, ModeId.LOG, ModeId.MAINTENANCE};
+                        count++;
+                        break;
+                    case "IDLE":
+                        idleCount++;
+                        count++;
+                        if(idleCount==1 ){
+                            transitionMode = ModeId.RUNNING;
+                        }
+                       else if(idleCount==2) {
+                            transitionMode = ModeId.DEBUG;
+                        }
+                        else if(idleCount==3) {
+                            transitionMode = ModeId.LOG;
+                        }
+                        else if(idleCount==4) {
+                        transitionMode = ModeId.MAINTENANCE;
+                        }
+                        modes = new ModeId[]{ModeId.PAUSE, ModeId.RESULTS};
+                        break;
+                }
+
+                for(int i = 0; i<modes.length; i++) // Go through each invalid mode and verify transition to them is not possible
+                {
+                    if (!failedTransitions.contains(currentMode.name() + modes[i].name())) // If this transition failed, don't try it again to avoid circular dependencies
+                    {
+                        try {
+                            ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, modes[i].getValue());
+                            mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+                            Thread.sleep(1000);
+
+                            appendMessage("Status of sending command to change mode to "+modes[i].name()+" "+ (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>");
+                            appendMessage("Current Mode is: " + hCmd.getMode() + "  and its value is  " + hCmd.getMode().getValue() + "<br><br>");
+
+                            results += "Status of sending command to change mode to "+modes[i].name()+" " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
+                            results += "Current Mode is: " + hCmd.getMode() + "  and its value is  " + hCmd.getMode().getValue() + "\n\n";
+
+                            if (hCmd.getMode() != modes[i]) {
+                                appendMessage("<br><font color = #00ff00>* PASS *</font><br><br> Mode " + currentMode + " did not transition to invalid mode " + modes[i] + " <br>");
+
+                                results += "\n* PASS *\n\n Mode " + currentMode + " did not transition to invalid mode " + modes[i] + "\n";
+                                testFailed = false;
+                            } else {
+                                appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>Mode " + currentMode + " transitioned to invalid mode " + modes[i] + "<br>");
+
+                                results += "\n* FAIL *\n\n Mode " + currentMode + " transitioned to invalid mode  " + modes[i] + "\n";
+                                testFailed = true;
+
+                                // Try to get back to mode being tested before transition failed
+                                for (int x = 0; x<validTransitionsFlow.length; x++)
+                                {
+                                    ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, validTransitionsFlow[x].getValue());
+                                    mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+                                    Thread.sleep(1000);
+                                    if (hCmd.getMode() == currentMode)
+                                    {
+                                        break;
+                                    }
+                                }
+////                                if(transitionMode == ModeId.PAUSE)
+////                                {
+////                                    idleCount--; // so that it repeats the instance of the test where the transition failed, and therefore get to the other transitions
+////                                }
+////                                /*The doneCount variable increments by 2 because since the transition failed:
+////                                    1. This test instance will be repeated to get to the other transitions in the array
+////                                    2. The mode transition instance will be also repeated
+////                                 So not the count we keep track of to know when we are done with the tests, it's incremented by
+////                                 2 everytime a test fails
+////                                */
+//                                doneCount+=3;
+                                failedTransitionStr = currentMode.name() + modes[i].name();
+                                failedTransitions.add(failedTransitionStr);
+                            }
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+
+                }
+                /*Now switch to the next mode to test invalid transitions for it. */
+
+                    try {
+                        ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, transitionMode.getValue());
+                        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+                        Thread.sleep(1000);
+
+                        appendMessage("Status of sending mode command: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>");
+                        appendMessage("Current Mode is: " + hCmd.getMode() + "  and its value is  " + hCmd.getMode().getValue() + "<br><br>");
+
+                        results += "Status of sending mode command: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
+                        results += "Current Mode is: " + hCmd.getMode() + "  and its value is  " + hCmd.getMode().getValue() + "\n\n";
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+
+            } while(count<10); // Do until all mode have been tested
         }
 
         return results;
