@@ -346,10 +346,7 @@ public class TestBitfields extends TestCommons implements TestAll {
     //Helper function to test bitfields
     private void verifyBitfield(ModeId modeId, BitFieldId bitFieldId, Object valueToWrite, boolean validValue) throws InvalidCommandException, InvalidBitFieldException {
         long time=1000;
-        if(bitFieldId.name() =="KPH" || bitFieldId.name() =="GRADE")
-        {
-            time = 5000;
-        }
+
         try {
             ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, modeId);
             mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
@@ -369,7 +366,7 @@ public class TestBitfields extends TestCommons implements TestAll {
             appendMessage("<br>using VALID value "+ valueToWrite);
            
             results+="\nusing VALID value "+ valueToWrite;
-            if (hCmd.toString().equals(String.valueOf(valueToWrite))) {
+            if (hCmd.getValue(bitFieldId) == (double) valueToWrite) {
                 appendMessage("<br><br><font color = #00ff00>* PASS *</font><br><br> value " + hCmd.toString() + " read from brainboard matches value " + valueToWrite + " written to bitfield " + bitFieldId.name() + "<br>");
                
                 results+="\n\n* PASS *\n\n value " + hCmd.toString() + " read from brainboard matches value " + valueToWrite + " written to bitfield " + bitFieldId.name() + "\n";
@@ -385,14 +382,14 @@ public class TestBitfields extends TestCommons implements TestAll {
             
             results+="\nusing INVALID value "+ valueToWrite;
 
-            if (hCmd.toString().equals(String.valueOf(valueToWrite))) {
+            if (hCmd.getValue(bitFieldId) == (double) valueToWrite) {
                 appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br> invalid value " + hCmd.toString() + " read from brainboard should have not been written for bitfield " + bitFieldId.name() + "<br>");
                 
                 results+="\n* FAIL *\n\n invalid value " + hCmd.toString() + " read from brainboard should have not been written for bitfield " + bitFieldId.name() + "\n";
 
             } else {
                 appendMessage("<br><br><font color = #00ff00>* PASS *</font><br><br> invalid value " + valueToWrite + " was not written to brainboard for bitfield " + bitFieldId.name()+" value "+hCmd.toString() + " was written instead<br>");
-                results+="\n\n* PASS *\n\n invalid value " + valueToWrite + " was not written to brainboard for bitfield " + bitFieldId.name()+" value "+hCmd.toString() + " was written instead\n";
+                results+="\n\n* PASS *\n\n invalid value " + valueToWrite + " was not written to brainboard for bitfield " + bitFieldId.name()+" current value is "+hCmd.toString() + " \n";
 
             }
         }

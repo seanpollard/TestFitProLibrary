@@ -345,8 +345,8 @@ public class HandleCmd implements OnCommandReceivedListener
         return this.valueToString;
     }
     /*
-    * getValue returns the double value "bitfieldName"
-    * @param bitfieldName --> Name of the bitfield
+    * getValue returns the double value of the BitfieldId specified by "bitfieldName"
+    * @param bitfieldName --> Name of the bitfieldId
     * returns --> double value correpsonding to bitfieldName
     * */
     public double getValue(String bitfieldName) {
