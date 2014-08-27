@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Random;
 
 
 /**
@@ -58,15 +59,19 @@ public class TestMotor extends TestCommons implements TestAll {
                 //Get current system device
                 MainDevice = this.mFecpController.getSysDev();
                 this.wrCmd = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA), hCmd);
+                ((WriteReadDataCmd) wrCmd.getCommand()).addReadBitField(BitFieldId.WORKOUT_MODE);
+                mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+                Thread.sleep(1000);
+
                 this.rdCmd = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA), hCmd, 0, 100);
-                ((WriteReadDataCmd) rdCmd.getCommand()).addReadBitField(BitFieldId.KPH);
-                ((WriteReadDataCmd) rdCmd.getCommand()).addReadBitField(BitFieldId.ACTUAL_KPH);
+               ((WriteReadDataCmd) rdCmd.getCommand()).addReadBitField(BitFieldId.ACTUAL_KPH);
                 ((WriteReadDataCmd) rdCmd.getCommand()).addReadBitField(BitFieldId.MAX_KPH);
                 ((WriteReadDataCmd) rdCmd.getCommand()).addReadBitField(BitFieldId.GRADE);
                 ((WriteReadDataCmd) rdCmd.getCommand()).addReadBitField(BitFieldId.ACTUAL_INCLINE);
                 ((WriteReadDataCmd) rdCmd.getCommand()).addReadBitField(BitFieldId.DISTANCE);
                 ((WriteReadDataCmd) rdCmd.getCommand()).addReadBitField(BitFieldId.WORKOUT_MODE);
                 //  ((WriteReadDataCmd) rdCmd.getCommand()).addReadBitField(BitFieldId.WEIGHT);
+                ((WriteReadDataCmd) rdCmd.getCommand()).addReadBitField(BitFieldId.KPH);
                 ((WriteReadDataCmd) rdCmd.getCommand()).addReadBitField(BitFieldId.CALORIES);
                 mSFitSysCntrl.getFitProCntrl().addCmd(rdCmd);
                 Thread.sleep(1000);
@@ -338,7 +343,7 @@ public class TestMotor extends TestCommons implements TestAll {
   //TODO: Testing commands supported on each mode
   // Done: Testing transitions between modes
   * */
-    public String testModes(String mode) throws Exception {
+    public String testModes() throws Exception {
 
         String results="";
         System.out.println("**************** MODES TEST ****************");
@@ -354,48 +359,79 @@ public class TestMotor extends TestCommons implements TestAll {
 
         ModeId [] Modes;
 
-        switch (mode) {
-            case "IDLE":
-            case "DEBUG":
-            case "MAINTENANCE":
-            case "LOG":
-                Modes = new ModeId[]{ModeId.IDLE, ModeId.DEBUG, ModeId.IDLE, ModeId.LOG, ModeId.IDLE, ModeId.MAINTENANCE, ModeId.IDLE};
-                appendMessage("<br><br>----------------------------IDLE/DEBUG/MAINTENANCE/LOG MODE TEST RESULTS----------------------------<br><br>");
+//        Modes = new ModeId[]{ ModeId.IDLE, ModeId.DEBUG, ModeId.IDLE, ModeId.LOG, ModeId.IDLE, ModeId.MAINTENANCE, ModeId.IDLE,
+//                                      ModeId.RUNNING,ModeId.PAUSE,ModeId.RUNNING, ModeId.PAUSE, ModeId.RESULTS, ModeId.IDLE };// run both of previous cases if nothing is specified
+//        appendMessage("<br><br>----------------------------TESTING VALID MODE TRANSITIONS----------------------------<br><br>");
+//        results+="\n\n----------------------------TESTING VALID MODE TRANSITIONS----------------------------\n\n";
+//        results+=runModesTest(Modes, wrCmd, true);
+//
+//        appendMessage("<br><br>----------------------------TESTING INVALID MODE TRANSITIONS----------------------------<br><br>");
+//        results+="\n\n----------------------------TESTING INVALID MODE TRANSITIONS----------------------------\n\n";
+//        Modes = null; //Initialized inside the Method
+//        results+=runModesTest(Modes, wrCmd, false);
 
-                results+="\n\n----------------------------IDLE/DEBUG/MAINTENANCE/LOG MODE TEST RESULTS----------------------------\n\n";
+        appendMessage("<br><br>----------------------------TESTING BITFIELDS FUNCTIONS per MODE----------------------------<br><br>");
+        results+="\n\n----------------------------TESTING BITFIELDS BITFIELDS FUNCTIONS per MODE----------------------------\n\n";
 
-                results+=runModesTest(Modes, wrCmd, true);
-                break;
+        mSFitSysCntrl.getFitProCntrl().removeCmd(rdCmd); // Remove read command so call back doesn't interfere with test reading
+        Thread.sleep(1000);
 
-            case "RUNNING":
-            case "PAUSE":
-            case "RESULTS":
-                Modes = new ModeId[]{ModeId.RUNNING,ModeId.PAUSE,ModeId.RUNNING, ModeId.PAUSE, ModeId.RESULTS, ModeId.IDLE};
-                appendMessage("<br><br>----------------------------RUNNING/PAUSE/RESULTS MODE TEST RESULTS----------------------------<br><br>");
 
-                results+="\n\n----------------------------RUNNING/PAUSE/RESULTS MODE TEST RESULTS----------------------------\n\n";
+//        ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.IDLE);
+//        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+//        Thread.sleep(1000);
+//
+//        appendMessage("Status of sending mode command: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>");
+//        appendMessage("Current Mode is: " + hCmd.getMode() + "  and its value is  " + hCmd.getMode().getValue() + "<br><br>");
+//
+//        results += "Status of sending mode command: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
+//        results += "Current Mode is: " + hCmd.getMode() + "  and its value is  " + hCmd.getMode().getValue() + "\n\n";
+//        appendMessage("Speed before setting it to 4 in IDLE: "+hCmd.getSpeed()+"<br>");
+//        ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(BitFieldId.KPH, 16);
+//        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+//        Thread.sleep(1000);
+//        appendMessage("Speed after setting it to 4 in IDLE: "+hCmd.getSpeed()+"<br>");
+//
+//
+//
+//        appendMessage("Status of setting speed "+ (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>");
+//
+//        ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.DEBUG);
+//        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+//        Thread.sleep(1000);
+//
+//        appendMessage("Status of sending mode command: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>");
+//        appendMessage("Current Mode is: " + hCmd.getMode() + "  and its value is  " + hCmd.getMode().getValue() + "<br><br>");
+//
+//        results += "Status of sending mode command: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
+//        results += "Current Mode is: " + hCmd.getMode() + "  and its value is  " + hCmd.getMode().getValue() + "\n\n";
+//
+//
+//        while(hCmd.getMode()==ModeId.DEBUG)
+//        {
+//
+//        }
+        Modes = new ModeId[]{ModeId.IDLE,ModeId.RUNNING,ModeId.PAUSE, ModeId.RESULTS, ModeId.IDLE,
+                              ModeId.DEBUG, ModeId.IDLE, ModeId.LOG, ModeId.IDLE, ModeId.MAINTENANCE};
+        results+=runBitfieldsAccessInModes(Modes);
 
-                results+=runModesTest(Modes, wrCmd, true);
-                break;
 
-            default:
-                Modes = new ModeId[]{ ModeId.IDLE, ModeId.DEBUG, ModeId.IDLE, ModeId.LOG, ModeId.IDLE, ModeId.MAINTENANCE, ModeId.IDLE,
-                                      ModeId.RUNNING,ModeId.PAUSE,ModeId.RUNNING, ModeId.PAUSE, ModeId.RESULTS, ModeId.IDLE };// run both of previous cases if nothing is specified
-                appendMessage("<br><br>----------------------------TESTING VALID MODE TRANSITIONS----------------------------<br><br>");
-                results+="\n\n----------------------------TESTING VALID MODE TRANSITIONS----------------------------\n\n";
+        ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.IDLE);
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+        Thread.sleep(1000);
 
-                results+=runModesTest(Modes, wrCmd, true);
-                appendMessage("<br><br>----------------------------TESTING INVALID MODE TRANSITIONS----------------------------<br><br>");
-                results+="\n\n----------------------------TESTING INVALID MODE TRANSITIONS----------------------------\n\n";
-                Modes = null; //Initialized inside the Method
-                results+=runModesTest(Modes, wrCmd, false);
-                break;
-        }
+        appendMessage("Status of sending mode command: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>");
+        appendMessage("Current Mode is: " + hCmd.getMode() + "  and its value is  " + hCmd.getMode().getValue() + "<br><br>");
+
+        results += "Status of sending mode command: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
+        results += "Current Mode is: " + hCmd.getMode() + "  and its value is  " + hCmd.getMode().getValue() + "\n\n";
         timeOfTest = System.nanoTime() - startTestTimer;
         timeOfTest = timeOfTest / 1.0E09;
-
         appendMessage("<br>This test took a total of "+timeOfTest+" secs <br>");
         results+="\nThis test took a total of "+timeOfTest+" secs \n";
+
+        mSFitSysCntrl.getFitProCntrl().addCmd(rdCmd);
+        Thread.sleep(1000);
        return results;
     }
 
@@ -413,7 +449,7 @@ public class TestMotor extends TestCommons implements TestAll {
       If all invalid transitions pass their tests, this number is 7, if not if will increment by 2 everytime a transition fails*/
       int doneCount = 7;
       //This array will help get back to the mode currently being tested once a transition has failed
-      ModeId [] validTransitionsFlow = new ModeId[]{ModeId.IDLE,ModeId.RUNNING,ModeId.PAUSE,ModeId.RESULTS};
+      ModeId [] validTransitionsFlow = new ModeId[]{ModeId.IDLE,ModeId.RUNNING,ModeId.PAUSE,ModeId.RESULTS, ModeId.IDLE,ModeId.DEBUG, ModeId.IDLE,ModeId.LOG, ModeId.IDLE,ModeId.MAINTENANCE};
 
         if(validMode) {
             //Testing valid transitions
@@ -451,8 +487,6 @@ public class TestMotor extends TestCommons implements TestAll {
         //ISSUES FOUND: Mode can do invalid transitions RUNNING->RESULTS, PAUSE->IDLE
             do {
                 currentMode = hCmd.getMode();
-                appendMessage("<br><font color = #80C0FF> ********Testing invalid transitions for mode: "+currentMode+"********</font><br><br>");
-                results+="\nTesting invalid transitions for mode: "+currentMode+"\n\n";
                 switch (currentMode.name()) {
                     case "DEBUG":
                         transitionMode = ModeId.IDLE;
@@ -486,23 +520,44 @@ public class TestMotor extends TestCommons implements TestAll {
                         break;
                     case "IDLE":
                         idleCount++;
-                        count++;
                         if(idleCount==1 ){
                             transitionMode = ModeId.RUNNING;
                         }
-                       else if(idleCount==2) {
-                            transitionMode = ModeId.DEBUG;
-                        }
-                        else if(idleCount==3) {
-                            transitionMode = ModeId.LOG;
-                        }
-                        else if(idleCount==4) {
-                        transitionMode = ModeId.MAINTENANCE;
+                       else
+                        {
+                            switch (idleCount)
+                            {
+                                case 2:
+                                    transitionMode = ModeId.DEBUG;
+                                    break;
+                                case 3:
+                                    transitionMode = ModeId.LOG;
+                                    break;
+                                case 4:
+                                    transitionMode = ModeId.MAINTENANCE;
+                                    break;
+                            }
+                            try {
+                                ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, transitionMode.getValue());
+                                mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+                                Thread.sleep(1000);
+
+                                appendMessage("Status of sending mode command: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>");
+                                appendMessage("Current Mode is: " + hCmd.getMode() + "  and its value is  " + hCmd.getMode().getValue() + "<br><br>");
+
+                                results += "Status of sending mode command: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
+                                results += "Current Mode is: " + hCmd.getMode() + "  and its value is  " + hCmd.getMode().getValue() + "\n\n";
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                            }
+                            continue; // Skip to the next run of the while loop
                         }
                         modes = new ModeId[]{ModeId.PAUSE, ModeId.RESULTS};
+                        count++;
                         break;
                 }
-
+                appendMessage("<br><font color = #80C0FF> ********Testing invalid transitions for mode: "+currentMode+"********</font><br><br>");
+                results+="\nTesting invalid transitions for mode: "+currentMode+"\n\n";
                 for(int i = 0; i<modes.length; i++) // Go through each invalid mode and verify transition to them is not possible
                 {
                     if (!failedTransitions.contains(currentMode.name() + modes[i].name())) // If this transition failed, don't try it again to avoid circular dependencies
@@ -540,17 +595,6 @@ public class TestMotor extends TestCommons implements TestAll {
                                         break;
                                     }
                                 }
-////                                if(transitionMode == ModeId.PAUSE)
-////                                {
-////                                    idleCount--; // so that it repeats the instance of the test where the transition failed, and therefore get to the other transitions
-////                                }
-////                                /*The doneCount variable increments by 2 because since the transition failed:
-////                                    1. This test instance will be repeated to get to the other transitions in the array
-////                                    2. The mode transition instance will be also repeated
-////                                 So not the count we keep track of to know when we are done with the tests, it's incremented by
-////                                 2 everytime a test fails
-////                                */
-//                                doneCount+=3;
                                 failedTransitionStr = currentMode.name() + modes[i].name();
                                 failedTransitions.add(failedTransitionStr);
                             }
@@ -576,9 +620,581 @@ public class TestMotor extends TestCommons implements TestAll {
                         ex.printStackTrace();
                     }
 
-            } while(count<10); // Do until all mode have been tested
+            } while(count<7); // Do until all mode have been tested
         }
 
+        return results;
+    }
+
+    private String runBitfieldsAccessInModes(ModeId [] modes) throws Exception {
+        ArrayList<BitFieldId> supportedWrBitFields = new ArrayList<BitFieldId>(MainDevice.getInfo().getSupportedWriteBitfields());
+        String results = "";
+        Object expectedValue,valueToWrite;
+
+        Random rand = new Random();
+
+        //Go through each mode and verify supported bitfield access
+        for(int i = 0; i<modes.length; i++) {
+            try {
+                //set the mode
+                ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, modes[i].getValue());
+                mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+                Thread.sleep(1000);
+                appendMessage("Status of setting mode to " + modes[i].name() + " " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>");
+                results += "Status of setting mode to " + modes[i].name() + " " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
+                if(modes[i].name()=="IDLE" && i!=0)
+                {
+                    continue; // If idle has already been tested, go to next mode because in this case
+                              // IDLE is only used to transition to DEBUG, LOG, OR MAINTENANCE mode
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
+            appendMessage("<br><font color = #80C0FF> ********Testing mode: "+modes[i].name()+"********</font><br><br>");
+            results+="\nTesting mode: "+modes[i].name()+"\n\n";
+            appendMessage("Current mode is: "+hCmd.getMode()+"<br>");
+            results+="Current mode is: "+hCmd.getMode()+"\n";
+
+            for (BitFieldId bf : supportedWrBitFields) {
+                //All Write/Read bitfields are: KPH, GRADE, RESISTANCE, FAN_SPEED,VOLUME, WORKOUT_MODE, AUDIO_SOURCE, WORKOUT, AGE, WEIGHT, GEARS
+                //TRANS_MAX, BV_VOLUME, BV_FREQUENCY IDLE_TIMEOUT, PAUSE_TIMEOUT, SYSTEM_UNITS, GENDER, FIRST_NAME, LAST_NAME, IFIT_USER_NAME,
+                //HEIGHT, KPH_GOAL, GRADE_GOAL, RESISTANCE_GOAL, WATT_GOAL, RPM_GOAL, DISTANCE_GOAL,PULSE_GOAL
+
+                //TODO: Make sure to test one invalid value from below and from above valid range for each  bitfield
+                switch (bf.name()) {
+                    case "KPH":
+                        switch (modes[i].name())
+                        {
+                            case "IDLE":
+                            case "RESULTS":
+                            case "PAUSE":
+                            case "LOG":
+                            case "DEBUG":
+                            case "MAINTENANCE":
+                                valueToWrite = (double)rand.nextInt(6)+2; // Send a random value ( 2 to 6) on each mode
+                                results+=testBitfieldAccessInModes(bf,false,valueToWrite,null);
+                                break;
+                            case "RUNNING":
+                                valueToWrite = expectedValue = 4.0;
+                                results+=testBitfieldAccessInModes(bf,true,valueToWrite,expectedValue);
+                                break;
+                        }
+                        break;
+                    case "GRADE":
+                        //Incline can be changed in all modes, hence no switch case statement
+                        valueToWrite = expectedValue = (double)rand.nextInt(11); // Write a random value (0 to 10) to incline on each mode
+                        results+=testBitfieldAccessInModes(bf,true,valueToWrite,expectedValue);
+                        break;
+                    case "RESISTANCE":
+                        switch (modes[i].name())
+                        {
+                            case "IDLE":
+                            case "RESULTS":
+                            case "LOG":
+                            case "DEBUG":
+                            case "MAINTENANCE":
+                                valueToWrite = (double)rand.nextInt(20)+10; // Send a random value ( 10 to 20) on each mode
+                                expectedValue = 1.0;
+                                results+=testBitfieldAccessInModes(bf,false,valueToWrite,expectedValue);
+                                break;
+                            case "RUNNING":
+                            case "PAUSE":
+                                valueToWrite = expectedValue = (double)rand.nextInt(20)+10; // Send a random value ( 10 to 20) on each mode
+                                results+=testBitfieldAccessInModes(bf,true,valueToWrite,expectedValue);
+                                break;
+                        }
+                        break;
+                    case "FAN_SPEED":
+                        //Fan Speed can be changed in all modes, hence no switch case statement
+                        valueToWrite = expectedValue = (double)rand.nextInt(50)+20; // Write a random value (20 to 50) to fan speed on each mode
+                        results+=testBitfieldAccessInModes(bf,true,valueToWrite,expectedValue);
+                        break;
+                    case "VOLUME":
+                        valueToWrite = expectedValue = (double)rand.nextInt(20)+10; // Write a random value (10 to 20) to fan speed on each mode
+                        results+=testBitfieldAccessInModes(bf,true,valueToWrite,expectedValue);
+                        break;
+                    case "AUDIO_SOURCE":
+                        switch (modes[i].name())
+                        {
+                            case "IDLE":
+                                break;
+                            case "RUNNING":
+                                break;
+                            case "PAUSE":
+                                break;
+                            case "LOG":
+                                break;
+                            case "RESULTS":
+                                break;
+                            case "DEBUG":
+                                break;
+                            case "MAINTENANCE":
+                                break;
+                        }
+                        break;
+                    case "WORKOUT":
+                        switch (modes[i].name())
+                        {
+                            case "IDLE":
+//                                valueToWrite = expectedValue = (double)rand.nextInt(13); // Write a random value (0 to 12) to workout on each mode
+//                                results+=testBitfieldAccessInModes(bf,true,valueToWrite,expectedValue);
+                                break;
+                            case "RUNNING":
+                            case "PAUSE":
+                            case "LOG":
+                            case "RESULTS":
+                            case "DEBUG":
+                            case "MAINTENANCE":
+//                                valueToWrite = (double)rand.nextInt(13); // Write a random value (0 to 12) to workout on each mode
+//                                results+=testBitfieldAccessInModes(bf,false,valueToWrite,null);
+                                break;
+                        }
+                        break;
+                    case "AGE":
+                        switch (modes[i].name())
+                        {
+                            case "IDLE":
+                                break;
+                            case "RUNNING":
+                            case "PAUSE":
+                            case "LOG":
+                            case "RESULTS":
+                            case "DEBUG":
+                            case "MAINTENANCE":
+                                break;
+                        }
+                        break;
+                    case "WEIGHT":
+                        switch (modes[i].name())
+                        {
+                            case "IDLE":
+                                break;
+                            case "RUNNING":
+                            case "PAUSE":
+                            case "LOG":
+                            case "RESULTS":
+                            case "DEBUG":
+                            case "MAINTENANCE":
+                                break;
+                        }
+                        break;
+                    case "GEARS":
+                        switch (modes[i].name())
+                        {
+                            case "IDLE":
+                                break;
+                            case "RUNNING":
+                                break;
+                            case "PAUSE":
+                                break;
+                            case "LOG":
+                                break;
+                            case "RESULTS":
+                                break;
+                            case "DEBUG":
+                                break;
+                            case "MAINTENANCE":
+                                break;
+                        }
+                        break;
+                    case "TRANS_MAX":
+                        switch (modes[i].name())
+                        {
+                            case "IDLE":
+                                break;
+                            case "RUNNING":
+                                break;
+                            case "PAUSE":
+                                break;
+                            case "LOG":
+                                break;
+                            case "RESULTS":
+                                break;
+                            case "DEBUG":
+                                break;
+                            case "MAINTENANCE":
+                                break;
+                        }
+                        break;
+                    case "BV_VOLUME":
+                        switch (modes[i].name())
+                        {
+                            case "IDLE":
+                                break;
+                            case "RUNNING":
+                                break;
+                            case "PAUSE":
+                                break;
+                            case "LOG":
+                                break;
+                            case "RESULTS":
+                                break;
+                            case "DEBUG":
+                                break;
+                            case "MAINTENANCE":
+                                break;
+                        }
+                        break;
+                    case "BV_FREQUENCY":
+                        switch (modes[i].name())
+                        {
+                            case "IDLE":
+                                break;
+                            case "RUNNING":
+                                break;
+                            case "PAUSE":
+                                break;
+                            case "LOG":
+                                break;
+                            case "RESULTS":
+                                break;
+                            case "DEBUG":
+                                break;
+                            case "MAINTENANCE":
+                                break;
+                        }
+                        break;
+                    case "IDLE_TIMEOUT":
+                        switch (modes[i].name())
+                        {
+                            case "IDLE":
+                            case "MAINTENANCE":
+                                valueToWrite = expectedValue = (double)rand.nextInt(10)+5; // Write a random value (5 to 10) to incline on each mode
+                                results+=testBitfieldAccessInModes(bf,true,valueToWrite,expectedValue);
+                                break;
+                            case "RUNNING":
+                            case "PAUSE":
+                            case "LOG":
+                            case "RESULTS":
+                            case "DEBUG":
+                                valueToWrite = expectedValue = (double)rand.nextInt(20)+11; // Write a random value (11 to 20) to incline on each mode
+                                results+=testBitfieldAccessInModes(bf,false,valueToWrite,null);
+                                break;
+                        }
+                        break;
+                    case "PAUSE_TIMEOUT":
+                        switch (modes[i].name())
+                        {
+                            case "IDLE":
+                            case "MAINTENANCE":
+                                valueToWrite = expectedValue = (double)rand.nextInt(10)+5; // Write a random value (5 to 10) to incline on each mode
+                                results+=testBitfieldAccessInModes(bf,true,valueToWrite,expectedValue);
+                                break;
+                            case "RUNNING":
+                            case "PAUSE":
+                            case "LOG":
+                            case "RESULTS":
+                            case "DEBUG":
+                                valueToWrite = expectedValue = (double)rand.nextInt(30)+21; // Write a random value (21 to 30) to incline on each mode
+                                results+=testBitfieldAccessInModes(bf,false,valueToWrite,null);
+                                break;
+                        }
+                        break;
+                    case "SYSTEM_UNITS":
+                        switch (modes[i].name())
+                        {
+                            case "IDLE":
+                                break;
+                            case "RUNNING":
+                                break;
+                            case "PAUSE":
+                                break;
+                            case "LOG":
+                                break;
+                            case "RESULTS":
+                                break;
+                            case "DEBUG":
+                                break;
+                            case "MAINTENANCE":
+                                break;
+                        }
+                        break;
+                    case "GENDER":
+                        switch (modes[i].name())
+                        {
+                            case "IDLE":
+                                break;
+                            case "RUNNING":
+                                break;
+                            case "PAUSE":
+                                break;
+                            case "LOG":
+                                break;
+                            case "RESULTS":
+                                break;
+                            case "DEBUG":
+                                break;
+                            case "MAINTENANCE":
+                                break;
+                        }
+                        break;
+                    case "FIRST_NAME":
+                        switch (modes[i].name())
+                        {
+                            case "IDLE":
+                                break;
+                            case "RUNNING":
+                                break;
+                            case "PAUSE":
+                                break;
+                            case "LOG":
+                                break;
+                            case "RESULTS":
+                                break;
+                            case "DEBUG":
+                                break;
+                            case "MAINTENANCE":
+                                break;
+                        }
+                        break;
+                    case "LAST_NAME":
+                        switch (modes[i].name())
+                        {
+                            case "IDLE":
+                                break;
+                            case "RUNNING":
+                                break;
+                            case "PAUSE":
+                                break;
+                            case "LOG":
+                                break;
+                            case "RESULTS":
+                                break;
+                            case "DEBUG":
+                                break;
+                            case "MAINTENANCE":
+                                break;
+                        }
+                        break;
+                    case "HEIGHT":
+                        switch (modes[i].name())
+                        {
+                            case "IDLE":
+                                break;
+                            case "RUNNING":
+                                break;
+                            case "PAUSE":
+                                break;
+                            case "LOG":
+                                break;
+                            case "RESULTS":
+                                break;
+                            case "DEBUG":
+                                break;
+                            case "MAINTENANCE":
+                                break;
+                        }
+                        break;
+                    case "KPH_GOAL":
+                        switch (modes[i].name())
+                        {
+                            case "IDLE":
+                                break;
+                            case "RUNNING":
+                                break;
+                            case "PAUSE":
+                                break;
+                            case "LOG":
+                                break;
+                            case "RESULTS":
+                                break;
+                            case "DEBUG":
+                                break;
+                            case "MAINTENANCE":
+                                break;
+                        }
+                        break;
+                    case "GRADE_GOAL":
+                        switch (modes[i].name())
+                        {
+                            case "IDLE":
+                                break;
+                            case "RUNNING":
+                                break;
+                            case "PAUSE":
+                                break;
+                            case "LOG":
+                                break;
+                            case "RESULTS":
+                                break;
+                            case "DEBUG":
+                                break;
+                            case "MAINTENANCE":
+                                break;
+                        }
+                        break;
+                    case "RESISTANCE_GOAL":
+                        switch (modes[i].name())
+                        {
+                            case "IDLE":
+                                break;
+                            case "RUNNING":
+                                break;
+                            case "PAUSE":
+                                break;
+                            case "LOG":
+                                break;
+                            case "RESULTS":
+                                break;
+                            case "DEBUG":
+                                break;
+                            case "MAINTENANCE":
+                                break;
+                        }
+                        break;
+                    case "WATT_GOAL":
+                        switch (modes[i].name())
+                        {
+                            case "IDLE":
+                                break;
+                            case "RUNNING":
+                                break;
+                            case "PAUSE":
+                                break;
+                            case "LOG":
+                                break;
+                            case "RESULTS":
+                                break;
+                            case "DEBUG":
+                                break;
+                            case "MAINTENANCE":
+                                break;
+                        }
+                        break;
+                    case "RPM_GOAL":
+                        switch (modes[i].name())
+                        {
+                            case "IDLE":
+                                break;
+                            case "RUNNING":
+                                break;
+                            case "PAUSE":
+                                break;
+                            case "LOG":
+                                break;
+                            case "RESULTS":
+                                break;
+                            case "DEBUG":
+                                break;
+                            case "MAINTENANCE":
+                                break;
+                        }
+                        break;
+                    case "DISTANCE_GOAL":
+                        switch (modes[i].name())
+                        {
+                            case "IDLE":
+                                break;
+                            case "RUNNING":
+                                break;
+                            case "PAUSE":
+                                break;
+                            case "LOG":
+                                break;
+                            case "RESULTS":
+                                break;
+                            case "DEBUG":
+                                break;
+                            case "MAINTENANCE":
+                                break;
+                        }
+                        break;
+                    case "PULSE_GOAL":
+                        switch (modes[i].name())
+                        {
+                            case "IDLE":
+                                break;
+                            case "RUNNING":
+                                break;
+                            case "PAUSE":
+                                break;
+                            case "LOG":
+                                break;
+                            case "RESULTS":
+                                break;
+                            case "DEBUG":
+                                break;
+                            case "MAINTENANCE":
+                                break;
+                        }
+                        break;
+                    default:
+                        break;
+
+                }
+                // mSFitSysCntrl.getFitProCntrl().removeCmd(cmd);
+                // Thread.sleep(1000);
+
+            }
+
+        }
+     return  results;
+    }
+
+    private String testBitfieldAccessInModes(BitFieldId bf, boolean canWrite, Object valueToWrite, Object expectedResult) {
+        String results = "";
+        long time=1000;
+//        if(bf.name() =="KPH" || bf  .name() =="GRADE")
+//        {
+//            time = 5000;
+//        }
+        try {
+
+            ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(bf, valueToWrite);
+            mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+            Thread.sleep(time);
+            appendMessage("Status of trying to write " +valueToWrite +" to bitfield "+bf+" "+ (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>");
+            results+="Status of trying to write " +valueToWrite +" to bitfield "+bf+" "+ (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
+           ((WriteReadDataCmd) wrCmd.getCommand()).addReadBitField(bf);
+           mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+           Thread.sleep(time);
+            appendMessage("Status of adding read bitfield "+bf+" "+ (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>");
+            results+="Status of adding read bitfield "+bf+" "+ (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+        if(canWrite) {
+            appendMessage("<br>using VALID value "+ valueToWrite);
+
+            results+="\nusing VALID value "+ valueToWrite;
+            if (hCmd.getValue(bf.name()) == ((double)expectedResult)) {
+                appendMessage("<br><br><font color = #00ff00>* PASS *</font><br><br> value " + hCmd.toString() + " read from brainboard matches value " + valueToWrite + " written to bitfield " + bf.name() + "<br>");
+
+                results+="\n\n* PASS *\n\n value " + hCmd.toString() + " read from brainboard matches value " + valueToWrite + " written to bitfield " + bf.name() + "\n";
+
+            } else {
+                appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br> value " + hCmd.toString() + " read from brainboard DOESN'T match value " + valueToWrite + " written to bitfield " + bf.name() + "<br>");
+
+                results+="\n* FAIL *\n\n value " + hCmd.toString() + " read from brainboard DOESN'T match value " + valueToWrite + " written to bitfield " + bf.name() + "\n";
+            }
+        }
+        else
+        { appendMessage("<br>using INVALID value "+ valueToWrite);
+
+            results+="\nusing INVALID value "+ valueToWrite;
+
+            if (hCmd.getValue(bf.name()) == ((double)valueToWrite)) {
+                appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br> invalid value " + hCmd.toString() + " read from brainboard should have not been written for bitfield " + bf.name() + "<br>");
+
+                results+="\n* FAIL *\n\n invalid value " + hCmd.toString() + " read from brainboard should have not been written for bitfield " + bf.name() + "\n";
+
+            } else {
+
+                appendMessage("<br><br><font color = #00ff00>* PASS *</font><br><br> invalid value " + valueToWrite + " was not written to brainboard for bitfield " + bf.name()+" its current value is "+hCmd.toString() + "<br>");
+                results+="\n\n* PASS *\n\n invalid value " + valueToWrite + " was not written to brainboard for bitfield " + bf.name()+" its current value is "+hCmd.toString() + "\n";
+
+            }
+        }
+        try {
+            ((WriteReadDataCmd) wrCmd.getCommand()).removeReadDataField(bf);
+            mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+            Thread.sleep(1000);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return results;
     }
 
@@ -647,9 +1263,9 @@ public class TestMotor extends TestCommons implements TestAll {
         //Set Mode to Pause
         ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.PAUSE);
         mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
-        appendMessage("Set mode to pasue and give 5 secs for motor to speed down...<br>");
+        appendMessage("Set mode to pause and give 5 secs for motor to speed down...<br>");
 
-        results+="Set mode to pasue and give 5 secs for motor to speed down...\n";
+        results+="Set mode to pause and give 5 secs for motor to speed down...\n";
 
         Thread.sleep(5000); // Give time for motor to stop seconds
 
@@ -995,8 +1611,7 @@ public class TestMotor extends TestCommons implements TestAll {
         return results;
     }
 
-    public String testCals() throws Exception
-    {
+    public String testCals() throws Exception {
         /*
         * Calories Formula
         *
@@ -1414,7 +2029,6 @@ public class TestMotor extends TestCommons implements TestAll {
         String results="";
         try {
             results+=this.testStartSpeed();
-            results+=this.testModes("all");
             results+=this.testPauseResume();
             results+=this.testCalories();
             results+=this.testPwmOvershoot();

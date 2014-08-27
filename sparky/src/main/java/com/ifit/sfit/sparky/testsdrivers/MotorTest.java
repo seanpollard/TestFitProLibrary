@@ -80,7 +80,7 @@ public class MotorTest extends BaseTest implements AdapterView.OnItemSelectedLis
                             returnString = t.testDistance();
                         break;
                         case "Modes":
-                            returnString = t.testModes("all");
+                            returnString = t.testModes();
                         break;
                         case "Speed Controller":
                             returnString = t.testSpeedController();

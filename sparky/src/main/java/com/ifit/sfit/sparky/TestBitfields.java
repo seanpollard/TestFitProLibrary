@@ -38,7 +38,6 @@ public class TestBitfields extends TestCommons implements TestAll {
     private SFitSysCntrl mSFitSysCntrl;
     private SystemDevice MainDevice;
     private  FecpCommand wrCmd;
-    private  FecpCommand rdCmd;
     private String results="";
 
     public TestBitfields(FecpController fecpController, BaseTest act, SFitSysCntrl ctrl) {
@@ -60,7 +59,6 @@ public class TestBitfields extends TestCommons implements TestAll {
                 //Get current system device
                 MainDevice = this.mFecpController.getSysDev();
                 this.wrCmd = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
-                this.rdCmd = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd,0,100);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -192,7 +190,6 @@ public class TestBitfields extends TestCommons implements TestAll {
     //-------------------------------------------------------------------------------//
 //Future tests Include
     //TODO: Add validation for new and future supported commands
-    //TODO: Test max and min limits and check out of range values
     public String testBitfieldValuesValidation() throws Exception
     {
         System.out.println("NOW RUNNING READ/WRITE ACCESS FOR SUPPORTED BITFIELDS...<br>");
@@ -201,16 +198,6 @@ public class TestBitfields extends TestCommons implements TestAll {
         results+="------Testing Read/Write Access with valid values for Supported WRITE/READ Bitfields------\n\n"; //to store results of test
 
         ArrayList<BitFieldId> supportedWrBitFields = new ArrayList<BitFieldId>(MainDevice.getInfo().getSupportedWriteBitfields());
-
-        FecpCommand fanSpeedcmd = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
-        FecpCommand kphCmd = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
-        FecpCommand ageCmd = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
-        FecpCommand weightCmd = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
-        FecpCommand gradeCmd = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
-        FecpCommand workoutModeCmd = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
-        FecpCommand idleTimeOutCmd = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
-        FecpCommand pauseTimeOutCmd = new FecpCommand(MainDevice.getCommand(CommandId.WRITE_READ_DATA),hCmd);
-
 
         Object valueToWrite;
         Object defaultValue;
@@ -231,40 +218,40 @@ public class TestBitfields extends TestCommons implements TestAll {
             switch (bf.name()) {
                 case "KPH":
                     valueToWrite = -5.0;//Invalid value
-                    verifyBitfield(kphCmd,ModeId.RUNNING,bf,valueToWrite,false);
+                    verifyBitfield(ModeId.RUNNING,bf,valueToWrite,false);
                     valueToWrite = 25.0;//Invalid value
-                    verifyBitfield(kphCmd,ModeId.RUNNING,bf,valueToWrite,false);
+                    verifyBitfield(ModeId.RUNNING,bf,valueToWrite,false);
                     valueToWrite = 3.0;
-                    verifyBitfield(kphCmd,ModeId.RUNNING,bf,valueToWrite,true);
+                    verifyBitfield(ModeId.RUNNING,bf,valueToWrite,true);
                     break;
                 case "GRADE":
                     valueToWrite = 45.0;//Invalid value
-                    verifyBitfield(gradeCmd,ModeId.IDLE,bf,valueToWrite,false);
+                    verifyBitfield(ModeId.IDLE,bf,valueToWrite,false);
                     valueToWrite = -10.0;//Invalid value
-                    verifyBitfield(gradeCmd,ModeId.IDLE,bf,valueToWrite,false);
+                    verifyBitfield(ModeId.IDLE,bf,valueToWrite,false);
                     valueToWrite = 5.0;
-                    verifyBitfield(gradeCmd,ModeId.IDLE,bf,valueToWrite,true);
+                    verifyBitfield(ModeId.IDLE,bf,valueToWrite,true);
                     break;
                 case "RESISTANCE":
                     break;
                 case "FAN_SPEED":
                     valueToWrite = -3.0;//Invalid value
-                    verifyBitfield(fanSpeedcmd,ModeId.RUNNING,bf,valueToWrite,false);
+                    verifyBitfield(ModeId.RUNNING,bf,valueToWrite,false);
                     valueToWrite = 12.0; //set fan speed to 15% of max
-                    verifyBitfield(fanSpeedcmd,ModeId.RUNNING,bf,valueToWrite,true);
+                    verifyBitfield(ModeId.RUNNING,bf,valueToWrite,true);
                     break;
                 case "VOLUME":
                     break;
                 case "WORKOUT_MODE":
-                    ((WriteReadDataCmd) workoutModeCmd.getCommand()).addReadBitField(bf);
-                    mSFitSysCntrl.getFitProCntrl().addCmd(workoutModeCmd);
+                    ((WriteReadDataCmd) wrCmd.getCommand()).addReadBitField(bf);
+                    mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
                     Thread.sleep(1000);
                     valueToWrite = 15.0;
-                    verifyBitfield(workoutModeCmd,ModeId.RUNNING,bf,valueToWrite,false);
+                    verifyBitfield(ModeId.RUNNING,bf,valueToWrite,false);
                     valueToWrite = -13.0;
-                    verifyBitfield(workoutModeCmd,ModeId.RUNNING,bf,valueToWrite,false);
+                    verifyBitfield(ModeId.RUNNING,bf,valueToWrite,false);
                     valueToWrite = ModeId.PAUSE; //Pause Mode
-                    verifyBitfield(workoutModeCmd,ModeId.RUNNING,bf,valueToWrite,true);
+                    verifyBitfield(ModeId.RUNNING,bf,valueToWrite,true);
                     break;
                 case "AUDIO_SOURCE":
                     break;
@@ -272,19 +259,19 @@ public class TestBitfields extends TestCommons implements TestAll {
                     break;
                 case "AGE":
                     valueToWrite = 2.0; //invalid value
-                    verifyBitfield(ageCmd,ModeId.IDLE,bf,valueToWrite,false);
+                    verifyBitfield(ModeId.IDLE,bf,valueToWrite,false);
                     valueToWrite = 100; //invalid value
-                    verifyBitfield(ageCmd,ModeId.IDLE,bf,valueToWrite,false);
+                    verifyBitfield(ModeId.IDLE,bf,valueToWrite,false);
                     valueToWrite = 18.0; //set age to 20 years old
-                    verifyBitfield(ageCmd,ModeId.IDLE,bf,valueToWrite,true);
+                    verifyBitfield(ModeId.IDLE,bf,valueToWrite,true);
                     break;
                 case "WEIGHT":
                     valueToWrite = 20.0; //invalid value
-                    verifyBitfield(weightCmd,ModeId.IDLE,bf,valueToWrite,false);
+                    verifyBitfield(ModeId.IDLE,bf,valueToWrite,false);
                     valueToWrite = 200; //invalid value
-                    verifyBitfield(weightCmd,ModeId.IDLE,bf,valueToWrite,false);
+                    verifyBitfield(ModeId.IDLE,bf,valueToWrite,false);
                     valueToWrite = 68.0; //set weight to 20 years old
-                    verifyBitfield(weightCmd,ModeId.IDLE,bf,valueToWrite,true);
+                    verifyBitfield(ModeId.IDLE,bf,valueToWrite,true);
                     break;
                 case "GEARS":
                     break;
@@ -296,15 +283,15 @@ public class TestBitfields extends TestCommons implements TestAll {
                     break;
                 case "IDLE_TIMEOUT":
                     valueToWrite = -4.0; //set timeout to 9secs to go from pause to IDLE
-                    verifyBitfield(idleTimeOutCmd,ModeId.IDLE,bf,valueToWrite,false);
+                    verifyBitfield(ModeId.IDLE,bf,valueToWrite,false);
                     valueToWrite = 9.0; //set timeout to 9 secs to go from pause to IDLE
-                    verifyBitfield(idleTimeOutCmd,ModeId.IDLE,bf,valueToWrite,true);
+                    verifyBitfield(ModeId.IDLE,bf,valueToWrite,true);
                     break;
                 case "PAUSE_TIMEOUT":
                     valueToWrite = -9.0; //set timeout to 9secs to go from pause to IDLE
-                    verifyBitfield(pauseTimeOutCmd,ModeId.IDLE,bf,valueToWrite,false);
+                    verifyBitfield(ModeId.IDLE,bf,valueToWrite,false);
                     valueToWrite = 10.0; //set timeout to 5secs to go from pause to IDLE
-                    verifyBitfield(pauseTimeOutCmd,ModeId.PAUSE,bf,valueToWrite,true);
+                    verifyBitfield(ModeId.PAUSE,bf,valueToWrite,true);
                     break;
                 case "SYSTEM_UNITS":
                     break;
@@ -357,21 +344,21 @@ public class TestBitfields extends TestCommons implements TestAll {
         return results;
     }
     //Helper function to test bitfields
-    private void verifyBitfield(FecpCommand cmd, ModeId modeId, BitFieldId bitFieldId, Object valueToWrite, boolean validValue) throws InvalidCommandException, InvalidBitFieldException {
+    private void verifyBitfield(ModeId modeId, BitFieldId bitFieldId, Object valueToWrite, boolean validValue) throws InvalidCommandException, InvalidBitFieldException {
         long time=1000;
         if(bitFieldId.name() =="KPH" || bitFieldId.name() =="GRADE")
         {
             time = 5000;
         }
         try {
-            ((WriteReadDataCmd) cmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, modeId);
-            mSFitSysCntrl.getFitProCntrl().addCmd(cmd);
+            ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, modeId);
+            mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
             Thread.sleep(1000);
-            ((WriteReadDataCmd) cmd.getCommand()).addWriteData(bitFieldId, valueToWrite);
-            mSFitSysCntrl.getFitProCntrl().addCmd(cmd);
+            ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(bitFieldId, valueToWrite);
+            mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
             Thread.sleep(time);
-            ((WriteReadDataCmd) cmd.getCommand()).addReadBitField(bitFieldId);
-            mSFitSysCntrl.getFitProCntrl().addCmd(cmd);
+            ((WriteReadDataCmd) wrCmd.getCommand()).addReadBitField(bitFieldId);
+            mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
             Thread.sleep(time);
         }
         catch (Exception ex)
@@ -410,8 +397,8 @@ public class TestBitfields extends TestCommons implements TestAll {
             }
         }
         try {
-            ((WriteReadDataCmd) cmd.getCommand()).removeReadDataField(bitFieldId);
-            mSFitSysCntrl.getFitProCntrl().addCmd(cmd);
+            ((WriteReadDataCmd) wrCmd.getCommand()).removeReadDataField(bitFieldId);
+            mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
             Thread.sleep(1000);
         } catch (Exception e) {
             e.printStackTrace();

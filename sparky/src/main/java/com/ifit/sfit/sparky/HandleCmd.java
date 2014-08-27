@@ -11,9 +11,11 @@ import com.ifit.sparky.fecp.interpreter.bitField.converter.KeyObjectConverter;
 import com.ifit.sparky.fecp.interpreter.bitField.converter.LongConverter;
 import com.ifit.sparky.fecp.interpreter.bitField.converter.ModeConverter;
 import com.ifit.sparky.fecp.interpreter.bitField.converter.ModeId;
+import com.ifit.sparky.fecp.interpreter.bitField.converter.ResistanceConverter;
 import com.ifit.sparky.fecp.interpreter.bitField.converter.ShortConverter;
 import com.ifit.sparky.fecp.interpreter.bitField.converter.SpeedConverter;
 import com.ifit.sparky.fecp.interpreter.bitField.converter.WeightConverter;
+import com.ifit.sparky.fecp.interpreter.bitField.converter.WorkoutId;
 import com.ifit.sparky.fecp.interpreter.command.Command;
 import com.ifit.sparky.fecp.interpreter.command.CommandId;
 import com.ifit.sparky.fecp.interpreter.key.KeyObject;
@@ -48,6 +50,12 @@ public class HandleCmd implements OnCommandReceivedListener
     private  double mFanSpeed = 0;
     private  double mIdleTimeout = 0;
     private  double mPauseTimeout = 0;
+    private  double mVolume = 0;
+    private WorkoutId mWorkoutId;
+    private  double mResistance = 0;
+    private  double mActualResistance = 0;
+
+
     private KeyObject mKey;
     private String valueToString="none";
 
@@ -59,7 +67,7 @@ public class HandleCmd implements OnCommandReceivedListener
     }
     @Override
     public void onCommandReceived(Command cmd) {
-
+        //TODO: Add rest of bitfields (VOLUME, WORKOUT, etc...)
         //check command type
         TreeMap<BitFieldId, BitfieldDataConverter> commandData;
 
@@ -284,15 +292,140 @@ public class HandleCmd implements OnCommandReceivedListener
                 }
             }
 
+            //Read the Volume value off of the Brainboard
+            if(commandData.containsKey(BitFieldId.VOLUME)) {
+
+                try {
+                    mVolume = ((ByteConverter)commandData.get(BitFieldId.VOLUME).getData()).getValue();
+                    this.valueToString = String.valueOf(mVolume);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            //Read the Resistance value off of the Brainboard
+            if(commandData.containsKey(BitFieldId.RESISTANCE)) {
+
+                try {
+                    mResistance = ((ResistanceConverter)commandData.get(BitFieldId.RESISTANCE).getData()).getResistance();
+                    this.valueToString = String.valueOf(mResistance);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            //Read the Actual Resistance value off of the Brainboard
+            if(commandData.containsKey(BitFieldId.ACTUAL_RESISTANCE)) {
+
+                try {
+                    mActualResistance = ((ResistanceConverter)commandData.get(BitFieldId.ACTUAL_RESISTANCE).getData()).getResistance();
+                    this.valueToString = String.valueOf(mActualResistance);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+//            //Read the Workout value off of the Brainboard
+//            if(commandData.containsKey(BitFieldId.WORKOUT)) {
+//
+//                try {
+//                    mWorkoutId = ((WorkoutConverter)commandData.get(BitFieldId.WORKOUT).getData()).getWorkout();
+//                    this.valueToString = String.valueOf(mWorkoutId);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+
         }
     }
 
     //returns a string version of any of the values assigned in this class
+    //TODO: Add rest of bitfields (VOLUME, WORKOUT, etc...)
     @Override
     public String toString() {
         return this.valueToString;
     }
-
+    /*
+    * getValue returns the double value "bitfieldName"
+    * @param bitfieldName --> Name of the bitfield
+    * returns --> double value correpsonding to bitfieldName
+    * */
+    public double getValue(String bitfieldName) {
+        double value = 0;
+        switch (bitfieldName)
+        {
+            case "KPH":
+                value = this.mSpeed;
+                break;
+            case "ACTUAL_KPH":
+                value = this.mActualSpeed;
+                break;
+            case "GRADE":
+                value = this.mIncline;
+                break;
+            case "MAX_GRADE":
+                value = this.mMaxIncline;
+                break;
+            case "MIN_GRADE":
+                value = this.mMinIncline;
+                break;
+            case "ACTUAL_INCLINE":
+                value = this.mActualIncline;
+                break;
+            case "MAX_KPH":
+                value = this.mMaxSpeed;
+                break;
+            case "MIN_KPH":
+                value = this.mMinSpeed;
+                break;
+            case "DISTANCE":
+                value = this.mDistance;
+                break;
+            case "RUNNING_TIME":
+                value = this.mRunTime;
+                break;
+            case "PAUSE_TIMEOUT":
+                value = this.mPauseTimeout;
+                break;
+            case "IDLE_TIMEOUT":
+                value = this.mIdleTimeout;
+                break;
+            case "TRANS_MAX":
+                value = this.mTransMax;
+                break;
+            case "CALORIES":
+                value = this.mCalories;
+                break;
+            case "AGE":
+                value = this.mAge;
+                break;
+            case "WEIGHT":
+                value = this.mWeight;
+                break;
+            case "FAN_SPEED":
+                value = this.mFanSpeed;
+                break;
+//            case "WORKOUT":
+//                value = this.mWorkoutId.getValue();
+//                break;
+            case "RESISTANCE":
+                value = this.mResistance;
+                break;
+            case "ACTUAL_RESISTANCE":
+                value = this.mActualResistance;
+                break;
+            case "VOLUME":
+                value = this.mVolume;
+                break;
+            case "WORKOUT_MODE":
+                value = this.mResultMode.getValue();
+                break;
+        }
+        this.valueToString = String.valueOf(value);
+        return value;
+    }
+    public double getValue(BitFieldId bitFieldId){
+        return this.getValue(bitFieldId.name());
+    }
     public double getSpeed(){ return this.mSpeed; }
     public double getActualSpeed(){ return this.mActualSpeed; }
     public double getMaxSpeed() { return  this.mMaxSpeed; }
@@ -302,7 +435,6 @@ public class HandleCmd implements OnCommandReceivedListener
     public double getMaxIncline(){ return this.mMaxIncline; }
     public double getMinIncline(){ return this.mMinIncline; }
     public double getTransMax(){ return this.mTransMax; }
-    public ModeId getMode(){ return this.mResultMode; }
     public double getDistance() { return this.mDistance; }
     public double getRunTime() { return this.mRunTime; }
     public double getCalories() { return this.mCalories; }
@@ -311,6 +443,10 @@ public class HandleCmd implements OnCommandReceivedListener
     public double getFanSpeed() { return this.mFanSpeed; }
     public double getIdleTimeout() { return this.mIdleTimeout; }
     public double getPauseTimeout() { return this.mPauseTimeout; }
-    public KeyObject getKey() { return this.mKey; }
-
+    public double getVolume(){return this.mVolume;}
+    public double getResistance(){return this.mResistance;}
+    public double getActualResistance(){return this.mActualResistance;}
+    public WorkoutId getWorkoutId(){return this.mWorkoutId;}
+    public KeyObject getKey() { return this.mKey;}
+    public ModeId getMode(){ return this.mResultMode; }
     }
