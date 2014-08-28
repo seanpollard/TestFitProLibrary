@@ -4,7 +4,6 @@
              <item>Start Speed</item>
              <item>Pause Resume</item>
              <item>Distance</item>
-             <item>Modes</item>
              <item>Speed Controller</item>
              <item>PWM Overshoot</item>
              <item>Calories</item>
@@ -33,6 +32,7 @@
     <string-array name="bitfields_array">
         <item>Unsupported/RdOnly</item>
         <item>Values Validation</item>
+        <item>Modes</item>
         <item>Run All</item>
     </string-array>
 
