@@ -199,7 +199,7 @@ public class TestBitfields extends TestCommons implements TestAll {
 
         ArrayList<BitFieldId> supportedWrBitFields = new ArrayList<BitFieldId>(MainDevice.getInfo().getSupportedWriteBitfields());
 
-        Object valueToWrite;
+        double   valueToWrite;
         Object defaultValue;
         Object temp;
 
@@ -250,7 +250,7 @@ public class TestBitfields extends TestCommons implements TestAll {
                     verifyBitfield(ModeId.RUNNING,bf,valueToWrite,false);
                     valueToWrite = -13.0;
                     verifyBitfield(ModeId.RUNNING,bf,valueToWrite,false);
-                    valueToWrite = ModeId.PAUSE; //Pause Mode
+                    valueToWrite = ModeId.PAUSE.getValue(); //Pause Mode
                     verifyBitfield(ModeId.RUNNING,bf,valueToWrite,true);
                     break;
                 case "AUDIO_SOURCE":
@@ -344,7 +344,7 @@ public class TestBitfields extends TestCommons implements TestAll {
         return results;
     }
     //Helper function to test bitfields
-    private void verifyBitfield(ModeId modeId, BitFieldId bitFieldId, Object valueToWrite, boolean validValue) throws InvalidCommandException, InvalidBitFieldException {
+    private void verifyBitfield(ModeId modeId, BitFieldId bitFieldId, double valueToWrite, boolean validValue) throws InvalidCommandException, InvalidBitFieldException {
         long time=1000;
 
         try {
@@ -366,7 +366,7 @@ public class TestBitfields extends TestCommons implements TestAll {
             appendMessage("<br>using VALID value "+ valueToWrite);
            
             results+="\nusing VALID value "+ valueToWrite;
-            if (hCmd.getValue(bitFieldId) == (double) valueToWrite) {
+            if (hCmd.getValue(bitFieldId) == valueToWrite) {
                 appendMessage("<br><br><font color = #00ff00>* PASS *</font><br><br> value " + hCmd.toString() + " read from brainboard matches value " + valueToWrite + " written to bitfield " + bitFieldId.name() + "<br>");
                
                 results+="\n\n* PASS *\n\n value " + hCmd.toString() + " read from brainboard matches value " + valueToWrite + " written to bitfield " + bitFieldId.name() + "\n";
@@ -382,7 +382,7 @@ public class TestBitfields extends TestCommons implements TestAll {
             
             results+="\nusing INVALID value "+ valueToWrite;
 
-            if (hCmd.getValue(bitFieldId) == (double) valueToWrite) {
+            if (hCmd.getValue(bitFieldId) == valueToWrite) {
                 appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br> invalid value " + hCmd.toString() + " read from brainboard should have not been written for bitfield " + bitFieldId.name() + "<br>");
                 
                 results+="\n* FAIL *\n\n invalid value " + hCmd.toString() + " read from brainboard should have not been written for bitfield " + bitFieldId.name() + "\n";
