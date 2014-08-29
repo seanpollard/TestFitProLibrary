@@ -6,6 +6,7 @@ import com.ifit.sparky.fecp.SystemDevice;
 import com.ifit.sparky.fecp.communication.FecpController;
 import com.ifit.sparky.fecp.interpreter.bitField.BitFieldId;
 import com.ifit.sparky.fecp.interpreter.bitField.converter.ModeId;
+import com.ifit.sparky.fecp.interpreter.command.CalibrateCmd;
 import com.ifit.sparky.fecp.interpreter.command.CommandId;
 import com.ifit.sparky.fecp.interpreter.command.WriteReadDataCmd;
 import com.ifit.sparky.fecp.interpreter.device.DeviceId;
@@ -999,11 +1000,12 @@ public class TestIncline extends TestCommons implements TestAll {
              appendMessage("Waiting for DMK key to be pulled...<br>");
 
              results+="Waiting for DMK key to be pulled...\n";
-            inclineAtDMKpull = hCmd.getActualIncline();
+
             while(hCmd.getMode()!=ModeId.DMK);
              {
                  // Stay here until DMK Key is pulled
              }
+             inclineAtDMKpull = hCmd.getActualIncline();
              System.out.println("DMK Key Pulled!");
              appendMessage("DMK key pulled!<br>");
 
@@ -1046,6 +1048,7 @@ public class TestIncline extends TestCommons implements TestAll {
              {
                  // Stay here until DMK Key put back on console
              }
+             actualIncline = hCmd.getActualIncline();
              System.out.println("DMK Key Put back");
              appendMessage("DMK key put back!<br>");
 
@@ -1053,7 +1056,7 @@ public class TestIncline extends TestCommons implements TestAll {
 
 
         //Compare the value read for actual incline after key has been pulled to value read after key was put back
-             if(actualIncline ==hCmd.getActualIncline()){
+             if(actualIncline ==inclineAfterDMKpull){
                  appendMessage("<br><font color = #00ff00>* PASS *</font><br><br>");
                  appendMessage("Actual Incline after DMK put back is at " + actualIncline + "% which is the same as when the key was pulled<br>");
 
@@ -1062,10 +1065,10 @@ public class TestIncline extends TestCommons implements TestAll {
              }
              else {
                 appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>");
-                appendMessage("Actual Incline should be " + actualIncline + "%, but it is currently at " + hCmd.getActualIncline() + "%<br>");
+                appendMessage("Actual Incline should be " + inclineAfterDMKpull + "%, but it is currently at " + actualIncline + "%<br>");
 
                 results+="\n* FAIL *\n\n";
-                results+="Actual Incline should be " + actualIncline + "%, but it is currently at " + hCmd.getActualIncline() + "%\n";
+                results+="Actual Incline should be " + inclineAfterDMKpull + "%, but it is currently at " + actualIncline + "%\n";
              }
 
              //set mode back to idle to stop the test
@@ -1229,9 +1232,15 @@ public class TestIncline extends TestCommons implements TestAll {
     public String testInclineCalibration() throws Exception{
         String results = "";
 
-        ((WriteReadDataCmd)calibrateCmd.getCommand()).addWriteData(BitFieldId.GRADE,DeviceId.GRADE);
+        ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE,ModeId.MAINTENANCE);
+        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+        Thread.sleep(1000);
+
+        ((CalibrateCmd)calibrateCmd.getCommand()).setDevId(DeviceId.GRADE);
         mSFitSysCntrl.getFitProCntrl().addCmd(calibrateCmd);
         Thread.sleep(1000);
+
+
         return results;
     }
 
@@ -1239,11 +1248,23 @@ public class TestIncline extends TestCommons implements TestAll {
     public String runAll() {
         String results="";
         try {
-          results+=this.testIncline400msPause();
           results+=this.testInclineRetentionDmkRecall();
+            appendMessage("Wait for incline to finish calibrating...<br>");
+            results+="Wait for incline to finish calibrating...\n";
+            Thread.sleep(90000);
+          results+=this.testIncline400msPause();
           results+=this.testRetainedIncline();
+            appendMessage("Wait for incline to finish calibrating...<br>");
+            results+="Wait for incline to finish calibrating...\n";
+            Thread.sleep(90000);
           results+=this.testSpeedInclineLimit();
+            appendMessage("Wait for incline to finish calibrating...<br>");
+            results+="Wait for incline to finish calibrating...\n";
+            Thread.sleep(90000);
           results+=this.testStopIncline();
+            appendMessage("Wait for incline to finish calibrating...<br>");
+            results+="Wait for incline to finish calibrating...\n";
+            Thread.sleep(90000);
           results+=this.testInclineController();
         }
         catch (Exception ex) {

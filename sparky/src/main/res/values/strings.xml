@@ -17,10 +17,13 @@
         <item>Speed Incline Limits</item>
         <item>DMK Incline Retention/Recall</item>
         <item>400 ms Pause</item>
+        <item>Calibrate</item>
         <item>Run All</item>
     </string-array>
 
     <string-array name="integration_array">
+        <item>Age</item>
+        <item>Weight</item>
         <item>Max Speed</item>
         <item>Running Time</item>
         <item>Mar Running Time</item>

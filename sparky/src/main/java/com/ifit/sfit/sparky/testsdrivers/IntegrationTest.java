@@ -70,6 +70,12 @@ import com.ifit.sfit.sparky.TestIntegration;
 
                      switch (testToRun)
                      {
+//                         case "Age":
+//                             returnString = t.testAge();
+//                             break;
+//                         case "Weight":
+//                             returnString = t.testWeight();
+//                             break;
                          case "Max Speed":
                              returnString = t.testMaxSpeedTime();
                              break;
