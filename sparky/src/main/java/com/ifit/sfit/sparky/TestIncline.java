@@ -327,7 +327,7 @@ public class TestIncline extends TestCommons implements TestAll {
 
             elapsedTime = System.nanoTime() - startime;
             seconds = elapsedTime / 1.0E09;
-        } while(minIncline!=currentActualIncline && seconds < 90);//Do while the incline hasn't reached its point yet or took more than 1.5 mins
+        } while(setIncline!=currentActualIncline && seconds < 90);//Do while the incline hasn't reached its point yet or took more than 1.5 mins
 
         //Stop
         ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.PAUSE);
@@ -400,7 +400,7 @@ public class TestIncline extends TestCommons implements TestAll {
 
             elapsedTime = System.nanoTime() - startime;
             seconds = elapsedTime / 1.0E09;
-        } while(minIncline!=currentActualIncline && seconds < 90);//Do while the incline hasn't reached its point yet or took more than 1.5 mins
+        } while(setIncline!=currentActualIncline && seconds < 90);//Do while the incline hasn't reached its point yet or took more than 1.5 mins
 
         //Stop
         ((WriteReadDataCmd)wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.PAUSE);
