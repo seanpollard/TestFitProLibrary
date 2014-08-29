@@ -12,6 +12,7 @@ import com.ifit.sparky.fecp.interpreter.command.WriteReadDataCmd;
 import com.ifit.sparky.fecp.interpreter.device.DeviceId;
 import com.ifit.sparky.fecp.interpreter.status.StatusId;
 
+import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.util.Calendar;
 
@@ -623,6 +624,7 @@ public class TestIncline extends TestCommons implements TestAll {
         long startime = 0;
         double setIncline =0;
         double currentSpeed = 0;
+        BigDecimal speedRounded;
 
         double timeOfTest = 0; //how long test took in seconds
         long startTestTimer = System.nanoTime();
@@ -672,8 +674,11 @@ public class TestIncline extends TestCommons implements TestAll {
         } while(currentIncline!=currentActualIncline && seconds < 60);//Do while the incline hasn't reached its point yet or took more than 1 mins
 
         //set speed to max
-        ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(BitFieldId.KPH, 16); // Our motor's speed limit is 16kph
+        ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(BitFieldId.KPH, 19); // Our motor's speed limit is 20kph
         mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+        Thread.sleep(1000);
+        appendMessage("Wait 23 seconds...<br>");
+        results+="Wait 23 seconds...\n";
         Thread.sleep(23000); // give it 23 secs to reach max speed
 /* THIS PART WILL BE UNCOMMENTED ONCE ACTUAL SPEED IS ACCURATE
                 startime= System.nanoTime();
@@ -725,165 +730,167 @@ public class TestIncline extends TestCommons implements TestAll {
 
 
             currentSpeed = hCmd.getSpeed();
+            speedRounded = new BigDecimal(currentSpeed*0.625);
+            speedRounded = speedRounded.setScale(0, BigDecimal.ROUND_FLOOR);
 //TODO: Limits change based on home/club units. So Include tests for those cases
 //TODO: Change limits to KPH. Take into consideration the Max Speed to run the limits
 
-            //0% to 15% = 12 mph
+            //0% to 15% = 12 mph                
             if( ( i<= 0 && i >= 15)  && currentSpeed == 19.31) {
                 appendMessage("<br><font color = #00ff00>* PASS *</font><br><br>");
-                appendMessage("At Incline " +currentIncline+", Current speed is " + currentSpeed + " mph<br>");
+                appendMessage("At Incline " +currentIncline+", Current speed is " + speedRounded + " mph<br>");
 
                 results+="\n* PASS *\n\n";
-                results+="At Incline " +currentIncline+", Current speed is " + currentSpeed + " mph\n";
+                results+="At Incline " +currentIncline+", Current speed is " + speedRounded + " mph\n";
             }
             else if (( i<= 0 && i >= 15) && currentSpeed != 19.31) {
                 appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>");
-                appendMessage("At Incline " +currentIncline+" Current speed should be 12 MPH, but it is " + currentSpeed + " mph<br>");
+                appendMessage("At Incline " +currentIncline+" Current speed should be 12 MPH, but it is " + speedRounded + " mph<br>");
 
                 results+="\n* FAIL *\n\n";
-                results+="At Incline " +currentIncline+" Current speed should be 12 MPH, but it is " + currentSpeed + " mph\n";
+                results+="At Incline " +currentIncline+" Current speed should be 12 MPH, but it is " + speedRounded + " mph\n";
             }
 
             //15.5% to 25% = 8 mph
             if( ( i<= 15.5 && i >= 25)  && currentSpeed == 12.87) {
                 appendMessage("<br><font color = #00ff00>* PASS *</font><br><br>");
-                appendMessage("At Incline " +currentIncline+", Current speed is " + currentSpeed + " mph<br>");
+                appendMessage("At Incline " +currentIncline+", Current speed is " + speedRounded + " mph<br>");
 
                 results+="\n* PASS *\n\n";
-                results+="At Incline " +currentIncline+", Current speed is " + currentSpeed + " mph\n";
+                results+="At Incline " +currentIncline+", Current speed is " + speedRounded + " mph\n";
             }
             else if (( i<= 15.5 && i >= 25) && currentSpeed !=12.87) {
                 appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>");
-                appendMessage("At Incline " +currentIncline+" Current speed should be 8 MPH, but it is " + currentSpeed + " mph<br>");
+                appendMessage("At Incline " +currentIncline+" Current speed should be 8 MPH, but it is " + speedRounded + " mph<br>");
 
                 results+="\n* FAIL *\n\n";
-                results+="At Incline " +currentIncline+" Current speed should be 8 MPH, but it is " + currentSpeed + " mph\n";
+                results+="At Incline " +currentIncline+" Current speed should be 8 MPH, but it is " + speedRounded + " mph\n";
             }
 
             //25.5% to 40% = 6 mph
             if( ( i<= 25.5 && i >= 40)  && currentSpeed == 9.65) {
                 appendMessage("<br><font color = #00ff00>* PASS *</font><br><br>");
-                appendMessage("At Incline " +currentIncline+", Current speed is " + currentSpeed + " mph<br>");
+                appendMessage("At Incline " +currentIncline+", Current speed is " + speedRounded + " mph<br>");
 
                 results+="\n* PASS *\n\n";
-                results+="At Incline " +currentIncline+", Current speed is " + currentSpeed + " mph\n";
+                results+="At Incline " +currentIncline+", Current speed is " + speedRounded + " mph\n";
             }
             else if (( i<= 25.5 && i >= 40) && currentSpeed != 9.65) {
                 appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>");
-                appendMessage("At Incline " +currentIncline+" Current speed should be 6 MPH, but it is " + currentSpeed + " mph<br>");
+                appendMessage("At Incline " +currentIncline+" Current speed should be 6 MPH, but it is " + speedRounded + " mph<br>");
 
                 results+="\n* FAIL *\n\n";
-                results+="At Incline " +currentIncline+" Current speed should be 6 MPH, but it is " + currentSpeed + " mph\n";
+                results+="At Incline " +currentIncline+" Current speed should be 6 MPH, but it is " + speedRounded + " mph\n";
             }
 
             //-1% to -0.1% = 9 mph
             if( ( i<= 0 && i >= -1)  && currentSpeed == 14.48) {
                 appendMessage("<br><font color = #00ff00>* PASS *</font><br><br>");
-                appendMessage("At Incline " +currentIncline+", Current speed is " + currentSpeed + " mph<br>");
+                appendMessage("At Incline " +currentIncline+", Current speed is " + speedRounded + " mph<br>");
 
                 results+="\n* PASS *\n\n";
-                results+="At Incline " +currentIncline+", Current speed is " + currentSpeed + " mph\n";
+                results+="At Incline " +currentIncline+", Current speed is " + speedRounded + " mph\n";
             }
             else if (( i<= 0 && i >= -1) && currentSpeed != 14.48) {
                 appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>");
-                appendMessage("At Incline " +currentIncline+" Current speed should be 9 MPH, but it is " + currentSpeed + " mph<br>");
+                appendMessage("At Incline " +currentIncline+" Current speed should be 9 MPH, but it is " + speedRounded + " mph<br>");
 
                 results+="\n* FAIL *\n\n";
-                results+="At Incline " +currentIncline+" Current speed should be 9 MPH, but it is " + currentSpeed + " mph\n";
+                results+="At Incline " +currentIncline+" Current speed should be 9 MPH, but it is " + speedRounded + " mph\n";
             }
 
             //-2% to -1.1% = 8.5 mph
             if((i <= -1 && i >= -2)  && currentSpeed == 13.6) {
                 appendMessage("<br><font color = #00ff00>* PASS *</font><br><br>");
-                appendMessage("At Incline " +currentIncline+", Current speed is " + currentSpeed + " mph<br>");
+                appendMessage("At Incline " +currentIncline+", Current speed is " + speedRounded + " mph<br>");
 
                 results+="\n* PASS *\n\n";
-                results+="At Incline " +currentIncline+", Current speed is " + currentSpeed + " mph\n";
+                results+="At Incline " +currentIncline+", Current speed is " + speedRounded + " mph\n";
             }
             else if ( (i<= -1 && i >= -2) && currentSpeed != 13.6) {
                 appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>");
-                appendMessage("At Incline " +currentIncline+" Current speed should be 8.5 MPH, but it is " + currentSpeed + " mph<br>");
+                appendMessage("At Incline " +currentIncline+" Current speed should be 8.5 MPH, but it is " + speedRounded + " mph<br>");
 
                 results+="\n* FAIL *\n\n";
-                results+="At Incline " +currentIncline+" Current speed should be 8.5 MPH, but it is " + currentSpeed + " mph\n";
+                results+="At Incline " +currentIncline+" Current speed should be 8.5 MPH, but it is " + speedRounded + " mph\n";
             }
 
             //-3% to -2.1% = 8 mph
             if( (i<= -2 && i >= -3) && currentSpeed == 12.87) {
                 appendMessage("<br><font color = #00ff00>* PASS *</font><br><br>");
-                appendMessage("At Incline " +currentIncline+", Current speed is " + currentSpeed + " mph<br>");
+                appendMessage("At Incline " +currentIncline+", Current speed is " + speedRounded + " mph<br>");
 
                 results+="\n* PASS *\n\n";
-                results+="At Incline " +currentIncline+", Current speed is " + currentSpeed + " mph\n";
+                results+="At Incline " +currentIncline+", Current speed is " + speedRounded + " mph\n";
             }
             else if ( (i<= -2 && i >= -3) && currentSpeed != 12.87) {
                 appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>");
-                appendMessage("At Incline " +currentIncline+" Current speed should be 8.0 MPH, but it is " + currentSpeed + " mph<br>");
+                appendMessage("At Incline " +currentIncline+" Current speed should be 8.0 MPH, but it is " + speedRounded + " mph<br>");
 
                 results+="\n* FAIL *\n\n";
-                results+="At Incline " +currentIncline+" Current speed should be 8.0 MPH, but it is " + currentSpeed + " mph\n";
+                results+="At Incline " +currentIncline+" Current speed should be 8.0 MPH, but it is " + speedRounded + " mph\n";
             }
 
             //-4.5% to -3.1% = 7 mph
             if( (i< -3.5 && i >= -4.5) && currentSpeed == 11.26) {
                 appendMessage("<br><font color = #00ff00>* PASS *</font><br><br>");
-                appendMessage("At Incline " +currentIncline+", Current speed is " + currentSpeed + " mph<br>");
+                appendMessage("At Incline " +currentIncline+", Current speed is " + speedRounded + " mph<br>");
 
                 results+="\n* PASS *\n\n";
-                results+="At Incline " +currentIncline+", Current speed is " + currentSpeed + " mph\n";
+                results+="At Incline " +currentIncline+", Current speed is " + speedRounded + " mph\n";
             }
             else if ( (i<= -3.5 && i >= -4.5) && currentSpeed != 11.26) {
                 appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>");
-                appendMessage("At Incline " +currentIncline+" Current speed should be 7.0 MPH, but it is " + currentSpeed + " mph<br>");
+                appendMessage("At Incline " +currentIncline+" Current speed should be 7.0 MPH, but it is " + speedRounded + " mph<br>");
 
                 results+="\n* FAIL *\n\n";
-                results+="At Incline " +currentIncline+" Current speed should be 7.0 MPH, but it is " + currentSpeed + " mph\n";
+                results+="At Incline " +currentIncline+" Current speed should be 7.0 MPH, but it is " + speedRounded + " mph\n";
             }
 
             //-6% to -5% = 6 mph
             if( (i< -5 && i >= -6) && currentSpeed == 9.65) {
                 appendMessage("<br><font color = #00ff00>* PASS *</font><br><br>");
-                appendMessage("At Incline " +currentIncline+", Current speed is " + currentSpeed + " mph<br>");
+                appendMessage("At Incline " +currentIncline+", Current speed is " + speedRounded + " mph<br>");
 
                 results+="\n* PASS *\n\n";
-                results+="At Incline " +currentIncline+", Current speed is " + currentSpeed + " mph\n";
+                results+="At Incline " +currentIncline+", Current speed is " + speedRounded + " mph\n";
             }
             else if ( (i<= -5 && i >= -6) && currentSpeed != 9.65) {
                 appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>");
-                appendMessage("At Incline " +currentIncline+" Current speed should be 6.0 MPH, but it is " + currentSpeed + " mph<br>");
+                appendMessage("At Incline " +currentIncline+" Current speed should be 6.0 MPH, but it is " + speedRounded + " mph<br>");
 
                 results+="\n* FAIL *\n\n";
-                results+="At Incline " +currentIncline+" Current speed should be 6.0 MPH, but it is " + currentSpeed + " mph\n";
+                results+="At Incline " +currentIncline+" Current speed should be 6.0 MPH, but it is " + speedRounded + " mph\n";
             }
             //>15% to 25% = 8 mph
             if( (i> 15 && i <= 25) && currentSpeed == 12.87) {
                 appendMessage("<br><font color = #00ff00>* PASS *</font><br><br>");
-                appendMessage("At Incline " +currentIncline+", Current speed is " + currentSpeed + " mph<br>");
+                appendMessage("At Incline " +currentIncline+", Current speed is " + speedRounded + " mph<br>");
 
                 results+="\n* PASS *\n\n";
-                results+="At Incline " +currentIncline+", Current speed is " + currentSpeed + " mph\n";
+                results+="At Incline " +currentIncline+", Current speed is " + speedRounded + " mph\n";
             }
             else if ( (i> 15 && i <= 25) && currentSpeed != 12.87) {
                 appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>");
-                appendMessage("At Incline " +currentIncline+" Current speed should be 6.0 MPH, but it is " + currentSpeed + " mph<br>");
+                appendMessage("At Incline " +currentIncline+" Current speed should be 6.0 MPH, but it is " + speedRounded + " mph<br>");
 
                 results+="\n* FAIL *\n\n";
-                results+="At Incline " +currentIncline+" Current speed should be 6.0 MPH, but it is " + currentSpeed + " mph\n";
+                results+="At Incline " +currentIncline+" Current speed should be 6.0 MPH, but it is " + speedRounded + " mph\n";
             }
             //>25% to 40% = 6 mph
             if( (i> 25 && i <= 40) && currentSpeed == 9.65) {
                 appendMessage("<br><font color = #00ff00>* PASS *</font><br><br>");
-                appendMessage("At Incline " +currentIncline+", Current speed is " + currentSpeed + " mph<br>");
+                appendMessage("At Incline " +currentIncline+", Current speed is " + speedRounded + " mph<br>");
 
                 results+="\n* PASS *\n\n";
-                results+="At Incline " +currentIncline+", Current speed is " + currentSpeed + " mph\n";
+                results+="At Incline " +currentIncline+", Current speed is " + speedRounded + " mph\n";
             }
             else if ( (i> 25 && i <= 40) && currentSpeed != 9.65) {
                 appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>");
-                appendMessage("At Incline " +currentIncline+" Current speed should be 6.0 MPH, but it is " + currentSpeed + " mph<br>");
+                appendMessage("At Incline " +currentIncline+" Current speed should be 6.0 MPH, but it is " + speedRounded + " mph<br>");
 
                 results+="\n* FAIL *\n\n";
-                results+="At Incline " +currentIncline+" Current speed should be 6.0 MPH, but it is " + currentSpeed + " mph\n";
+                results+="At Incline " +currentIncline+" Current speed should be 6.0 MPH, but it is " + speedRounded + " mph\n";
             }
 
         }
