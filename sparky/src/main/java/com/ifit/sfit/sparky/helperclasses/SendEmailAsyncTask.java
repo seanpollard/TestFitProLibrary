@@ -1,9 +1,10 @@
-package com.ifit.sfit.sparky;
+package com.ifit.sfit.sparky.helperclasses;
 
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.ifit.sfit.sparky.BuildConfig;
 import com.ifit.sfit.sparky.testsdrivers.BaseTest;
 
 import java.text.DateFormat;

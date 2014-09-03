@@ -10,16 +10,15 @@ import android.widget.ScrollView;
 import android.widget.Spinner;
 
 import com.ifit.sfit.sparky.R;
-import com.ifit.sfit.sparky.TestAll;
-import com.ifit.sfit.sparky.TestBitfields;
-import com.ifit.sfit.sparky.TestIncline;
-import com.ifit.sfit.sparky.TestIntegration;
-import com.ifit.sfit.sparky.TestMotor;
+import com.ifit.sfit.sparky.tests.TestBitfields;
+import com.ifit.sfit.sparky.tests.TestIncline;
+import com.ifit.sfit.sparky.tests.TestIntegration;
+import com.ifit.sfit.sparky.tests.TestMotor;
 
 /**
  * Created by jc.almonte on 8/1/14.
  */
-public class AllTests extends BaseTest implements View.OnClickListener, AdapterView.OnItemSelectedListener, TestAll {
+public class AllTests extends BaseTest implements View.OnClickListener, AdapterView.OnItemSelectedListener{
 
      TestBitfields b;
      TestMotor m;
@@ -54,85 +53,85 @@ public class AllTests extends BaseTest implements View.OnClickListener, AdapterV
          g = new TestIncline(fecpController, (BaseTest) context, this.mSFitSysCntrl);
         final ScrollView scrollview = ((ScrollView) findViewById(R.id.scrollView));
 
-        b.setUpdateResultViewListener(new TestBitfields.UpdateResultView() {
-            @Override
-            public void onUpdate(final String msg) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        testingView.setText(Html.fromHtml(msg));
-                        scrollview.fullScroll(ScrollView.FOCUS_DOWN);
-//                        scrollview.post(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                scrollview.fullScroll(ScrollView.FOCUS_DOWN);
-//                            }
-//                        });
-                    }
-                });
-            }
-        });
-
-
-        m.setUpdateResultViewListener(new TestMotor.UpdateResultView() {
-            @Override
-            public void onUpdate(final String msg) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        testingView.setText(Html.fromHtml(msg));
-                        scrollview.fullScroll(ScrollView.FOCUS_DOWN);
-//                        scrollview.post(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                scrollview.fullScroll(ScrollView.FOCUS_DOWN);
-//                            }
-//                        });
-                    }
-                });
-
-            }
-        });
-
-        i.setUpdateResultViewListener(new TestIntegration.UpdateResultView() {
-            @Override
-            public void onUpdate(final String msg) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        testingView.setText(Html.fromHtml(msg));
-                        scrollview.fullScroll(ScrollView.FOCUS_DOWN);
-//                        scrollview.post(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                scrollview.fullScroll(ScrollView.FOCUS_DOWN);
-//                            }
-//                        });
-                    }
-                });
-
-            }
-        });
-
-        g.setUpdateResultViewListener(new TestIncline.UpdateResultView() {
-            @Override
-            public void onUpdate(final String msg) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        testingView.setText(Html.fromHtml(msg));
-                        scrollview.fullScroll(ScrollView.FOCUS_DOWN);
-//                        scrollview.post(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                scrollview.fullScroll(ScrollView.FOCUS_DOWN);
-//                            }
-//                        });
-                    }
-                });
-
-            }
-        });
+//        b.setUpdateResultViewListener(new TestBitfields.UpdateResultView() {
+//            @Override
+//            public void onUpdate(final String msg) {
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        testingView.setText(Html.fromHtml(msg));
+//                        scrollview.fullScroll(ScrollView.FOCUS_DOWN);
+////                        scrollview.post(new Runnable() {
+////                            @Override
+////                            public void run() {
+////                                scrollview.fullScroll(ScrollView.FOCUS_DOWN);
+////                            }
+////                        });
+//                    }
+//                });
+//            }
+//        });
+//
+//
+//        m.setUpdateResultViewListener(new TestMotor.UpdateResultView() {
+//            @Override
+//            public void onUpdate(final String msg) {
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        testingView.setText(Html.fromHtml(msg));
+//                        scrollview.fullScroll(ScrollView.FOCUS_DOWN);
+////                        scrollview.post(new Runnable() {
+////                            @Override
+////                            public void run() {
+////                                scrollview.fullScroll(ScrollView.FOCUS_DOWN);
+////                            }
+////                        });
+//                    }
+//                });
+//
+//            }
+//        });
+//
+//        i.setUpdateResultViewListener(new TestIntegration.UpdateResultView() {
+//            @Override
+//            public void onUpdate(final String msg) {
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        testingView.setText(Html.fromHtml(msg));
+//                        scrollview.fullScroll(ScrollView.FOCUS_DOWN);
+////                        scrollview.post(new Runnable() {
+////                            @Override
+////                            public void run() {
+////                                scrollview.fullScroll(ScrollView.FOCUS_DOWN);
+////                            }
+////                        });
+//                    }
+//                });
+//
+//            }
+//        });
+//
+//        g.setUpdateResultViewListener(new TestIncline.UpdateResultView() {
+//            @Override
+//            public void onUpdate(final String msg) {
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        testingView.setText(Html.fromHtml(msg));
+//                        scrollview.fullScroll(ScrollView.FOCUS_DOWN);
+////                        scrollview.post(new Runnable() {
+////                            @Override
+////                            public void run() {
+////                                scrollview.fullScroll(ScrollView.FOCUS_DOWN);
+////                            }
+////                        });
+//                    }
+//                });
+//
+//            }
+//        });
         Thread th = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -198,8 +197,6 @@ public class AllTests extends BaseTest implements View.OnClickListener, AdapterV
 
     }
 
-
-    @Override
     public String runAll() throws Exception {
 
         String results ="";

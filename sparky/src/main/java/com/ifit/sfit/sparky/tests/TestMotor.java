@@ -1,5 +1,8 @@
-package com.ifit.sfit.sparky;
+package com.ifit.sfit.sparky.tests;
 
+import com.ifit.sfit.sparky.helperclasses.CommonFeatures;
+import com.ifit.sfit.sparky.helperclasses.HandleCmd;
+import com.ifit.sfit.sparky.helperclasses.SFitSysCntrl;
 import com.ifit.sfit.sparky.testsdrivers.BaseTest;
 import com.ifit.sparky.fecp.FecpCommand;
 import com.ifit.sparky.fecp.SystemDevice;
@@ -19,7 +22,7 @@ import java.util.Calendar;
  * Class for motor type tests
  * Used sean's TestMotor code and adapted it to work with SparkyAndroidLib 0.0.9
  */
-public class TestMotor extends TestCommons implements TestAll {
+public class TestMotor extends CommonFeatures {
     //Variables needed to initialize connection with Brainboard
     private FecpController mFecpController;
     private BaseTest mAct;

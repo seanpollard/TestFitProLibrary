@@ -1,5 +1,8 @@
-package com.ifit.sfit.sparky;
+package com.ifit.sfit.sparky.tests;
 
+import com.ifit.sfit.sparky.helperclasses.CommonFeatures;
+import com.ifit.sfit.sparky.helperclasses.HandleCmd;
+import com.ifit.sfit.sparky.helperclasses.SFitSysCntrl;
 import com.ifit.sfit.sparky.testsdrivers.BaseTest;
 import com.ifit.sparky.fecp.FecpCommand;
 import com.ifit.sparky.fecp.SystemDevice;
@@ -17,7 +20,7 @@ import java.nio.ByteBuffer;
 //This class tests that the program recognizes the physical key pressed
 // and it tells for how long it was pressed (in milliseconds)
 
-public class TestPhysicalKeyCodes extends TestCommons implements TestAll {
+public class TestPhysicalKeyCodes extends CommonFeatures {
     //Variables needed to initialize connection with Brainboard
     private FecpController mFecpController;
     private BaseTest mAct;
@@ -57,6 +60,7 @@ public class TestPhysicalKeyCodes extends TestCommons implements TestAll {
     }
     //Test the Start Key
     public String testStartKey() throws Exception {
+        String results = " ";
         System.out.println("NOW RUNNING START KEY TEST.. PRESS AND HOLD START KEY<br>");
         String currentKey;
         int timeHeld;
@@ -75,10 +79,11 @@ public class TestPhysicalKeyCodes extends TestCommons implements TestAll {
             appendMessage("The " + currentKey + " key was pressed and held for " + timeHeld + " ms (should have been START key)<br>");
         }
 
-        return res;
+        return results;
     }
     //Test the stop key
     public String testStopKey() throws Exception {
+        String results =" ";
         String currentKey;
         int timeHeld;
 
@@ -97,10 +102,11 @@ public class TestPhysicalKeyCodes extends TestCommons implements TestAll {
             appendMessage("The " + currentKey + " key was pressed and held for " + timeHeld + " ms (should have been STOP key)<br>");
         }
 
-        return res;
+        return results;
     }
 
     public String testQuickInclineKeys() throws Exception {
+        String results = " ";
         String currentKey;
         int timeHeld;
         //max and min incline should eventually be read from the brainboard, but the max incline is currently set at 15%,
@@ -143,7 +149,7 @@ public class TestPhysicalKeyCodes extends TestCommons implements TestAll {
             }
         }
 
-        return res;
+        return results;
     }
 
     @Override

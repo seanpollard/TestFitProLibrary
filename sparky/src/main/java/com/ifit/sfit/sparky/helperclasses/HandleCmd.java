@@ -1,4 +1,4 @@
-package com.ifit.sfit.sparky;
+package com.ifit.sfit.sparky.helperclasses;
 
 import com.ifit.sfit.sparky.testsdrivers.BaseTest;
 import com.ifit.sparky.fecp.OnCommandReceivedListener;

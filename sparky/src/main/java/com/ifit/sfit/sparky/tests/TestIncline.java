@@ -1,5 +1,8 @@
-package com.ifit.sfit.sparky;
+package com.ifit.sfit.sparky.tests;
 
+import com.ifit.sfit.sparky.helperclasses.CommonFeatures;
+import com.ifit.sfit.sparky.helperclasses.HandleCmd;
+import com.ifit.sfit.sparky.helperclasses.SFitSysCntrl;
 import com.ifit.sfit.sparky.testsdrivers.BaseTest;
 import com.ifit.sparky.fecp.FecpCommand;
 import com.ifit.sparky.fecp.SystemDevice;
@@ -19,7 +22,7 @@ import java.util.Calendar;
 /**
  * Created by jc.almonte on 7/14/14.
  */
-public class TestIncline extends TestCommons implements TestAll {
+public class TestIncline extends CommonFeatures {
 
     //Variables needed to initialize connection with Brainboard
     private FecpController mFecpController;
@@ -93,7 +96,7 @@ public class TestIncline extends TestCommons implements TestAll {
         //Read current sent incline
         //Read actual incline
         //Check current sent incline against actual incline
-        //Run the above logic for the entire range of incline values from Max Incline to Min Incline in decrements of 0.5%
+        //Run the above logic for the entire range of incline values from Max Incline to Min Incline in 0.5% grade steps
 
         String results="";
         System.out.println("NOW RUNNING INCLINE CONTROLLER TEST<br>");
@@ -145,9 +148,9 @@ public class TestIncline extends TestCommons implements TestAll {
             //This value "J" will be set to maxIncline later on when we use it on a motor with higher incline range
             for(double j = 15; j >= minIncline; j = j-0.5)
             {
-                appendMessage("Sending a command for incline at " + j + "% to the FecpController<br>");
+                appendMessage("Sending a command to set incline to " + j + "%<br>");
 
-                results+="Sending a command for incline at " + j + "% to the FecpController\n";
+                results+="Sending a command to set incline to " + j + "%\n";
 
                 //Set value for the incline
                 ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(BitFieldId.GRADE, j);
@@ -155,59 +158,49 @@ public class TestIncline extends TestCommons implements TestAll {
                 Thread.sleep(1000);
 
                 //Check status of the command to send the incline
-                appendMessage("Status of sending incline " + j + "%: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>");
+                appendMessage("Status of setting incline to " + j + "%: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>");
                 appendMessage("Checking incline will reach set value...<br>");
 
-                results+="Status of sending incline " + j + "%: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
+                results+="Status of setting incline to " + j + "%: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
                 results+="Checking incline will reach set value...\n";
                 startime= System.nanoTime();
                 do
                 {
                     currentActualIncline = hCmd.getActualIncline();
                     Thread.sleep(300);
-                    appendMessage("Current Incline is: " + currentActualIncline+ " goal: " + j+" time elapsed: "+seconds+"<br>");
-                    results+="Current Incline is: " + currentActualIncline+ " goal: " + j+" time elapsed: "+seconds+"\n";
+                    appendMessage("Current Incline is: " + currentActualIncline+ " goal: " + j+" time elapsed: "+String.format("%.2f",seconds)+" secs<br>");
+                    results+="Current Incline is: " + currentActualIncline+ " goal: " + j+" time elapsed: "+String.format("%.2f",seconds)+" secs\n";
                     elapsedTime = System.nanoTime() - startime;
                     seconds = elapsedTime / 1.0E09;
-                } while(j!=currentActualIncline && seconds < 60);//Do while the incline hasn't reached its point yet or took more than 1.5 mins
+                } while(j!=currentActualIncline && seconds < 60);//Do while the incline hasn't reached its point yet o.r took more than 1 mins
 
                 currentWorkoutMode = "Workout mode of incline at " + j + "% is " + hCmd.getMode() + "<br>";
                 appendMessage(currentWorkoutMode);
 
                 results+="Workout mode of incline at " + j + "% is " + hCmd.getMode() + "\n";
 
-
-                appendMessage("The last set incline is " + hCmd.getIncline() + "%<br>");
-
-                results+="The last set incline is " + hCmd.getIncline() + "%\n";
-
-                System.out.println("The last set incline is " + hCmd.getIncline() + "%<br>");
-
                 //Read the actual incline off of device
                 actualInlcine = hCmd.getActualIncline();
-                appendMessage("The actual incline is currently at: " + actualInlcine + "%<br>");
-
-                results+="The actual incline is currently at: " + actualInlcine + "%\n";
-
-                System.out.println("The actual incline is currently at: " + actualInlcine + "%<br>");
-
-                appendMessage("<br>For Incline at " + j + "%:<br>");
-
-                results+="\nFor Incline at " + j + "%:\n";
-
 
                 if(j == actualInlcine)
                 {
                     appendMessage("<br><font color = #00ff00>* PASS *</font><br><br>");
 
+                    appendMessage("The current actual incline matches set value: " + actualInlcine + "%<br><br>");
+
+
+
                     results+="\n* PASS *\n\n";
+                    results+="The current actual incline matches set value: "  + actualInlcine + "%\n\n";
 
                 }
                 else
                 {
                     appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>The incline is off by " + (j - actualInlcine) + "%<br><br>");
+                    appendMessage("The current actual incline "+actualInlcine + "DOES NOT match set value: " + j + "%<br><br>");
 
                     results+="\n* FAIL *\n\nThe incline is off by " + (j - actualInlcine) + "%\n\n";
+                    results+="The current actual incline "+actualInlcine + "DOES NOT match set value: " + j + "%\n\n";
 
                 }
                 Thread.sleep(3000);
@@ -228,8 +221,8 @@ public class TestIncline extends TestCommons implements TestAll {
         timeOfTest = System.nanoTime() - startTestTimer;
         timeOfTest = timeOfTest / 1.0E09;
 
-        appendMessage("<br>This test took a total of "+timeOfTest+" secs <br>");
-        results+="\nThis test took a total of "+timeOfTest+" secs \n";
+        appendMessage("<br>This test took a total of "+String.format("%.2f",timeOfTest)+" secs <br>");
+        results+="\nThis test took a total of "+String.format("%.2f",timeOfTest)+" secs \n";
         return results;
     }
 

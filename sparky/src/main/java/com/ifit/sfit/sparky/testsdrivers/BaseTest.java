@@ -16,9 +16,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ifit.sfit.sparky.R;
-import com.ifit.sfit.sparky.SFitSysCntrl;
-import com.ifit.sfit.sparky.SendEmailAsyncTask;
-import com.ifit.sfit.sparky.TestIntegration;
+import com.ifit.sfit.sparky.helperclasses.SFitSysCntrl;
+import com.ifit.sfit.sparky.helperclasses.SendEmailAsyncTask;
+import com.ifit.sfit.sparky.tests.TestIntegration;
 import com.ifit.sparky.fecp.FecpCommand;
 import com.ifit.sparky.fecp.FitProUsb;
 import com.ifit.sparky.fecp.SystemDevice;
@@ -41,8 +41,10 @@ public abstract class BaseTest extends Activity implements View.OnClickListener,
     /*
     testingView: Display test results
     resultView: Display result of test (PASS/FAIL)
+    Both variables declared "static" to be able to access them from "HandleResults" class
      */
-    protected TextView testingView;
+    public static TextView testingView;
+    public static ScrollView scrollview;
     protected TextView resultView;
 
     /*
@@ -53,7 +55,7 @@ public abstract class BaseTest extends Activity implements View.OnClickListener,
     protected SFitSysCntrl mSFitSysCntrl;
 
     //To display pop-up messages
-    protected Toast mToast;
+    public static Toast mToast; // Made static to use on email class
 
     /*
     passFail: holds result of test (PASS/FAIL)
@@ -140,11 +142,22 @@ public abstract class BaseTest extends Activity implements View.OnClickListener,
         return BaseTest.context;
     }
 
+    public TextView getTestingView()
+    {
+        return this.testingView;
+    }
+
+    public ScrollView getScrollview()
+    {
+        return this.scrollview;
+    }
+
     //Initialize the application layout
     private void initLayout(){
         //initialize views
         testingView = (TextView) findViewById(R.id.testView);
         resultView = (TextView)findViewById(R.id.passFailView);
+        scrollview = ((ScrollView) findViewById(R.id.scrollView));
         //Initializing buttons
         allTestsButton = (Button) findViewById(R.id.allTests);
         allTestsButton.setOnClickListener(this);
@@ -672,20 +685,20 @@ public abstract class BaseTest extends Activity implements View.OnClickListener,
             final TestIntegration t = new TestIntegration(fecpController, (BaseTest) context, this.mSFitSysCntrl);
             final ScrollView scrollview = ((ScrollView) findViewById(R.id.scrollView));
 
-            t.setUpdateResultViewListener(new TestIntegration.UpdateResultView() {
-                @Override
-                public void onUpdate(final String msg) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            testingView.setText(Html.fromHtml(msg));
-                            scrollview.fullScroll(ScrollView.FOCUS_DOWN);
-                        }
-                    });
-
-
-                }
-            });
+//            t.setUpdateResultViewListener(new TestIntegration.UpdateResultView() {
+//                @Override
+//                public void onUpdate(final String msg) {
+//                    runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            testingView.setText(Html.fromHtml(msg));
+//                            scrollview.fullScroll(ScrollView.FOCUS_DOWN);
+//                        }
+//                    });
+//
+//
+//                }
+//            });
 
             Thread th = new Thread(new Runnable() {
                 @Override
@@ -727,6 +740,7 @@ public abstract class BaseTest extends Activity implements View.OnClickListener,
         else if(v==allTestsButton)
         {
             resultView.setText(" ");
+            testingView.setText(" ");
             runTest();
         }
         if(v == findFailButton) {

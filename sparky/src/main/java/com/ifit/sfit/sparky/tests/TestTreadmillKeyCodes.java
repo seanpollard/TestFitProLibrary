@@ -1,5 +1,8 @@
-package com.ifit.sfit.sparky;
+package com.ifit.sfit.sparky.tests;
 
+import com.ifit.sfit.sparky.helperclasses.CommonFeatures;
+import com.ifit.sfit.sparky.helperclasses.HandleCmd;
+import com.ifit.sfit.sparky.helperclasses.SFitSysCntrl;
 import com.ifit.sfit.sparky.testsdrivers.BaseTest;
 import com.ifit.sparky.fecp.FecpCommand;
 import com.ifit.sparky.fecp.SystemDevice;
@@ -21,7 +24,7 @@ import java.util.Calendar;
 /**
  * Created by jc.almonte on 8/6/14.
  */
-public class TestTreadmillKeyCodes extends TestCommons implements TestAll {
+public class TestTreadmillKeyCodes extends CommonFeatures {
 
         //Variables needed to initialize connection with Brainboard
         private FecpController mFecpController;

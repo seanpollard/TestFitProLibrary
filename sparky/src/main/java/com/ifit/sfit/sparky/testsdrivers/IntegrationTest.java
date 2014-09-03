@@ -6,11 +6,10 @@ import android.text.Html;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ScrollView;
 import android.widget.Spinner;
 
 import com.ifit.sfit.sparky.R;
-import com.ifit.sfit.sparky.TestIntegration;
+import com.ifit.sfit.sparky.tests.TestIntegration;
 
 /**
     * Created by jc.almonte on 7/30/14.
@@ -41,27 +40,27 @@ import com.ifit.sfit.sparky.TestIntegration;
      void runTest() {
 
          final TestIntegration t = new TestIntegration(fecpController, (BaseTest) context, this.mSFitSysCntrl);
-         final ScrollView scrollview = ((ScrollView) findViewById(R.id.scrollView));
-         t.setUpdateResultViewListener(new TestIntegration.UpdateResultView() {
-             @Override
-             public void onUpdate(final String msg) {
-                 runOnUiThread(new Runnable() {
-                     @Override
-                     public void run() {
-                         testingView.setText(Html.fromHtml(msg));
-                         scrollview.fullScroll(ScrollView.FOCUS_DOWN);
-//                         scrollview.post(new Runnable() {
-//                             @Override
-//                             public void run() {
-//                                 scrollview.fullScroll(ScrollView.FOCUS_DOWN);
-//                             }
-//                         });
-                     }
-                 });
-
-
-             }
-         });
+//         final ScrollView scrollview = ((ScrollView) findViewById(R.id.scrollView));
+//         t.setUpdateResultViewListener(new TestIntegration.UpdateResultView() {
+//             @Override
+//             public void onUpdate(final String msg) {
+//                 runOnUiThread(new Runnable() {
+//                     @Override
+//                     public void run() {
+//                         testingView.setText(Html.fromHtml(msg));
+//                         scrollview.fullScroll(ScrollView.FOCUS_DOWN);
+////                         scrollview.post(new Runnable() {
+////                             @Override
+////                             public void run() {
+////                                 scrollview.fullScroll(ScrollView.FOCUS_DOWN);
+////                             }
+////                         });
+//                     }
+//                 });
+//
+//
+//             }
+//         });
 
          Thread th = new Thread(new Runnable() {
              @Override
