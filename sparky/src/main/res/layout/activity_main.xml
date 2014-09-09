@@ -2,40 +2,141 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent" android:background="@color/white">
 
-    <Button
-        android:id="@+id/bMotor"
-        android:text="Motor Test"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent">
 
-    <Button
-        android:id="@+id/bBitfields"
-        android:text="Bitfields Test"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        <Button
+            android:id="@+id/bMotor"
+            android:text="Motor Test"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="false"
+            android:layout_below="@+id/bIncline"
+            android:layout_alignParentLeft="true"
+            android:clickable="true"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="20dp"
+            android:layout_alignEnd="@+id/bBitfields"
+            android:focusableInTouchMode="false"
+            android:layout_alignParentEnd="false"
+            android:textColor="#a6000000" />
 
-    <Button
-        android:id="@+id/bIncline"
-        android:text="Incline Test"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        <Button
+            android:id="@+id/bBitfields"
+            android:text="Bitfields Test"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="false"
+            android:layout_below="@+id/bAllTests"
+            android:layout_alignParentLeft="true"
+            android:clickable="true"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="20dp"
+            android:focusableInTouchMode="false"
+            android:layout_alignParentEnd="false"
+            android:textColor="#a6000000" />
 
-    <Button
-        android:id="@+id/bIntegration"
-        android:text="Integration Test"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        <Button
+            android:id="@+id/bIncline"
+            android:text="Incline Test"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="false"
+            android:layout_below="@+id/bBitfields"
+            android:layout_alignParentLeft="true"
+            android:clickable="true"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="20dp"
+            android:layout_alignEnd="@+id/bMotor"
+            android:focusableInTouchMode="false"
+            android:layout_alignParentEnd="false"
+            android:textColor="#a6000000" />
 
-    <Button
-        android:id="@+id/bTreadmilllKeys"
-        android:text="Treadmill Kycodes Test"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-    <Button
-        android:id="@+id/bAllTests"
-        android:text="All Tests"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        <Button
+            android:id="@+id/bIntegration"
+            android:text="Integration Test"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@+id/bTreadmilllKeys"
+            android:layout_alignParentStart="false"
+            android:layout_below="@+id/bMotor"
+            android:layout_alignParentLeft="true"
+            android:clickable="true"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="20dp"
+            android:layout_alignBottom="@+id/imgViewTestTubeIcon"
+            android:layout_alignEnd="@+id/bMotor"
+            android:focusableInTouchMode="false"
+            android:layout_alignParentEnd="false"
+            android:textColor="#a6000000" />
+
+        <Button
+            android:id="@+id/bTreadmilllKeys"
+            android:text="Treadmill Kycodes Test"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textView"
+            android:layout_alignParentStart="false"
+            android:clickable="true"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="20dp"
+            android:layout_alignEnd="@+id/bAllTests"
+            android:focusableInTouchMode="false"
+            android:layout_alignParentEnd="false"
+            android:textColor="#a6000000" />
+
+        <Button
+            android:id="@+id/bAllTests"
+            android:text="All Tests"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@+id/bIncline"
+            android:layout_toStartOf="@+id/imgViewTestTubeIcon"
+            android:layout_alignParentStart="false"
+            android:layout_below="@+id/bTreadmilllKeys"
+            android:layout_alignParentLeft="true"
+            android:clickable="true"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="20dp"
+            android:layout_alignEnd="@+id/bBitfields"
+            android:focusableInTouchMode="false"
+            android:layout_alignParentEnd="false"
+            android:textColor="#a6000000" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/test_tube"
+            android:id="@+id/imgViewTestTubeIcon"
+            android:baselineAlignBottom="true"
+            android:layout_gravity="center"
+            android:layout_below="@+id/bAllTests"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="20dp" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/icon_logo1"
+            android:id="@+id/imgViewIconLogo"
+            android:baselineAlignBottom="true"
+            android:layout_above="@+id/imgViewTestTubeIcon"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="40dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="FitPro Test Suite"
+            android:id="@+id/textView"
+            android:layout_centerHorizontal="true"
+            android:textColor="#000000"
+            android:textSize="50dp"
+            android:textIsSelectable="false"
+            android:layout_marginTop="20dp" />
+    </RelativeLayout>
 </LinearLayout>

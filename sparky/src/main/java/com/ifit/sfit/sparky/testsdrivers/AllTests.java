@@ -1,6 +1,7 @@
 package com.ifit.sfit.sparky.testsdrivers;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.View;
@@ -10,6 +11,8 @@ import android.widget.ScrollView;
 import android.widget.Spinner;
 
 import com.ifit.sfit.sparky.R;
+import com.ifit.sfit.sparky.activities.ManageTests;
+import com.ifit.sfit.sparky.helperclasses.SendEmailAsyncTask;
 import com.ifit.sfit.sparky.tests.TestBitfields;
 import com.ifit.sfit.sparky.tests.TestIncline;
 import com.ifit.sfit.sparky.tests.TestIntegration;
@@ -29,6 +32,17 @@ public class AllTests extends BaseTest implements View.OnClickListener, AdapterV
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         init();
+        emailAddress = "jc.almonte@iconfitness.com";
+        // 1. get passed intent
+        Intent intent = getIntent();
+
+        // 2. get message value from intent
+        String message = intent.getStringExtra("message");
+        if(message.equals("runAll"));
+        {
+            testToRun = "All Tests";
+            runTest();
+        }
     }
 
     private void init() {
@@ -45,12 +59,13 @@ public class AllTests extends BaseTest implements View.OnClickListener, AdapterV
 
     }
 
+
     @Override
     void runTest() {
-         b = new TestBitfields(fecpController, (BaseTest) context, this.mSFitSysCntrl);
-         m = new TestMotor(fecpController, (BaseTest) context, this.mSFitSysCntrl);
-         i = new TestIntegration(fecpController, (BaseTest) context, this.mSFitSysCntrl);
-         g = new TestIncline(fecpController, (BaseTest) context, this.mSFitSysCntrl);
+         b = new TestBitfields(ManageTests.fecpController, (BaseTest) context, ManageTests.mSFitSysCntrl);
+         m = new TestMotor(ManageTests.fecpController, (BaseTest) context, ManageTests.mSFitSysCntrl);
+         i = new TestIntegration(ManageTests.fecpController, (BaseTest) context, ManageTests.mSFitSysCntrl);
+         g = new TestIncline(ManageTests.fecpController, (BaseTest) context, ManageTests.mSFitSysCntrl);
         final ScrollView scrollview = ((ScrollView) findViewById(R.id.scrollView));
 
 //        b.setUpdateResultViewListener(new TestBitfields.UpdateResultView() {
@@ -150,7 +165,7 @@ public class AllTests extends BaseTest implements View.OnClickListener, AdapterV
                             returnString = b.runAll();
                             break;
                         case "All Tests":
-                            runAll();
+                            returnString = runAll();
                             break;
                     }
                     try {
@@ -159,6 +174,9 @@ public class AllTests extends BaseTest implements View.OnClickListener, AdapterV
                         outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
                         outputStream.write((returnString).getBytes());
                         outputStream.close();
+                        new SendEmailAsyncTask(emailAddress).execute();
+
+
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -180,6 +198,7 @@ public class AllTests extends BaseTest implements View.OnClickListener, AdapterV
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                finish(); // Go back to previous activity screen
             }
         });
         th.start();
@@ -200,11 +219,10 @@ public class AllTests extends BaseTest implements View.OnClickListener, AdapterV
     public String runAll() throws Exception {
 
         String results ="";
-        results += g.runAll();
+        //results += g.runAll();
         results += m.runAll();
-        results += i.runAll();
-        results += b.runAll();
-
+        //results += i.runAll();
+       // results += b.runAll();
         return results;
     }
 }

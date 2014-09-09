@@ -3,7 +3,7 @@
     package="com.ifit.sfit.sparky" >
 
     <uses-feature android:name="android.hardware.usb.accessory" />
-
+    <uses-permission android:name="android.permission.WAKE_LOCK"></uses-permission>
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -45,6 +45,8 @@
                 android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
                 android:resource="@xml/accessory_filter" />
         </activity>
+        <receiver android:name=".activities.SampleAlarmReceiver"></receiver>
+        <service android:name=".activities.SampleSchedulingService" />
 
     </application>
 

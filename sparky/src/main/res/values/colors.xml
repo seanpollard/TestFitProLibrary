@@ -92,6 +92,7 @@
     <color name="display_group_background">#ffe5d594</color>
 
     <color name="purple">#ff990066</color>
+    <color name="white">#FFFFFF</color>
     <color name="purple_selected">#ffb7669d</color>
     <color name="pink">#ffFF0066</color>
     <color name="pink_selected">#fff1629f</color>

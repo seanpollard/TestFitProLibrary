@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import com.ifit.sfit.sparky.R;
+import com.ifit.sfit.sparky.activities.ManageTests;
 import com.ifit.sfit.sparky.tests.TestMotor;
 
 /**
@@ -39,7 +40,7 @@ public class MotorTest extends BaseTest implements AdapterView.OnItemSelectedLis
     @Override
     void runTest() {
 
-        final TestMotor t = new TestMotor(fecpController, (BaseTest) context, this.mSFitSysCntrl);
+        final TestMotor t = new TestMotor(ManageTests.fecpController, (BaseTest) context, ManageTests.mSFitSysCntrl);
 //        final ScrollView scrollview = ((ScrollView) findViewById(R.id.scrollView));
 //
 //        t.setUpdateResultViewListener(new TestMotor.UpdateResultView() {

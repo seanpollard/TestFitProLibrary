@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import com.ifit.sfit.sparky.R;
+import com.ifit.sfit.sparky.activities.ManageTests;
 import com.ifit.sfit.sparky.tests.TestIntegration;
 
 /**
@@ -39,7 +40,7 @@ import com.ifit.sfit.sparky.tests.TestIntegration;
      @Override
      void runTest() {
 
-         final TestIntegration t = new TestIntegration(fecpController, (BaseTest) context, this.mSFitSysCntrl);
+         final TestIntegration t = new TestIntegration(ManageTests.fecpController, (BaseTest) context, ManageTests.mSFitSysCntrl);
 //         final ScrollView scrollview = ((ScrollView) findViewById(R.id.scrollView));
 //         t.setUpdateResultViewListener(new TestIntegration.UpdateResultView() {
 //             @Override

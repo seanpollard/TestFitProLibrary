@@ -61,7 +61,8 @@
         <item>Bitfields Tests</item>
         <item>All Tests</item>
     </string-array>
-
+    <string name="start_text">Start Alarm</string>
+    <string name="cancel_text">Cancel Alarm</string>
     <string name="app_name">Fit Pro</string>
     <string name="hello_world">Hello world!</string>
     <string name="connect_options">USB</string>

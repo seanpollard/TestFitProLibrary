@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import com.ifit.sfit.sparky.R;
+import com.ifit.sfit.sparky.activities.ManageTests;
 import com.ifit.sfit.sparky.tests.TestBitfields;
 
 /**
@@ -39,7 +40,7 @@ public class BitfieldsTest extends BaseTest implements View.OnClickListener, Ada
     @Override
     void runTest() {
 
-        final TestBitfields t = new TestBitfields(fecpController, (BaseTest) context, this.mSFitSysCntrl);
+        final TestBitfields t = new TestBitfields(ManageTests.fecpController, (BaseTest) context, ManageTests.mSFitSysCntrl);
 //        final ScrollView scrollview = ((ScrollView) findViewById(R.id.scrollView));
 //        t.setUpdateResultViewListener(new TestBitfields.UpdateResultView() {
 //            @Override

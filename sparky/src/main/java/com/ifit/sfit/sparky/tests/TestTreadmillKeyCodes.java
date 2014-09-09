@@ -35,6 +35,7 @@ public class TestTreadmillKeyCodes extends CommonFeatures {
         private FecpCommand wrCmd;
         private FecpCommand rdCmd;
         private FecpCommand sendKeyCmd;
+        private String emailAddress;
 
         public TestTreadmillKeyCodes(FecpController fecpController, BaseTest act, SFitSysCntrl ctrl) {
             //Get controller sent from the main activity (TestApp)
@@ -42,6 +43,7 @@ public class TestTreadmillKeyCodes extends CommonFeatures {
                 this.mFecpController = fecpController;
                 this.mAct = act;
                 this.mSFitSysCntrl = ctrl;
+                this.emailAddress = "jc.almonte@iconfitness.com";
                 hCmd = new HandleCmd(this.mAct);// Init handlers
                 ByteBuffer secretKey = ByteBuffer.allocate(32);
                 for(int i = 0; i < 32; i++)
@@ -1093,7 +1095,6 @@ public class TestTreadmillKeyCodes extends CommonFeatures {
         keysResults += testQuickSpeedKeys();
         keysResults += testAgeUpKey();
         keysResults += testAgeDownKey();
-
         return keysResults;
     }
 }

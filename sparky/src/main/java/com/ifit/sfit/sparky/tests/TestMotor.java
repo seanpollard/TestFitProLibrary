@@ -32,7 +32,7 @@ public class TestMotor extends CommonFeatures {
     private double currentSpeed; // Current motor speed
     private FecpCommand wrCmd;
     private FecpCommand rdCmd;
-
+    private String emailAddress;
 
     //To hold time lapsed
     private long stopTimer = 0;
@@ -47,6 +47,7 @@ public class TestMotor extends CommonFeatures {
             this.mFecpController = fecpController;
             this.mAct = act;
             this.mSFitSysCntrl = ctrl;
+            this.emailAddress = "jc.almonte@iconfitness.com";
             this.hCmd = new HandleCmd(this.mAct);// Init handlers
 
             ByteBuffer secretKey = ByteBuffer.allocate(32);
@@ -1162,10 +1163,10 @@ public class TestMotor extends CommonFeatures {
         try {
             results+=this.testStartSpeed();
             results+=this.testPauseResume();
-            results+=this.testCalories();
-            results+=this.testPwmOvershoot();
-            results+=this.testDistance();
-            results+=this.testSpeedController();
+            //results+=this.testCalories();
+           // results+=this.testPwmOvershoot();
+            //results+=this.testDistance();
+           // results+=this.testSpeedController();
             //results+= this.testCals();
         } catch (Exception ex) {
             ex.printStackTrace();

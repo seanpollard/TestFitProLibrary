@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import com.ifit.sfit.sparky.R;
+import com.ifit.sfit.sparky.activities.ManageTests;
 import com.ifit.sfit.sparky.tests.TestIncline;
 
 /**
@@ -39,7 +40,7 @@ public class InclineTest extends BaseTest implements View.OnClickListener, Adapt
     @Override
     void runTest() {
 
-        final TestIncline t = new TestIncline(fecpController, (BaseTest) context, this.mSFitSysCntrl);
+        final TestIncline t = new TestIncline(ManageTests.fecpController, (BaseTest) context, ManageTests.mSFitSysCntrl);
 //        final ScrollView scrollview = ((ScrollView) findViewById(R.id.scrollView));
 //
 //        t.setUpdateResultViewListener(new TestIncline.UpdateResultView() {

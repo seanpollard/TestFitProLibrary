@@ -26,13 +26,15 @@ import java.util.Calendar;
      private SystemDevice MainDevice;
      private  FecpCommand wrCmd;
      private  FecpCommand rdCmd;
- 
-     public TestIntegration(FecpController fecpController, BaseTest act, SFitSysCntrl ctrl) {
+    private String emailAddress;
+
+    public TestIntegration(FecpController fecpController, BaseTest act, SFitSysCntrl ctrl) {
          //Get controller sent from the main activity (TestApp)
          try {
              this.mFecpController = fecpController;
              this.mAct = act;
              this.mSFitSysCntrl = ctrl;
+             this.emailAddress = "jc.almonte@iconfitness.com";
              hCmd = new HandleCmd(this.mAct);// Init handlers
              ByteBuffer secretKey = ByteBuffer.allocate(32);
              for(int i = 0; i < 32; i++)

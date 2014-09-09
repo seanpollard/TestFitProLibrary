@@ -27,6 +27,7 @@ public class TestPhysicalKeyCodes extends CommonFeatures {
     private HandleCmd hCmd;
     private SFitSysCntrl mSFitSysCntrl;
     private SystemDevice MainDevice;
+    private String emailAddress;
 
     private FecpCommand rdCmd;
 
@@ -37,6 +38,7 @@ public class TestPhysicalKeyCodes extends CommonFeatures {
             this.mFecpController = fecpController;
             this.mAct = act;
             this.mSFitSysCntrl = ctrl;
+            this.emailAddress = "jc.almonte@iconfitness.com";
             hCmd = new HandleCmd(this.mAct);// Init handlers
             ByteBuffer secretKey = ByteBuffer.allocate(32);
             for(int i = 0; i < 32; i++)
@@ -159,7 +161,6 @@ public class TestPhysicalKeyCodes extends CommonFeatures {
         results+=this.testStartKey();
         results+=this.testStopKey();
         results+=this.testQuickInclineKeys();
-
         return results;
     }
 }

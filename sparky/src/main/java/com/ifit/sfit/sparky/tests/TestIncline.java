@@ -38,6 +38,7 @@ public class TestIncline extends CommonFeatures {
     private double currentIncline = 0.0;
     private double actualInlcine = 0.0;
     private final int NUM_TESTS = 1;
+    private String emailAddress;
 
     public TestIncline(FecpController fecpController, BaseTest act, SFitSysCntrl ctrl) {
         //Get controller sent from the main activity (TestApp)
@@ -45,6 +46,7 @@ public class TestIncline extends CommonFeatures {
             this.mFecpController = fecpController;
             this.mAct = act;
             this.mSFitSysCntrl = ctrl;
+            this.emailAddress = "jc.almonte@iconfitness.com";
             hCmd = new HandleCmd(this.mAct);// Init handlers
             //Get current system device
             MainDevice = this.mFecpController.getSysDev();
@@ -197,10 +199,10 @@ public class TestIncline extends CommonFeatures {
                 else
                 {
                     appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>The incline is off by " + (j - actualInlcine) + "%<br><br>");
-                    appendMessage("The current actual incline "+actualInlcine + "DOES NOT match set value: " + j + "%<br><br>");
+                    appendMessage("The current actual incline "+actualInlcine + " DOES NOT match set value: " + j + "%<br><br>");
 
                     results+="\n* FAIL *\n\nThe incline is off by " + (j - actualInlcine) + "%\n\n";
-                    results+="The current actual incline "+actualInlcine + "DOES NOT match set value: " + j + "%\n\n";
+                    results+="The current actual incline "+actualInlcine + " DOES NOT match set value: " + j + "%\n\n";
 
                 }
                 Thread.sleep(3000);
@@ -1270,6 +1272,6 @@ public class TestIncline extends CommonFeatures {
         catch (Exception ex) {
             ex.printStackTrace();
         }
-        return results;
+            return results;
     }
 }
