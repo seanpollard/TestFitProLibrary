@@ -9,7 +9,7 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
 
 /**
  * Created by jc.almonte on 7/30/14.
- * This class will have the common features shared among all test classes
+ * Common features shared among all test classes
  */
 public abstract class CommonFeatures extends Activity {
 //    protected UpdateResultView listener;
@@ -21,12 +21,10 @@ public abstract class CommonFeatures extends Activity {
 //        public void onUpdate(String msg);
 //    }
 
-/*
-*
-* This method will take care of displaying test results on screen
-* @param msg --> message to be displayed on screen
-*
-* */
+    /**
+     * Takes care of displaying on screen the test results sent through "msg" param
+     * @param msg
+     */
 
     public void appendMessage(final String msg) {
         //res += msg;
@@ -45,13 +43,11 @@ public abstract class CommonFeatures extends Activity {
         });
     }
 
-    /*
-*
-* This method will be used to run all tests for each class. Declared abstract since
-* every TestClass runs a different set of tests
-*
-* @return String --> test results
-*
-* */
+    /**
+     * Used to run all tests for each class.
+     * Declared abstract since every TestClass runs a different set of tests
+     * @return text log of test results
+     * @throws Exception
+     */
    public abstract String runAll() throws Exception;
 }

@@ -85,13 +85,15 @@ public class TestTreadmillKeyCodes extends CommonFeatures {
         }
 
 
-        //--------------------------------------------//
-        //                                            //
-        //      Testing All Treadmill Keycodes        //
-        //                                            //
-        //--------------------------------------------//
+
 //TODO: In the past when this tests worked, you could hear the buzzer clicking sound when key command was sent
 //TODO: Write the code for the rest of the Keys to have it ready to go as soon as set_testing_key is working
+
+    /**
+     * Simulates stop key press and verifies it works as expected
+     * @return text log of test results
+     * @throws Exception
+     */
  public String testStopKey() throws Exception{
             //Redmine Support #925
             //Test Stop button press
@@ -189,6 +191,12 @@ public class TestTreadmillKeyCodes extends CommonFeatures {
 
             return results;
         }
+
+    /**
+     * Simulates start key press and verifies it works as expected
+     * @return text log of test results
+     * @throws Exception
+     */
  public String testStartKey() throws Exception{
         //Redmine Support #1170
         //Testing Start Key Press
@@ -277,6 +285,12 @@ public class TestTreadmillKeyCodes extends CommonFeatures {
 
         return results;
     }
+
+    /**
+     * Simulates Incline up key press and verifies it works as expected
+     * @return text log of test results
+     * @throws Exception
+     */
  public String testInclineUpKey() throws Exception{
      //Redmine Support #1171
      //Testing Incline Up key press
@@ -384,6 +398,12 @@ public class TestTreadmillKeyCodes extends CommonFeatures {
 
      return results;
  }
+
+    /**
+     * Simulates Incline down key press and verifies it works as expected
+     * @return text log of test results
+     * @throws Exception
+     */
  public String testInclineDownKey() throws Exception{
         //Redmine Support #1171
         //Testing Incline Up key press
@@ -491,6 +511,12 @@ public class TestTreadmillKeyCodes extends CommonFeatures {
 
         return results;
     }
+
+    /**
+     * Simulates Speed up key press and verifies it works as expected
+     * @return text log of test results
+     * @throws Exception
+     */
  public String testSpeedUpKey() throws Exception {
      //Testing Speed Up key press
      //1. Set mode to running
@@ -575,6 +601,12 @@ public class TestTreadmillKeyCodes extends CommonFeatures {
 
      return results;
  }
+
+    /**
+     * Simulates Speed down key press and verifies it works as expected
+     * @return text log of test results
+     * @throws Exception
+     */
  public String testSpeedDownKey() throws Exception {
         //Testing Speed Down key press
 //        1. Set mode to running
@@ -687,6 +719,12 @@ public class TestTreadmillKeyCodes extends CommonFeatures {
 
      return results;
     }
+
+    /**
+     * Simulates Quick Incline key press and verifies it works as expected
+     * @return text log of test results
+     * @throws Exception
+     */
  public String testQuickInclineKeys() throws Exception{
      /*
      * 1. Read max and min inclines
@@ -783,6 +821,12 @@ public class TestTreadmillKeyCodes extends CommonFeatures {
 
      return results;
  }
+
+    /**
+     * Simulates Quick speed key press and verifies it works as expected
+     * @return text log of test results
+     * @throws Exception
+     */
  public String testQuickSpeedKeys() throws Exception{
      /*
      * 1. Set mode to running
@@ -886,6 +930,13 @@ public class TestTreadmillKeyCodes extends CommonFeatures {
 
      return results;
     }
+
+    /**
+     * Simulates age up key press and verifies it works as expected
+     * @return text log of test results
+     * @throws Exception
+     */
+
  public String testAgeUpKey() throws Exception{
         //Testing Age Up key press
         //1. Set age to 18
@@ -982,6 +1033,12 @@ public class TestTreadmillKeyCodes extends CommonFeatures {
 
         return results;
     }
+
+    /**
+     * Simulates age down key press and verifies it works as expected
+     * @return text log of test results
+     * @throws Exception
+     */
  public String testAgeDownKey() throws Exception{
         //Redmine Support #1171
         //Testing Incline Up key press
@@ -1079,6 +1136,11 @@ public class TestTreadmillKeyCodes extends CommonFeatures {
      return results;
     }
 
+    /**
+     * Runs all Treadmill Key-codes tests
+     * @return text log of test results
+     * @throws Exception
+     */
     @Override
     public String runAll() throws Exception {
         //Redmine Support #925

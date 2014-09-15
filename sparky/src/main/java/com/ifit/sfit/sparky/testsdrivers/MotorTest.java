@@ -23,6 +23,9 @@ public class MotorTest extends BaseTest implements AdapterView.OnItemSelectedLis
         init();
     }
 
+    /**
+     * Set up spinner and populated it with options specific to this test class
+     */
     private void init(){
 
         Spinner spinner = (Spinner) findViewById(R.id.spinnerMotor);
@@ -37,6 +40,9 @@ public class MotorTest extends BaseTest implements AdapterView.OnItemSelectedLis
 
     }
 
+    /**
+     * Run selected Motor test
+     */
     @Override
     void runTest() {
 
@@ -128,6 +134,13 @@ public class MotorTest extends BaseTest implements AdapterView.OnItemSelectedLis
 
     }
 
+    /**
+     * Indicates test to run based item selected
+     * @param parent the parent adapter view
+     * @param view current view
+     * @param pos position of selected item
+     * @param id selected item id
+     */
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
         testToRun = parent.getItemAtPosition(pos).toString();

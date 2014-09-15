@@ -19,6 +19,7 @@ import com.ifit.sfit.sparky.tests.TestIntegration;
 import com.ifit.sfit.sparky.tests.TestMotor;
 
 /**
+ * Class to handle running all tests. In this class only the runAll method of each handle test class is run
  * Created by jc.almonte on 8/1/14.
  */
 public class AllTests extends BaseTest implements View.OnClickListener, AdapterView.OnItemSelectedListener{
@@ -27,6 +28,7 @@ public class AllTests extends BaseTest implements View.OnClickListener, AdapterV
      TestMotor m;
      TestIntegration i;
      TestIncline g ;
+     boolean isAlarmMessage = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,13 +40,17 @@ public class AllTests extends BaseTest implements View.OnClickListener, AdapterV
 
         // 2. get message value from intent
         String message = intent.getStringExtra("message");
-        if(message.equals("runAll"));
+        isAlarmMessage = message.equals("runAll");
+        if(isAlarmMessage == true);
         {
             testToRun = "All Tests";
             runTest();
         }
     }
 
+    /**
+     * Set up spinner and populated it with options specific to this test class
+     */
     private void init() {
 
         Spinner spinner = (Spinner) findViewById(R.id.spinnerMotor);
@@ -59,7 +65,9 @@ public class AllTests extends BaseTest implements View.OnClickListener, AdapterV
 
     }
 
-
+    /**
+     * Run selected "runAll" test
+     */
     @Override
     void runTest() {
          b = new TestBitfields(ManageTests.fecpController, (BaseTest) context, ManageTests.mSFitSysCntrl);
@@ -206,6 +214,13 @@ public class AllTests extends BaseTest implements View.OnClickListener, AdapterV
 
     }
 
+    /**
+     * Indicates test to run based item selected
+     * @param parent the parent adapter view
+     * @param view current view
+     * @param pos position of selected item
+     * @param id selected item id
+     */
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
         testToRun = parent.getItemAtPosition(pos).toString();
@@ -216,13 +231,18 @@ public class AllTests extends BaseTest implements View.OnClickListener, AdapterV
 
     }
 
+    /**
+     * Runs all tests for each test class
+     * @return text log of test results
+     * @throws Exception
+     */
     public String runAll() throws Exception {
 
         String results ="";
-        //results += g.runAll();
+        results += g.runAll();
         results += m.runAll();
-        //results += i.runAll();
-       // results += b.runAll();
+        results += i.runAll();
+        results += b.runAll();
         return results;
     }
 }

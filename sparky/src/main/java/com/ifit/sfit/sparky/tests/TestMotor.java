@@ -90,6 +90,12 @@ public class TestMotor extends CommonFeatures {
     //The testStartSpeed is planned to automate #16 of the software
     //checklist to make sure that the machine starts at 1.0mph or 2.0kph
 
+    /**
+     * Makes sure machine starts at a speed 1.0mph/2.0kph (software checklist #16)
+     * @return text log of test results
+     * @throws Exception
+     */
+
     public String testStartSpeed() throws Exception {
 
 //        //outline for code support #958 **first task to automate**
@@ -216,11 +222,12 @@ public class TestMotor extends CommonFeatures {
 
     }
 
-    //--------------------------------------------//
-    //                                            //
-    //              Testing Distance              //
-    //                                            //
-    //--------------------------------------------//
+    /**
+     * Runs a workout and verifies the distance recorded is accurate
+     * @return text log of test results
+     * @throws Exception
+     */
+
     public String testDistance() throws Exception {
         System.out.println("**************** DISTANCE TEST ****************");
 
@@ -331,11 +338,11 @@ public class TestMotor extends CommonFeatures {
     }
 
 
-    //--------------------------------------------//
-    //                                            //
-    //          Testing Pause/Resume Speed        //
-    //                                            //
-    //--------------------------------------------//
+    /**
+     * Makes sure machine starts at a speed 1.0mph/2.0kph after a pause (redmine support #954)
+     * @return text log of test results
+     * @throws Exception
+     */
 
 
      public String testPauseResume() throws Exception {
@@ -482,13 +489,11 @@ public class TestMotor extends CommonFeatures {
         return results;
     }
 
-    //--------------------------------------------//
-    //                                            //
-    //  Testing All Speeds (in decrements of 0.1) //
-    //                                            //
-    //--------------------------------------------//
-
-
+    /**
+     * Verify all speed values can be set properly and speed changes accordingly
+     * @return text log of test results
+     * @throws Exception
+     */
     public String testSpeedController() throws Exception {
         System.out.println("**************** SPEED CONTROLLER TEST ****************");
         final double MAX_SPEED = 16; //hardcode the value until we can read it
@@ -744,6 +749,13 @@ public class TestMotor extends CommonFeatures {
         return results;
     }
 
+    /**
+     * Runs trough a series of workouts with different weight,incline and speeds
+     * and verifies calories values are as expected
+     * @return text log of test results
+     * @throws Exception
+     */
+
     public String testCals() throws Exception {
         /*
         * Calories Formula
@@ -994,13 +1006,12 @@ public class TestMotor extends CommonFeatures {
         return results;
     }
 
-    //--------------------------------------------//
-    //                                            //
-    //           Testing PWM Overshoot            //
-    //                                            //
-    //--------------------------------------------//
-    /*Futures test includes
-    * */
+    /**
+     * Verifies speed on belt motor doesn't shoot up when motor has been running at a high speed,
+     * stop is pressed and then start is pressed right away
+     * @return text log of test results
+     * @throws Exception
+     */
     public String testPwmOvershoot() throws Exception {
         System.out.println("**************** PWM OVERSHOOT TEST ****************");
 
@@ -1157,6 +1168,11 @@ public class TestMotor extends CommonFeatures {
         return results;
     }
 
+    /**
+     * Runs all Motor tests
+     * @return text log of test results
+     * @throws Exception
+     */
     @Override
     public String runAll() {
         String results="";
@@ -1164,10 +1180,10 @@ public class TestMotor extends CommonFeatures {
             results+=this.testStartSpeed();
             results+=this.testPauseResume();
             //results+=this.testCalories();
-           // results+=this.testPwmOvershoot();
-            //results+=this.testDistance();
-           // results+=this.testSpeedController();
-            //results+= this.testCals();
+           results+=this.testPwmOvershoot();
+            results+=this.testDistance();
+           results+=this.testSpeedController();
+            results+= this.testCals();
         } catch (Exception ex) {
             ex.printStackTrace();
         }

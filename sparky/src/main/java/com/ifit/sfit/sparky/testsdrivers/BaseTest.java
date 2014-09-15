@@ -26,6 +26,7 @@ import com.ifit.sparky.fecp.communication.FecpController;
 import java.io.FileOutputStream;
 
 /**
+ * Abstract Base class for all test drivers. Common features among test drivers are implemented on this class.
  * Created by jc.almonte on 7/29/14.
  */
 public abstract class BaseTest extends Activity implements View.OnClickListener{
@@ -82,7 +83,7 @@ public abstract class BaseTest extends Activity implements View.OnClickListener{
     protected Button clearButton;
 
     /*
-    Fields to enter information (kinda like text-boxes in C#)
+    Fields to enter information
     */
     protected EditText editConsoleName;
     protected EditText editModel;
@@ -131,12 +132,18 @@ public abstract class BaseTest extends Activity implements View.OnClickListener{
 //        }
 
     }
-    //To return application context
+
+    /**
+     * To return application context
+     * @return
+     */
     public static Context getAppContext() {
         return BaseTest.context;
     }
 
-    //Initialize the application layout
+    /**
+     * Initialize the layout for the test screen
+     */
     private void initLayout(){
         //initialize views
         testingView = (TextView) findViewById(R.id.testView);
@@ -770,6 +777,9 @@ public abstract class BaseTest extends Activity implements View.OnClickListener{
         }
     }
 
+    /**
+     * Abstract method to run test specific to each test class
+     */
     abstract void runTest();
 
     @Override
@@ -781,19 +791,6 @@ public abstract class BaseTest extends Activity implements View.OnClickListener{
             mToast.cancel();
         }
     }
-
-//    @Override
-//    public boolean onKeyDown(int keyCode, KeyEvent event) {
-//        boolean result = false;
-//        switch (keyCode)
-//        {
-//            case KeyEvent.KEYCODE_BACK:
-//            Intent myIntent = new Intent(BaseTest.this, ManageTests.class);
-//            startActivity(myIntent);
-//            result = false;
-//        }
-//        return result;
-//    }
 
     @Override
     protected void onPause() {

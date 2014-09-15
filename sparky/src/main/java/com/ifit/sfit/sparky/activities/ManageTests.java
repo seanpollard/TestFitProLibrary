@@ -28,6 +28,8 @@ import com.ifit.sparky.fecp.interpreter.command.WriteReadDataCmd;
 import com.ifit.sparky.fecp.interpreter.device.DeviceId;
 
 /**
+ * This class holds the code for the Main Screen. From here we choose which test we want to run
+ * It also sets the Alarm to run all tests automatically at the specified time everyday
  * Created by jc.almonte on 7/29/14.
  */
 public class ManageTests extends Activity implements View.OnClickListener, SystemStatusListener {
@@ -44,20 +46,31 @@ public class ManageTests extends Activity implements View.OnClickListener, Syste
         setContentView(R.layout.activity_main);
         init();
     }
+
+    /**
+     * Initialize menu
+     * @param menu the menu
+     * @return true when menu created
+     */
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
-    // Menu options to set and cancel the alarm.
+    /**
+     * Menu options to set and cancel the alarm.
+     * @param item the menu item
+     * @return true if item selected, false otherwise
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             // When the user clicks START ALARM, set the alarm.
-            case R.id.start_action:
-                alarm.setAlarm(this);
-                return true;
+//            case R.id.start_action:
+//                alarm.setAlarm(this);
+//                return true;
             // When the user clicks CANCEL ALARM, cancel the alarm.
             case R.id.cancel_action:
                 alarm.cancelAlarm(this);
@@ -65,6 +78,12 @@ public class ManageTests extends Activity implements View.OnClickListener, Syste
         }
         return false;
     }
+
+    /**
+     * Initializes the Controlller for the System Communication with Brainbaord
+     * Initializes the Alarm to run tests automatically at a specified time
+     * Initializes the UI elements on screen
+     */
     public void init()
     {
 
@@ -72,6 +91,7 @@ public class ManageTests extends Activity implements View.OnClickListener, Syste
             fecpController = new FitProUsb(getApplicationContext(), getIntent());
             mSFitSysCntrl = new SFitSysCntrl(fecpController);
             fecpController.initializeConnection(this);
+            alarm.setAlarm(this);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -85,6 +105,10 @@ public class ManageTests extends Activity implements View.OnClickListener, Syste
         findViewById(R.id.bAllTests).setOnClickListener(this);
     }
 
+    /**
+     * Handles the click event on the current view
+     * @param view the view clicked
+     */
     @Override
     public void onClick(View view) {
         switch (view.getId())
@@ -117,12 +141,16 @@ public class ManageTests extends Activity implements View.OnClickListener, Syste
 
             case R.id.bAllTests:
                 Intent allTests = new Intent(ManageTests.this, AllTests.class);
+                allTests.putExtra("message", new String("none"));
                 startActivity(allTests);
             break;
 
         }
     }
 
+    /**
+     * this method is called when the system is disconnected. this is the same as the Communications disconnect
+     */
     @Override
     public void systemDisconnected() {
 
@@ -212,6 +240,9 @@ public class ManageTests extends Activity implements View.OnClickListener, Syste
         });
     }
 
+    /**
+     * This will be called when the system has been validated
+     */
     @Override
     public void systemSecurityValidated() {
 

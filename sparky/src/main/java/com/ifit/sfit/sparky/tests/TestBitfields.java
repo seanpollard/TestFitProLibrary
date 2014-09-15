@@ -43,7 +43,6 @@ public class TestBitfields extends CommonFeatures {
     private SFitSysCntrl mSFitSysCntrl;
     private SystemDevice MainDevice;
     private  FecpCommand wrCmd;
-    private String results="";
     private String emailAddress;
 
     public TestBitfields(FecpController fecpController, BaseTest act, SFitSysCntrl ctrl) {
@@ -77,17 +76,15 @@ public class TestBitfields extends CommonFeatures {
         }
     }
 
-    //---------------------------------------------------------------------//
-    //  Test read/write access on supported read-only - testBitfieldRdWr() //
-    //                                                                     //
-    //         -  verify writing operation to bitfield fails for read only //
-    //         - If bitfield is not supported, verify exception is thrown  //
-    //---------------------------------------------------------------------//
-//Future test include
-//TODO: Verify read operation on all read-only bitfields by reading default values
-    //TODO: Do same tests for new and future supported commands
-
+    /**
+     * Test read/write access on supported read-only bit fields
+     *  - verify writing operation to bitfield fails for read only
+     *  - If bitfield is not supported, verify exception is thrown
+     * @return text log of test Results
+     * @throws Exception
+     */
     public String testBitfieldRdWr() throws Exception {
+        String results = "";
         System.out.println("NOW RUNNING READ ACCESS & UNSUPPORTED BITFIELDS TEST...<br>");
         Object valueToWrite = 10;
 
@@ -198,10 +195,17 @@ public class TestBitfields extends CommonFeatures {
     //      - Send invalid values to each bitfield and verify exception is thrown    //
     //      - Send valid values and then read them to verify it                      //
     //-------------------------------------------------------------------------------//
-//Future tests Include
-    //TODO: Add validation for new and future supported commands
+
+    /**
+     * Test input values for each bitfield
+     *  - Send invalid values to each bitfield and verify either an exception is thrown or value is not written
+     *  - Send valid values and then read them to verify writing operation successfull
+     * @return
+     * @throws Exception
+     */
     public String testBitfieldValuesValidation() throws Exception
     {
+        String results = "";
         System.out.println("NOW RUNNING READ/WRITE ACCESS FOR SUPPORTED BITFIELDS...<br>");
         appendMessage("------Testing Read/Write Access with valid values for Supported WRITE/READ Bitfields------<br><br>"); //to store results of test
        
@@ -228,27 +232,27 @@ public class TestBitfields extends CommonFeatures {
             switch (bf.name()) {
                 case "KPH":
                     valueToWrite = -5.0;//Invalid value
-                    verifyBitfield(ModeId.RUNNING,bf,valueToWrite,false);
+                    results+=verifyBitfield(ModeId.RUNNING,bf,valueToWrite,false);
                     valueToWrite = 25.0;//Invalid value
-                    verifyBitfield(ModeId.RUNNING,bf,valueToWrite,false);
+                    results+=verifyBitfield(ModeId.RUNNING,bf,valueToWrite,false);
                     valueToWrite = 3.0;
-                    verifyBitfield(ModeId.RUNNING,bf,valueToWrite,true);
+                    results+=verifyBitfield(ModeId.RUNNING,bf,valueToWrite,true);
                     break;
                 case "GRADE":
                     valueToWrite = 45.0;//Invalid value
-                    verifyBitfield(ModeId.IDLE,bf,valueToWrite,false);
+                    results+=verifyBitfield(ModeId.IDLE,bf,valueToWrite,false);
                     valueToWrite = -10.0;//Invalid value
-                    verifyBitfield(ModeId.IDLE,bf,valueToWrite,false);
+                    results+=verifyBitfield(ModeId.IDLE,bf,valueToWrite,false);
                     valueToWrite = 5.0;
-                    verifyBitfield(ModeId.IDLE,bf,valueToWrite,true);
+                    results+=verifyBitfield(ModeId.IDLE,bf,valueToWrite,true);
                     break;
                 case "RESISTANCE":
                     break;
                 case "FAN_SPEED":
                     valueToWrite = -3.0;//Invalid value
-                    verifyBitfield(ModeId.RUNNING,bf,valueToWrite,false);
+                    results+=verifyBitfield(ModeId.RUNNING,bf,valueToWrite,false);
                     valueToWrite = 12.0; //set fan speed to 15% of max
-                    verifyBitfield(ModeId.RUNNING,bf,valueToWrite,true);
+                    results+=verifyBitfield(ModeId.RUNNING,bf,valueToWrite,true);
                     break;
                 case "VOLUME":
                     break;
@@ -257,11 +261,11 @@ public class TestBitfields extends CommonFeatures {
                     mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
                     Thread.sleep(1000);
                     valueToWrite = 15.0;
-                    verifyBitfield(ModeId.RUNNING,bf,valueToWrite,false);
+                    results+=verifyBitfield(ModeId.RUNNING,bf,valueToWrite,false);
                     valueToWrite = -13.0;
-                    verifyBitfield(ModeId.RUNNING,bf,valueToWrite,false);
+                    results+=verifyBitfield(ModeId.RUNNING,bf,valueToWrite,false);
                     valueToWrite = ModeId.PAUSE.getValue(); //Pause Mode
-                    verifyBitfield(ModeId.RUNNING,bf,valueToWrite,true);
+                    results+=verifyBitfield(ModeId.RUNNING,bf,valueToWrite,true);
                     break;
                 case "AUDIO_SOURCE":
                     break;
@@ -269,19 +273,19 @@ public class TestBitfields extends CommonFeatures {
                     break;
                 case "AGE":
                     valueToWrite = 2.0; //invalid value
-                    verifyBitfield(ModeId.IDLE,bf,valueToWrite,false);
+                    results+=verifyBitfield(ModeId.IDLE,bf,valueToWrite,false);
                     valueToWrite = 100; //invalid value
-                    verifyBitfield(ModeId.IDLE,bf,valueToWrite,false);
+                    results+=verifyBitfield(ModeId.IDLE,bf,valueToWrite,false);
                     valueToWrite = 18.0; //set age to 20 years old
-                    verifyBitfield(ModeId.IDLE,bf,valueToWrite,true);
+                    results+=verifyBitfield(ModeId.IDLE,bf,valueToWrite,true);
                     break;
                 case "WEIGHT":
                     valueToWrite = 20.0; //invalid value
-                    verifyBitfield(ModeId.IDLE,bf,valueToWrite,false);
+                    results+=verifyBitfield(ModeId.IDLE,bf,valueToWrite,false);
                     valueToWrite = 200; //invalid value
-                    verifyBitfield(ModeId.IDLE,bf,valueToWrite,false);
+                    results+=verifyBitfield(ModeId.IDLE,bf,valueToWrite,false);
                     valueToWrite = 68.0; //set weight to 20 years old
-                    verifyBitfield(ModeId.IDLE,bf,valueToWrite,true);
+                    results+=verifyBitfield(ModeId.IDLE,bf,valueToWrite,true);
                     break;
                 case "GEARS":
                     break;
@@ -293,15 +297,15 @@ public class TestBitfields extends CommonFeatures {
                     break;
                 case "IDLE_TIMEOUT":
                     valueToWrite = -4.0; //set timeout to 9secs to go from pause to IDLE
-                    verifyBitfield(ModeId.IDLE,bf,valueToWrite,false);
+                    results+=verifyBitfield(ModeId.IDLE,bf,valueToWrite,false);
                     valueToWrite = 9.0; //set timeout to 9 secs to go from pause to IDLE
-                    verifyBitfield(ModeId.IDLE,bf,valueToWrite,true);
+                    results+=verifyBitfield(ModeId.IDLE,bf,valueToWrite,true);
                     break;
                 case "PAUSE_TIMEOUT":
                     valueToWrite = -9.0; //set timeout to 9secs to go from pause to IDLE
-                    verifyBitfield(ModeId.IDLE,bf,valueToWrite,false);
+                    results+=verifyBitfield(ModeId.IDLE,bf,valueToWrite,false);
                     valueToWrite = 10.0; //set timeout to 5secs to go from pause to IDLE
-                    verifyBitfield(ModeId.PAUSE,bf,valueToWrite,true);
+                    results+=verifyBitfield(ModeId.PAUSE,bf,valueToWrite,true);
                     break;
                 case "SYSTEM_UNITS":
                     break;
@@ -353,8 +357,18 @@ public class TestBitfields extends CommonFeatures {
         results+="\nThis test took a total of "+timeOfTest+" secs \n";
         return results;
     }
-    //Helper function to test bitfields
-    private void verifyBitfield(ModeId modeId, BitFieldId bitFieldId, double valueToWrite, boolean validValue) throws InvalidCommandException, InvalidBitFieldException {
+
+    /**
+     * Helper function for {@link #testBitfieldValuesValidation()}
+     * @param modeId the right mode id to be able to use bitfield
+     * @param bitFieldId the Id of the bitfield being tested
+     * @param valueToWrite the value to write to the bitfield
+     * @param validValue true if value to write is valid, false otherwise
+     * @throws InvalidCommandException
+     * @throws InvalidBitFieldException
+     */
+    private String verifyBitfield(ModeId modeId, BitFieldId bitFieldId, double valueToWrite, boolean validValue) throws InvalidCommandException, InvalidBitFieldException {
+        String results = "";
         long time=1000;
 
         try {
@@ -410,26 +424,23 @@ public class TestBitfields extends CommonFeatures {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+    return results;
     }
 
-    //--------------------------------------------//
-    //                                            //
-    //                Testing Mode                //
-    //                                            //
-    //--------------------------------------------//
-    /*
-    Future tests include
-  //TODO: Testing commands supported on each mode
-  // Done: Testing transitions between modes
-  * */
+    /**
+     * Runs any tests related to workout modes (RUNNING, IDLE, etc..). It is comprised of three sub-tests:
+     *  1. Tests valid transitions between modes
+     *  2. Tests invalid transitions between modes
+     *  3. Tests actions (changing bitfield values) allowed on each mode
+     * @return text log of test results
+     * @throws Exception
+     */
     public String testModes() throws Exception {
 
         String results="";
         System.out.println("**************** MODES TEST ****************");
         double timeOfTest = 0; //how long test took in seconds
         long startTestTimer = System.nanoTime();
-        int currentMode = 0;
 
         appendMessage("<br><br>----------------------------MODE TEST RESULTS----------------------------<br><br>");
         appendMessage(Calendar.getInstance().getTime() + "<br><br>");
@@ -510,6 +521,15 @@ public class TestBitfields extends CommonFeatures {
         return results;
     }
 
+    /**
+     * Helper function of {@link #testModes()}. Tests the following:
+     *  1. Valid transitions between modes
+     *  2. Invalid transitions between modes
+     * @param modes array of all modes to be tested
+     * @param wrCmd command to be used to write bitfield values
+     * @param validMode if true test 1. is performed, 2. if false
+     * @return text log of test results
+     */
     private String runModesTest(ModeId[] modes, FecpCommand wrCmd, boolean validMode) {
 
         String results="";
@@ -528,6 +548,33 @@ public class TestBitfields extends CommonFeatures {
 
         if(validMode) {
             //Testing valid transitions
+//            currentMode = hCmd.getMode();
+//            if(currentMode!=ModeId.IDLE)
+//            {
+//                for (int x = 0; x<validTransitionsFlow.length; x++)
+//                {
+//                    try {
+//                    ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, validTransitionsFlow[x].getValue());
+//                        mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+//                        Thread.sleep(1000);
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//
+//                    if (hCmd.getMode() == ModeId.IDLE)
+//                    {
+//                        break;
+//                    }
+//                }
+//            }
+            try {
+            ((WriteReadDataCmd) wrCmd.getCommand()).addReadBitField(BitFieldId.WORKOUT_MODE);
+            mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
+            Thread.sleep(1000);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
             for (int i = 0; i < modes.length; i++) {
                 try {
                     currentMode = hCmd.getMode();
@@ -535,10 +582,10 @@ public class TestBitfields extends CommonFeatures {
                     mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
                     Thread.sleep(1000);
 
-                    appendMessage("Status of changing mode: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>");
+                    appendMessage("Status of changing mode to "+modes[i].name()+": "+ (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "<br>");
                     appendMessage("Current Mode is: " + hCmd.getMode() + "  and its value is  " + hCmd.getMode().getValue() + "<br><br>");
 
-                    results += "Status of changing mode: " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
+                    results += "Status of changing mode to "+modes[i].name()+": " + (wrCmd.getCommand()).getStatus().getStsId().getDescription() + "\n";
                     results += "Current Mode is: " + hCmd.getMode() + "  and its value is  " + hCmd.getMode().getValue() + "\n\n";
 
                     if (hCmd.getMode().getValue() == modes[i].getValue()) {
@@ -548,7 +595,7 @@ public class TestBitfields extends CommonFeatures {
                     } else {
                         appendMessage("<br><font color = #ff0000>* FAIL *</font><br><br>Mode DID NOT transition from "+currentMode+" to: "+hCmd.getMode()+"<br>");
 
-                        results += "\n* FAIL *\n\nMode DID NOT transition from "+currentMode+" to: "+hCmd.getMode()+"\n";
+                        results += "\n* FAIL *\n\nMode DID NOT transition from "+currentMode+" to: "+modes[i].name()+"\n";
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -700,6 +747,14 @@ public class TestBitfields extends CommonFeatures {
 
         return results;
     }
+
+    /**
+     * Helper function of {@link #testModes()} to test actions (changing bitfield values) allowed on each mode
+     * Goes through every bitfield on every mode
+     * @param modes the modes to be tested
+     * @return text log of results
+     * @throws Exception
+     */
 
     private String runBitfieldsAccessInModes(ModeId [] modes) throws Exception {
         ArrayList<BitFieldId> supportedWrBitFields = new ArrayList<BitFieldId>(MainDevice.getInfo().getSupportedWriteBitfields());
@@ -1207,6 +1262,16 @@ public class TestBitfields extends CommonFeatures {
         return  results;
     }
 
+    /**
+     * Helper function of {@link #runBitfieldsAccessInModes(com.ifit.sparky.fecp.interpreter.bitField.converter.ModeId[])}
+     * Performs corresponding action on bitfield and validates it
+     * @param bf the bitfiled being tested
+     * @param canWrite true of we are suppose to write to "bf" on the current mode, else otherwise
+     * @param valueToWrite the value to write to bitfield "vf"
+     * @param expectedResult the expected result after writing operation performed
+     * @return text log of test results
+     */
+
     private String testBitfieldAccessInModes(BitFieldId bf, boolean canWrite, Object valueToWrite, Object expectedResult) {
         String results = "";
         long time=1000;
@@ -1273,8 +1338,14 @@ public class TestBitfields extends CommonFeatures {
         return results;
     }
 
+    /**
+     * Runs all Bitfields tests
+     * @return text log of test results
+     * @throws Exception
+     */
     @Override
     public String runAll() throws Exception {
+        String results = "";
 
        results="";
        results+=this.testBitfieldRdWr();

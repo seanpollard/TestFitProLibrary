@@ -26,6 +26,7 @@ import com.ifit.sparky.fecp.interpreter.status.WriteReadDataSts;
 import java.util.TreeMap;
 
 /**
+ * Handles reading Bitfield values from brainboard through a command
  * Created by jc.almonte on 6/27/14.
  */
 public class HandleCmd implements OnCommandReceivedListener
@@ -59,12 +60,20 @@ public class HandleCmd implements OnCommandReceivedListener
     private KeyObject mKey;
     private String valueToString="none";
 
-
+    /**
+     * Constructor
+     * @param act
+     */
     public HandleCmd(BaseTest act) {
 
         this.mAct = act;
         this.valueToString = "No Value!";
     }
+
+    /**
+     * Handles the reply from the device
+     * @param cmd the command that was sent.
+     */
     @Override
     public void onCommandReceived(Command cmd) {
         //TODO: Add rest of bitfields (VOLUME, WORKOUT, etc...)
@@ -338,17 +347,22 @@ public class HandleCmd implements OnCommandReceivedListener
         }
     }
 
-    //returns a string version of any of the values assigned in this class
     //TODO: Add rest of bitfields (VOLUME, WORKOUT, etc...)
+
+    /**
+     *
+     * @return the string value of last Bitfield read
+     */
     @Override
     public String toString() {
         return this.valueToString;
     }
-    /*
-    * getValue returns the double value of the BitfieldId specified by "bitfieldName"
-    * @param bitfieldName --> Name of the bitfieldId
-    * returns --> double value correpsonding to bitfieldName
-    * */
+
+    /**
+     * Gets the value of the bitfield specified by bitFieldName
+     * @param bitfieldName the name of the Bitfield
+     * @return the value of the Bitfield requested to be read
+     */
     public double getValue(String bitfieldName) {
         double value = 0;
         switch (bitfieldName)
@@ -423,30 +437,152 @@ public class HandleCmd implements OnCommandReceivedListener
         this.valueToString = String.valueOf(value);
         return value;
     }
+
+    /**
+     * Overloaded function of {@link #getValue(String)}
+     * @param bitFieldId the BitfieldId we want to access
+     * @return Bitfield value
+     */
     public double getValue(BitFieldId bitFieldId){
+
         return this.getValue(bitFieldId.name());
     }
+
+    /**
+     * Gets value current set speed from brainboard
+     * @return Speed
+     */
     public double getSpeed(){ return this.mSpeed; }
+
+    /**
+     * Gets actual speed value from brainboard
+     * @return  Actual Speed
+     */
     public double getActualSpeed(){ return this.mActualSpeed; }
+
+    /**
+     * Gets the console's Max speed from brainboard
+     * @return  Max Speed
+     */
     public double getMaxSpeed() { return  this.mMaxSpeed; }
+
+    /**
+     * Gets the console's Min Speed value from brainboard
+     * @return Min Speed
+     */
     public double getMinSpeed() { return this.mMinSpeed; }
+
+    /**
+     * Gets current set Incline value from brainboard
+     * @return (double) Incline
+     */
     public double getIncline(){ return this.mIncline; }
+
+    /**
+     * Gets Actual Incline value from brainboard
+     * @return Actual Incline
+     */
     public double getActualIncline(){ return this.mActualIncline; }
+
+    /**
+     * Gets the console's Max Incline value from brainboard
+     * @return Max Incline
+     */
     public double getMaxIncline(){ return this.mMaxIncline; }
+
+    /**
+     * Gets the console's Min Incline value from brainboard
+     * @return Min Incline
+     */
     public double getMinIncline(){ return this.mMinIncline; }
+
+    /**
+     * Gets the console's Trans Max value from brainboard
+     * @return Trans Max
+     */
     public double getTransMax(){ return this.mTransMax; }
+
+    /**
+     * Gets Distance value from brainboard
+     * @return Distance
+     */
     public double getDistance() { return this.mDistance; }
+
+    /**
+     * Gets the current workout running time
+     * @return Running Time
+     */
     public double getRunTime() { return this.mRunTime; }
+
+    /**
+     * Gets the calories burned on current workout form brainboard
+     * @return Calories
+     */
     public double getCalories() { return this.mCalories; }
+
+    /**
+     * Gets the current user set weight from brainboard
+     * @return Weight
+     */
     public double  getWeight() { return  this.mWeight; }
+
+    /**
+     * Gets current user set age from brainboard
+     * @return Age
+     */
     public double getAge() { return this.mAge; }
+
+    /**
+     * Gets the current set speed of the fan from brainbaord
+     * @return Fan Speed
+     */
     public double getFanSpeed() { return this.mFanSpeed; }
+
+    /**
+     * Gets from brainbaord the current Timeout it takes to go from Result to Idle
+     * @return Idle Timeout
+     */
     public double getIdleTimeout() { return this.mIdleTimeout; }
+
+    /**
+     * Gets from brainbaord the current Timeout it takes to go from Pause to Results
+     * @return Pause Timeout
+     */
     public double getPauseTimeout() { return this.mPauseTimeout; }
+
+    /**
+     * Gets the current set volume for the console's speaker
+     * @return Volume
+     */
     public double getVolume(){return this.mVolume;}
+
+    /**
+     * Gets the console's set resistance from brainboard
+     * @return Resistance
+     */
     public double getResistance(){return this.mResistance;}
+
+    /**
+     * Gets the actual Resistance value from brainboard
+     * @return
+     */
     public double getActualResistance(){return this.mActualResistance;}
+
+    /**
+     * Gets the ID of the current workout
+     * @return Workout ID
+     */
     public WorkoutId getWorkoutId(){return this.mWorkoutId;}
+
+    /**
+     * Gets the Key Object from the brainboard. This key object is used to simulate key-presses
+     * @return Key Object
+     */
     public KeyObject getKey() { return this.mKey;}
+
+    /**
+     * Gets the current Workout mode (RUNNING, IDLE, etc...)
+     * @return Workout Mode
+     */
     public ModeId getMode(){ return this.mResultMode; }
     }

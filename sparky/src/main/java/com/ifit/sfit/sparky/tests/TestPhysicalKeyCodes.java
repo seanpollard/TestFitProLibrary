@@ -60,7 +60,12 @@ public class TestPhysicalKeyCodes extends CommonFeatures {
             ex.printStackTrace();
         }
     }
-    //Test the Start Key
+
+    /**
+     * Verifies the proper code is read when start key is pressed
+     * @return text log of test results
+     * @throws Exception
+     */
     public String testStartKey() throws Exception {
         String results = " ";
         System.out.println("NOW RUNNING START KEY TEST.. PRESS AND HOLD START KEY<br>");
@@ -83,7 +88,12 @@ public class TestPhysicalKeyCodes extends CommonFeatures {
 
         return results;
     }
-    //Test the stop key
+
+    /**
+     * Verifies the proper code is read when stop key is pressed
+     * @return text log of test results
+     * @throws Exception
+     */
     public String testStopKey() throws Exception {
         String results =" ";
         String currentKey;
@@ -107,6 +117,11 @@ public class TestPhysicalKeyCodes extends CommonFeatures {
         return results;
     }
 
+    /**
+     * Verifies the proper code is read when each quick incline key is pressed
+     * @return text log of test results
+     * @throws Exception
+     */
     public String testQuickInclineKeys() throws Exception {
         String results = " ";
         String currentKey;
@@ -154,6 +169,12 @@ public class TestPhysicalKeyCodes extends CommonFeatures {
         return results;
     }
 
+
+    /**
+     * Runs all Physical Key-codes tests
+     * @return text log of test results
+     * @throws Exception
+     */
     @Override
     public String runAll() throws Exception {
 

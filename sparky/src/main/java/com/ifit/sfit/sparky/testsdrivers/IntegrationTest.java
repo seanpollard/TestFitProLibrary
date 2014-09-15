@@ -13,6 +13,7 @@ import com.ifit.sfit.sparky.activities.ManageTests;
 import com.ifit.sfit.sparky.tests.TestIntegration;
 
 /**
+ *  Integration test driver
     * Created by jc.almonte on 7/30/14.
     */
   public class IntegrationTest extends BaseTest implements View.OnClickListener, AdapterView.OnItemSelectedListener {
@@ -23,6 +24,9 @@ import com.ifit.sfit.sparky.tests.TestIntegration;
          init();
      }
 
+    /**
+     * Set up spinner and populated it with options specific to this test class
+     */
      private void init(){
 
          Spinner spinner = (Spinner) findViewById(R.id.spinnerMotor);
@@ -37,6 +41,9 @@ import com.ifit.sfit.sparky.tests.TestIntegration;
 
      }
 
+    /**
+     * Run selected Integration test
+     */
      @Override
      void runTest() {
 
@@ -126,6 +133,13 @@ import com.ifit.sfit.sparky.tests.TestIntegration;
 
      }
 
+    /**
+     * Indicates test to run based item selected
+     * @param parent the parent adapter view
+     * @param view current view
+     * @param pos position of selected item
+     * @param id selected item id
+     */
      @Override
      public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
          testToRun = parent.getItemAtPosition(pos).toString();

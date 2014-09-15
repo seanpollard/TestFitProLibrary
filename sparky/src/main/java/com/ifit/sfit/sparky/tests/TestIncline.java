@@ -84,11 +84,11 @@ public class TestIncline extends CommonFeatures {
 
     }
 
-    //--------------------------------------------//
-    //                                            //
-    //Testing All Inclines (in decrements of 0.5%)//
-    //                                            //
-    //--------------------------------------------//
+    /**
+     * Verify all incline values can be set properly and incline changes accordingly
+     * @return text log of test results
+     * @throws Exception
+     */
     public String testInclineController() throws Exception{
         //outline for code support #928 in redmine
         //Read the Max Incline value from the brainboard
@@ -229,7 +229,11 @@ public class TestIncline extends CommonFeatures {
     }
 
 
-// ISSUE FOUND: if incline is set to a value and stop button is pressed (or Mode is set to pause), incline keeps going which it should not
+    /**
+     * Verifies the incline stops going as soon as stop button is pressed
+     * @return text log of test results
+     * @throws Exception
+     */
     public String testStopIncline() throws Exception{
         //Redmine Support #1182
         //Set Incline to 0 or Min Incline
@@ -445,12 +449,12 @@ public class TestIncline extends CommonFeatures {
         return results;
     }
 
-    //--------------------------------------------//
-    //                                            //
-    //          Testing Retained Incline          //
-    //                                            //
-    //--------------------------------------------//
-    // ISSUE FOUND: Incline always calibrates when it goes to IDLE mode after it has been in running mode.
+    /**
+     * Tests that incline doesn't change when start button is pressed. In other words that the incline value
+     * the console had before pressing start, is retained after pressing start
+     * @return text log of test results
+     * @throws Exception
+     */
     public String testRetainedIncline() throws Exception {
         //Redmine Support #1077
         //Set Incline to 5%
@@ -588,6 +592,12 @@ public class TestIncline extends CommonFeatures {
         return results;
     }
 
+    /**
+     * Verifies speed changes as Incline changes according to the rules specified on software
+     * checklist #201B, #9
+     * @return text log of test results
+     * @throws Exception
+     */
     public String testSpeedInclineLimit() throws Exception {
         //TODO: As of 3/12/14, this functionality is not yet implemented
         //Redmine issue #953
@@ -908,11 +918,11 @@ public class TestIncline extends CommonFeatures {
         return results;
     }
 
-    //--------------------------------------------//
-         //                                            //
-         //Testing Incline Condition from Checklist #44//
-         //                                            //
-         //--------------------------------------------//
+    /**
+     * Testing that Incline value is retained after DMK key is pulled and put back (software checklist #44)
+     * @return text log of test results
+     * @throws Exception
+     */
     public String testInclineRetentionDmkRecall() throws Exception {
              //From Software Checklist #44
              //Redmine Support #1079
@@ -1094,6 +1104,12 @@ public class TestIncline extends CommonFeatures {
              return results;
          }
 
+    /**
+     * Verifies that there is a minimum of 400ms pause between incline direction changes
+     * @return text log of test results
+     * @throws Exception
+     */
+
     public String testIncline400msPause() throws Exception
     {
         String results="";
@@ -1231,6 +1247,12 @@ public class TestIncline extends CommonFeatures {
         return results;
     }
 
+    /**
+     * Tests incline calibration routine
+     * @return text log of test results
+     * @throws Exception
+     */
+
     public String testInclineCalibration() throws Exception{
         String results = "";
 
@@ -1246,15 +1268,23 @@ public class TestIncline extends CommonFeatures {
         return results;
     }
 
+    /**
+     * Runs all Incline tests
+     * @return text log of test results
+     * @throws Exception
+     */
         @Override
     public String runAll() {
         String results="";
         try {
-          results+=this.testInclineRetentionDmkRecall();
+//          results+=this.testInclineRetentionDmkRecall();
+//            appendMessage("Wait for incline to finish calibrating...<br>");
+//            results+="Wait for incline to finish calibrating...\n";
+//            Thread.sleep(90000);
+          results+=this.testIncline400msPause();
             appendMessage("Wait for incline to finish calibrating...<br>");
             results+="Wait for incline to finish calibrating...\n";
             Thread.sleep(90000);
-          results+=this.testIncline400msPause();
           results+=this.testRetainedIncline();
             appendMessage("Wait for incline to finish calibrating...<br>");
             results+="Wait for incline to finish calibrating...\n";

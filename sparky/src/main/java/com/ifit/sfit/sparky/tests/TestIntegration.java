@@ -74,13 +74,12 @@ import java.util.Calendar;
              ex.printStackTrace();
          }
      }
- 
-     //--------------------------------------------//
-     //
-     //Testing Age
-     //
-     //--------------------------------------------//
-//TODO: Include tests for invalid ages ranges both below and above
+
+    /**
+     * Verifies valid age values can be set as well as invalid age values cant be set
+     * @return text log of test results
+     * @throws Exception
+     */
      public String testAge() throws Exception {
          //Redmine Support #937
          //Read the default Age
@@ -201,12 +200,12 @@ import java.util.Calendar;
          ageResults+="\nThis test took a total of "+timeOfTest+" secs \n";
          return ageResults;
      }
-     //--------------------------------------------//
-     //
-     //Testing Weight
-     //
-     //--------------------------------------------//
- 
+
+    /**
+     * Verifies valid weight ranges can be set as well as invalid weight values cant be set
+     * @return text log of test results
+     * @throws Exception
+     */
 
      public String testWeight() throws Exception {
          //Weight is implemented in kilograms with a default weight of 185 lbs =84 kg
@@ -315,12 +314,13 @@ import java.util.Calendar;
          weightResults+="\nThis test took a total of "+timeOfTest+" secs \n";
          return weightResults;
      }
- 
-     //--------------------------------------------//
-     //
-     //Testing System Configuration
-     //
-     //--------------------------------------------//
+
+    /**
+     * Verifies branboard config values are correct for the corresponding console
+     * @param inputString the string containing the values to check against
+     * @return text log of test results
+     * @throws Exception
+     */
      public String testSystemConfiguration(String inputString) throws Exception{
          //outline for code support #951
          //read System Config data from Brainboard
@@ -389,11 +389,13 @@ import java.util.Calendar;
          systemString+="\nThis test took a total of "+timeOfTest+" secs \n";
          return systemString;
      }
-     //--------------------------------------------//
-     //
-     //Testing Pause Timeout
-     //
-     //--------------------------------------------//
+
+    /**
+     * Verifies that console switches from PAUSE to RESULTS after an elapsed time specified by PAUSE_TIMEOUT
+     * and from RESULTS to IDLE after an elapsed time specified by IDLE_TIMEOUT
+     * @return text log of test results
+     * @throws Exception
+     */
      public String testPauseIdleTimeout() throws Exception{
          //part of redmine #930
          //Set mode to Pause
@@ -526,12 +528,14 @@ import java.util.Calendar;
          results+="\nThis test took a total of "+timeOfTest+" secs \n";
          return results;
      }
- 
-     //--------------------------------------------//
-     //
-     //Testing Running Time
-     //
-     //--------------------------------------------//
+
+    /**
+     * Runs a workout for an specifed amount of time and checks that the running time recorded
+     * by the console is accurate
+     * @param runType if "m" run marathon workout (4 hours), else a normal workout.
+     * @return text log of test results
+     * @throws Exception
+     */
      public String testRunningTime(String runType) throws Exception{
          //outline for code support #930 in redmine
          
@@ -721,8 +725,13 @@ import java.util.Calendar;
      //              Testing Max Speed             //
      //                                            //
      //--------------------------------------------//
-     //the testMaxSpeedTime is planned to automate #59 of the software
-     //checklist to time the amount of time it takes to go from 0 to max speed
+
+    /**
+     * Records the amount of time it takes to go from 0 to max speed
+     * @return text log of test results
+     * @throws Exception
+     */
+
      public String testMaxSpeedTime() throws Exception{
          //outline for code #1051 in redmine
          //look up max speed for device (currently is not implemented - so just going to use 20kph)
@@ -824,7 +833,13 @@ import java.util.Calendar;
          results+="\nThis test took a total of "+timeOfTest+" secs \n";
          return results;
      }
-     @Override
+
+    /**
+     * Runs all Integration tests
+     * @return text log of test results
+     * @throws Exception
+     */
+    @Override
      public String runAll() {
         String results = "";
          try {
