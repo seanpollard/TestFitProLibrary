@@ -1,22 +1,25 @@
-package com.ifit.sfit.sparky;
+package com.ifit.sfit.sparky.helperclasses;
 
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.ifit.sfit.sparky.BuildConfig;
+import com.ifit.sfit.sparky.testsdrivers.BaseTest;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import javax.mail.AuthenticationFailedException;
-import javax.mail.MessagingException;
+import javax.mail.SendFailedException;
 
 /**
  * Created by jc.almonte on 7/10/14.
  */
 public class SendEmailAsyncTask extends AsyncTask<Void, Void, Boolean> {
     //Set up default email with username and password
-    Mail m = new Mail("phil.icontesting@gmail.com", "icon2014");
+    Mail m = new Mail("fitprotesting.icon@gmail.com", "fitprotest2014");
     DateFormat dateFormat = new SimpleDateFormat("EEE, d MMM hh:mm:ss a");
 
     public SendEmailAsyncTask(String toString) {
@@ -26,7 +29,7 @@ public class SendEmailAsyncTask extends AsyncTask<Void, Void, Boolean> {
         String[] toArr = {toString};
         m.setTo(toArr);
         //Who the email is from
-        m.setFrom("phil.icontesting@gmail.com");
+        m.setFrom("fitprotesting.icon@gmail.com");
         //Email subject
         m.setSubject("FitPro Automation Test Results: " + dateFormat.format(Calendar.getInstance().getTime()));
 //        m.setBody("see attachment");
@@ -34,16 +37,16 @@ public class SendEmailAsyncTask extends AsyncTask<Void, Void, Boolean> {
             //Add attachment at the filename listed
             m.addAttachment("data/data/com.ifit.sfit.sparky/files/test.txt");
 
-            if(m.send()) {
-                for(int i = 0; i < toArr.length; i++){
-                    Toast.makeText(TestApp.getAppContext(), "Email was sent successfully to " + toArr[i], Toast.LENGTH_LONG).show();
-                }
-            } else {
-                Toast.makeText(TestApp.getAppContext(), "Email was not sent.", Toast.LENGTH_LONG).show();
-            }
+//            if(m.send()) {
+//                for(int i = 0; i < toArr.length; i++){
+//                    Toast.makeText(BaseTest.getAppContext(), "Email was sent successfully to " + toArr[i], Toast.LENGTH_LONG).show();
+//                }
+//            } else {
+//                Toast.makeText(BaseTest.getAppContext(), "Email was not sent.", Toast.LENGTH_LONG).show();
+//            }
         } catch(Exception e) {
             //Toast.makeText(MailApp.this, "There was a problem sending the email.", Toast.LENGTH_LONG).show();
-            Log.e("philsTestApp", "Could not send email", e);
+            Log.e("FitPro Test App", "Problem attaching file", e);
         }
 
     }
@@ -53,13 +56,15 @@ public class SendEmailAsyncTask extends AsyncTask<Void, Void, Boolean> {
         if (BuildConfig.DEBUG) Log.v(SendEmailAsyncTask.class.getName(), "doInBackground()");
         try {
             m.send();
+            Toast.makeText(BaseTest.getAppContext(), "Email was successfully sent!", Toast.LENGTH_LONG).show();
             return true;
         } catch (AuthenticationFailedException e) {
             Log.e(SendEmailAsyncTask.class.getName(), "Bad account details");
             e.printStackTrace();
             return false;
-        } catch (MessagingException e) {
+        } catch (SendFailedException e) {
 //                Log.e(SendEmailAsyncTask.class.getName(), m.getTo(null) + "failed");
+           Toast.makeText(BaseTest.getAppContext(), "Failed to send email!.", Toast.LENGTH_LONG).show();
             e.printStackTrace();
             return false;
         } catch (Exception e) {

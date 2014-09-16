@@ -1,6 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string-array name="motor_array">
+             <item>Start Speed</item>
+             <item>Pause Resume</item>
+             <item>Distance</item>
+             <item>Speed Controller</item>
+             <item>PWM Overshoot</item>
+             <item>Calories</item>
+             <item>Run All</item>
+         </string-array>
 
+    <string-array name="incline_array">
+        <item>Stop Incline</item>
+        <item>Incline Controller</item>
+        <item>Retained Incline</item>
+        <item>Speed Incline Limits</item>
+        <item>DMK Incline Retention/Recall</item>
+        <item>400 ms Pause</item>
+        <item>Calibrate</item>
+        <item>Run All</item>
+    </string-array>
+
+    <string-array name="integration_array">
+        <item>Age</item>
+        <item>Weight</item>
+        <item>Max Speed</item>
+        <item>Running Time</item>
+        <item>Mar Running Time</item>
+        <item>Pause/Idle Timeout</item>
+        <item>Run All</item>
+
+    </string-array>
+
+    <string-array name="bitfields_array">
+        <item>Unsupported/RdOnly</item>
+        <item>Values Validation</item>
+        <item>Modes</item>
+        <item>Run All</item>
+    </string-array>
+
+    <string-array name="treadmillkeys_array">
+        <item>Stop Key</item>
+        <item>Start Key</item>
+        <item>Incline Up</item>
+        <item>Incline Down</item>
+        <item>Speed Up</item>
+        <item>Speed Down</item>
+        <item>Quick Speed</item>
+        <item>Quick Incline</item>
+        <item>Age Up</item>
+        <item>Age Down</item>
+        <item>Run All</item>
+
+    </string-array>
+
+    <string-array name="alltests_array">
+        <item>Motor Tests</item>
+        <item>Integration Tests</item>
+        <item>Incline Tests</item>
+        <item>Bitfields Tests</item>
+        <item>All Tests</item>
+    </string-array>
+    <string name="start_text">Start Alarm</string>
+    <string name="cancel_text">Cancel Alarm</string>
     <string name="app_name">Fit Pro</string>
     <string name="hello_world">Hello world!</string>
     <string name="connect_options">USB</string>

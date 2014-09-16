@@ -5,7 +5,7 @@
  * @version 1
  * This will be a public source of information for all the different systems, and there unique information.
  */
-package com.ifit.sfit.sparky;
+package com.ifit.sfit.sparky.helperclasses;
 
 
 import com.ifit.sparky.fecp.FecpCommand;

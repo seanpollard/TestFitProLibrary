@@ -1,7 +1,6 @@
-package com.ifit.sfit.sparky;
+package com.ifit.sfit.sparky.helperclasses;
 
-import android.content.Context;
-
+import com.ifit.sfit.sparky.testsdrivers.BaseTest;
 import com.ifit.sparky.fecp.OnCommandReceivedListener;
 import com.ifit.sparky.fecp.interpreter.bitField.BitFieldId;
 import com.ifit.sparky.fecp.interpreter.bitField.converter.BitfieldDataConverter;
@@ -12,9 +11,11 @@ import com.ifit.sparky.fecp.interpreter.bitField.converter.KeyObjectConverter;
 import com.ifit.sparky.fecp.interpreter.bitField.converter.LongConverter;
 import com.ifit.sparky.fecp.interpreter.bitField.converter.ModeConverter;
 import com.ifit.sparky.fecp.interpreter.bitField.converter.ModeId;
+import com.ifit.sparky.fecp.interpreter.bitField.converter.ResistanceConverter;
 import com.ifit.sparky.fecp.interpreter.bitField.converter.ShortConverter;
 import com.ifit.sparky.fecp.interpreter.bitField.converter.SpeedConverter;
 import com.ifit.sparky.fecp.interpreter.bitField.converter.WeightConverter;
+import com.ifit.sparky.fecp.interpreter.bitField.converter.WorkoutId;
 import com.ifit.sparky.fecp.interpreter.command.Command;
 import com.ifit.sparky.fecp.interpreter.command.CommandId;
 import com.ifit.sparky.fecp.interpreter.key.KeyObject;
@@ -22,16 +23,15 @@ import com.ifit.sparky.fecp.interpreter.status.PortalDeviceSts;
 import com.ifit.sparky.fecp.interpreter.status.StatusId;
 import com.ifit.sparky.fecp.interpreter.status.WriteReadDataSts;
 
-import junit.framework.Test;
-
 import java.util.TreeMap;
 
 /**
+ * Handles reading Bitfield values from brainboard through a command
  * Created by jc.almonte on 6/27/14.
  */
 public class HandleCmd implements OnCommandReceivedListener
 {
-    private TestApp mAct;
+    private BaseTest mAct;
     private  double mMaxSpeed = 0.0;
     private  double mMinSpeed = 0.0;
     private ModeId mResultMode;
@@ -51,18 +51,32 @@ public class HandleCmd implements OnCommandReceivedListener
     private  double mFanSpeed = 0;
     private  double mIdleTimeout = 0;
     private  double mPauseTimeout = 0;
+    private  double mVolume = 0;
+    private WorkoutId mWorkoutId;
+    private  double mResistance = 0;
+    private  double mActualResistance = 0;
+
+
     private KeyObject mKey;
     private String valueToString="none";
 
-
-    public HandleCmd(TestApp act) {
+    /**
+     * Constructor
+     * @param act
+     */
+    public HandleCmd(BaseTest act) {
 
         this.mAct = act;
         this.valueToString = "No Value!";
     }
+
+    /**
+     * Handles the reply from the device
+     * @param cmd the command that was sent.
+     */
     @Override
     public void onCommandReceived(Command cmd) {
-
+        //TODO: Add rest of bitfields (VOLUME, WORKOUT, etc...)
         //check command type
         TreeMap<BitFieldId, BitfieldDataConverter> commandData;
 
@@ -287,33 +301,288 @@ public class HandleCmd implements OnCommandReceivedListener
                 }
             }
 
+            //Read the Volume value off of the Brainboard
+            if(commandData.containsKey(BitFieldId.VOLUME)) {
+
+                try {
+                    mVolume = ((ByteConverter)commandData.get(BitFieldId.VOLUME).getData()).getValue();
+                    this.valueToString = String.valueOf(mVolume);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            //Read the Resistance value off of the Brainboard
+            if(commandData.containsKey(BitFieldId.RESISTANCE)) {
+
+                try {
+                    mResistance = ((ResistanceConverter)commandData.get(BitFieldId.RESISTANCE).getData()).getResistance();
+                    this.valueToString = String.valueOf(mResistance);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            //Read the Actual Resistance value off of the Brainboard
+            if(commandData.containsKey(BitFieldId.ACTUAL_RESISTANCE)) {
+
+                try {
+                    mActualResistance = ((ResistanceConverter)commandData.get(BitFieldId.ACTUAL_RESISTANCE).getData()).getResistance();
+                    this.valueToString = String.valueOf(mActualResistance);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+//            //Read the Workout value off of the Brainboard
+//            if(commandData.containsKey(BitFieldId.WORKOUT)) {
+//
+//                try {
+//                    mWorkoutId = ((WorkoutConverter)commandData.get(BitFieldId.WORKOUT).getData()).getWorkout();
+//                    this.valueToString = String.valueOf(mWorkoutId);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+
         }
     }
 
-    //returns a string version of any of the values assigned in this class
+    //TODO: Add rest of bitfields (VOLUME, WORKOUT, etc...)
+
+    /**
+     *
+     * @return the string value of last Bitfield read
+     */
     @Override
     public String toString() {
         return this.valueToString;
     }
 
-    public double getSpeed(){ return this.mSpeed; }
-    public double getActualSpeed(){ return this.mActualSpeed; }
-    public double getMaxSpeed() { return  this.mMaxSpeed; }
-    public double getMinSpeed() { return this.mMinSpeed; }
-    public double getIncline(){ return this.mIncline; }
-    public double getActualIncline(){ return this.mActualIncline; }
-    public double getMaxIncline(){ return this.mMaxIncline; }
-    public double getMinIncline(){ return this.mMinIncline; }
-    public double getTransMax(){ return this.mTransMax; }
-    public ModeId getMode(){ return this.mResultMode; }
-    public double getDistance() { return this.mDistance; }
-    public double getRunTime() { return this.mRunTime; }
-    public double getCalories() { return this.mCalories; }
-    public double  getWeight() { return  this.mWeight; }
-    public double getAge() { return this.mAge; }
-    public double getFanSpeed() { return this.mFanSpeed; }
-    public double getIdleTimeout() { return this.mIdleTimeout; }
-    public double getPauseTimeout() { return this.mPauseTimeout; }
-    public KeyObject getKey() { return this.mKey; }
+    /**
+     * Gets the value of the bitfield specified by bitFieldName
+     * @param bitfieldName the name of the Bitfield
+     * @return the value of the Bitfield requested to be read
+     */
+    public double getValue(String bitfieldName) {
+        double value = 0;
+        switch (bitfieldName)
+        {
+            case "KPH":
+                value = this.mSpeed;
+                break;
+            case "ACTUAL_KPH":
+                value = this.mActualSpeed;
+                break;
+            case "GRADE":
+                value = this.mIncline;
+                break;
+            case "MAX_GRADE":
+                value = this.mMaxIncline;
+                break;
+            case "MIN_GRADE":
+                value = this.mMinIncline;
+                break;
+            case "ACTUAL_INCLINE":
+                value = this.mActualIncline;
+                break;
+            case "MAX_KPH":
+                value = this.mMaxSpeed;
+                break;
+            case "MIN_KPH":
+                value = this.mMinSpeed;
+                break;
+            case "DISTANCE":
+                value = this.mDistance;
+                break;
+            case "RUNNING_TIME":
+                value = this.mRunTime;
+                break;
+            case "PAUSE_TIMEOUT":
+                value = this.mPauseTimeout;
+                break;
+            case "IDLE_TIMEOUT":
+                value = this.mIdleTimeout;
+                break;
+            case "TRANS_MAX":
+                value = this.mTransMax;
+                break;
+            case "CALORIES":
+                value = this.mCalories;
+                break;
+            case "AGE":
+                value = this.mAge;
+                break;
+            case "WEIGHT":
+                value = this.mWeight;
+                break;
+            case "FAN_SPEED":
+                value = this.mFanSpeed;
+                break;
+//            case "WORKOUT":
+//                value = this.mWorkoutId.getValue();
+//                break;
+            case "RESISTANCE":
+                value = this.mResistance;
+                break;
+            case "ACTUAL_RESISTANCE":
+                value = this.mActualResistance;
+                break;
+            case "VOLUME":
+                value = this.mVolume;
+                break;
+            case "WORKOUT_MODE":
+                value = this.mResultMode.getValue();
+                break;
+        }
+        this.valueToString = String.valueOf(value);
+        return value;
+    }
 
+    /**
+     * Overloaded function of {@link #getValue(String)}
+     * @param bitFieldId the BitfieldId we want to access
+     * @return Bitfield value
+     */
+    public double getValue(BitFieldId bitFieldId){
+
+        return this.getValue(bitFieldId.name());
+    }
+
+    /**
+     * Gets value current set speed from brainboard
+     * @return Speed
+     */
+    public double getSpeed(){ return this.mSpeed; }
+
+    /**
+     * Gets actual speed value from brainboard
+     * @return  Actual Speed
+     */
+    public double getActualSpeed(){ return this.mActualSpeed; }
+
+    /**
+     * Gets the console's Max speed from brainboard
+     * @return  Max Speed
+     */
+    public double getMaxSpeed() { return  this.mMaxSpeed; }
+
+    /**
+     * Gets the console's Min Speed value from brainboard
+     * @return Min Speed
+     */
+    public double getMinSpeed() { return this.mMinSpeed; }
+
+    /**
+     * Gets current set Incline value from brainboard
+     * @return (double) Incline
+     */
+    public double getIncline(){ return this.mIncline; }
+
+    /**
+     * Gets Actual Incline value from brainboard
+     * @return Actual Incline
+     */
+    public double getActualIncline(){ return this.mActualIncline; }
+
+    /**
+     * Gets the console's Max Incline value from brainboard
+     * @return Max Incline
+     */
+    public double getMaxIncline(){ return this.mMaxIncline; }
+
+    /**
+     * Gets the console's Min Incline value from brainboard
+     * @return Min Incline
+     */
+    public double getMinIncline(){ return this.mMinIncline; }
+
+    /**
+     * Gets the console's Trans Max value from brainboard
+     * @return Trans Max
+     */
+    public double getTransMax(){ return this.mTransMax; }
+
+    /**
+     * Gets Distance value from brainboard
+     * @return Distance
+     */
+    public double getDistance() { return this.mDistance; }
+
+    /**
+     * Gets the current workout running time
+     * @return Running Time
+     */
+    public double getRunTime() { return this.mRunTime; }
+
+    /**
+     * Gets the calories burned on current workout form brainboard
+     * @return Calories
+     */
+    public double getCalories() { return this.mCalories; }
+
+    /**
+     * Gets the current user set weight from brainboard
+     * @return Weight
+     */
+    public double  getWeight() { return  this.mWeight; }
+
+    /**
+     * Gets current user set age from brainboard
+     * @return Age
+     */
+    public double getAge() { return this.mAge; }
+
+    /**
+     * Gets the current set speed of the fan from brainbaord
+     * @return Fan Speed
+     */
+    public double getFanSpeed() { return this.mFanSpeed; }
+
+    /**
+     * Gets from brainbaord the current Timeout it takes to go from Result to Idle
+     * @return Idle Timeout
+     */
+    public double getIdleTimeout() { return this.mIdleTimeout; }
+
+    /**
+     * Gets from brainbaord the current Timeout it takes to go from Pause to Results
+     * @return Pause Timeout
+     */
+    public double getPauseTimeout() { return this.mPauseTimeout; }
+
+    /**
+     * Gets the current set volume for the console's speaker
+     * @return Volume
+     */
+    public double getVolume(){return this.mVolume;}
+
+    /**
+     * Gets the console's set resistance from brainboard
+     * @return Resistance
+     */
+    public double getResistance(){return this.mResistance;}
+
+    /**
+     * Gets the actual Resistance value from brainboard
+     * @return
+     */
+    public double getActualResistance(){return this.mActualResistance;}
+
+    /**
+     * Gets the ID of the current workout
+     * @return Workout ID
+     */
+    public WorkoutId getWorkoutId(){return this.mWorkoutId;}
+
+    /**
+     * Gets the Key Object from the brainboard. This key object is used to simulate key-presses
+     * @return Key Object
+     */
+    public KeyObject getKey() { return this.mKey;}
+
+    /**
+     * Gets the current Workout mode (RUNNING, IDLE, etc...)
+     * @return Workout Mode
+     */
+    public ModeId getMode(){ return this.mResultMode; }
     }

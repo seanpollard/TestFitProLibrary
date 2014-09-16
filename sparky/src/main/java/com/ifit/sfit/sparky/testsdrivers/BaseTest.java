@@ -1,4 +1,4 @@
-package com.ifit.sfit.sparky;
+package com.ifit.sfit.sparky.testsdrivers;
 
 import android.app.Activity;
 import android.content.Context;
@@ -11,134 +11,144 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ifit.sfit.sparky.R;
+import com.ifit.sfit.sparky.activities.ManageTests;
+import com.ifit.sfit.sparky.helperclasses.SFitSysCntrl;
+import com.ifit.sfit.sparky.helperclasses.SendEmailAsyncTask;
+import com.ifit.sfit.sparky.tests.TestIntegration;
 import com.ifit.sparky.fecp.FecpCommand;
-import com.ifit.sparky.fecp.FitProUsb;
-import com.ifit.sparky.fecp.SystemDevice;
 import com.ifit.sparky.fecp.communication.FecpController;
-import com.ifit.sparky.fecp.communication.SystemStatusListener;
-import com.ifit.sparky.fecp.interpreter.bitField.BitFieldId;
-import com.ifit.sparky.fecp.interpreter.bitField.converter.ModeId;
-import com.ifit.sparky.fecp.interpreter.command.CommandId;
-import com.ifit.sparky.fecp.interpreter.command.WriteReadDataCmd;
-import com.ifit.sparky.fecp.interpreter.device.DeviceId;
 
 import java.io.FileOutputStream;
 
-// TODO: Reduce code to the simplest case (send a command) and test that
-public class TestApp extends Activity implements View.OnClickListener, SystemStatusListener {
+/**
+ * Abstract Base class for all test drivers. Common features among test drivers are implemented on this class.
+ * Created by jc.almonte on 7/29/14.
+ */
+public abstract class BaseTest extends Activity implements View.OnClickListener{
+
 
     /*
     testingView: Display test results
     resultView: Display result of test (PASS/FAIL)
+    Both variables declared "static" to be able to access them from "HandleResults" class
      */
-    public TextView testingView;
-    public TextView resultView;
+    public static TextView testingView;
+    public static ScrollView scrollview;
+    protected TextView resultView;
 
     /*
     Controller Variables to handle communication and interaction with Brainboard
     */
-    private FecpController fecpController;
+    protected  FecpController fecpController;
     private FecpCommand mSystemStopCmd;
-    private SFitSysCntrl mSFitSysCntrl;
+    protected SFitSysCntrl mSFitSysCntrl;
 
     //To display pop-up messages
-    private Toast mToast;
+    public static Toast mToast; // Made static to use on email class
 
     /*
     passFail: holds result of test (PASS/FAIL)
     returnString: detailed test results
     */
-    private String configString = "";
-    private String returnString = "";
-    private String systemString = "";
-    private String passFail;
-    private String consoleName = "";
-    private String model = "";
-    private String emailAddress = "";
-    private String deviceInfo;
+    protected String configString = "";
+    protected String returnString = "";
+    protected String systemString = "";
+    protected String passFail;
+    protected String consoleName = "";
+    protected String model = "";
+    protected String emailAddress = "";
+    protected String deviceInfo;
 
     /*
         outputStream: test result and put it in a text file
         filename: filename of the text file where results will be saved
     */
-    private FileOutputStream outputStream;
-    private String filename = "test.txt";
+    protected FileOutputStream outputStream;
+    protected String filename = "test.txt";
 
     // To hold application context
-    private static Context context;
+    protected static Context context;
 
     //Buttons on screen to perform tests
-    private Button speedButton;
-    private Button modeButton;
-    private Button allTestsButton;
-    private Button checkValsButton;
-    private Button findFailButton;
-    private Button emailButton;
-    private Button clearButton;
+
+    protected Button allTestsButton;
+    protected Button checkValsButton;
+    protected Button findFailButton;
+    protected Button emailButton;
+    protected Button clearButton;
 
     /*
-    Fields to enter information (kinda like text-boxes in C#)
+    Fields to enter information
     */
-    private EditText editConsoleName;
-    private EditText editModel;
-    private EditText editPartNumber;
-    private EditText editSoftwareVersion;
-    private EditText editHardwareVersion;
-    private EditText editSerialNumber;
-    private EditText editManNumber;
-    private EditText editMaxIncline;
-    private EditText editMinIncline;
-    private EditText editMaxSpeed;
-    private EditText editMinSpeed;
-    private EditText editEmail;
+    protected EditText editConsoleName;
+    protected EditText editModel;
+    protected EditText editPartNumber;
+    protected EditText editSoftwareVersion;
+    protected EditText editHardwareVersion;
+    protected EditText editSerialNumber;
+    protected EditText editManNumber;
+    protected EditText editMaxIncline;
+    protected EditText editMinIncline;
+    protected EditText editMaxSpeed;
+    protected EditText editMinSpeed;
+    protected EditText editEmail;
 
     /*
         Variables to hold device info
     */
-    private int partNumber = 0;
-    private int swVersion = 0;
-    private int hwVersion = 0;
-    private int serialNumber = 0;
-    private int manufactureNumber = 0;
-    private double maxIncline = 0.0;
-    private double minIncline = 0.0;
-    private double maxSpeed = 0.0;
-    private double minSpeed = 0.0;
+    protected int partNumber = 0;
+    protected int swVersion = 0;
+    protected int hwVersion = 0;
+    protected int serialNumber = 0;
+    protected int manufactureNumber = 0;
+    protected double maxIncline = 0.0;
+    protected double minIncline = 0.0;
+    protected double maxSpeed = 0.0;
+    protected double minSpeed = 0.0;
+    protected String testToRun = "";
 
-   /**
-            * onCreate
-    * Called when the app is created.
-            * @param savedInstanceState Bundle item
-    */
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.test_layout);
+      setContentView(R.layout.motor_layout);
+      initLayout();
 
-        try {
-            fecpController = new FitProUsb(getApplicationContext(), getIntent());
-            mSFitSysCntrl = new SFitSysCntrl(fecpController);
-            fecpController.initializeConnection(this);
-            initLayout();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-
-        }
+//        try {
+//            fecpController = new FitProUsb(getApplicationContext(), getIntent());
+//            mSFitSysCntrl = new SFitSysCntrl(fecpController);
+//            fecpController.initializeConnection(this);
+//            initLayout();
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//
+//        }
 
     }
 
-   //To return application context
+    /**
+     * To return application context
+     * @return
+     */
     public static Context getAppContext() {
-        return TestApp.context;
+        return BaseTest.context;
     }
 
-    //Initialize the application layout
+    /**
+     * Initialize the layout for the test screen
+     */
     private void initLayout(){
+        //initialize views
+        testingView = (TextView) findViewById(R.id.testView);
+        resultView = (TextView)findViewById(R.id.passFailView);
+        scrollview = ((ScrollView) findViewById(R.id.scrollView));
         //Initializing buttons
         allTestsButton = (Button) findViewById(R.id.allTests);
         allTestsButton.setOnClickListener(this);
@@ -459,7 +469,7 @@ public class TestApp extends Activity implements View.OnClickListener, SystemSta
                         return false;//invalid data
                     }
                     try {
-                        maxIncline = Integer.parseInt(inputText);
+                        maxIncline = Double.parseDouble(inputText);
                     } catch (NumberFormatException e) {
                         e.printStackTrace();
                     }
@@ -479,7 +489,7 @@ public class TestApp extends Activity implements View.OnClickListener, SystemSta
                         inputText = "0";
                     }
 
-                    maxIncline = Integer.parseInt(inputText);
+                    maxIncline = Double.parseDouble(inputText);
                 }
 
             }
@@ -499,7 +509,7 @@ public class TestApp extends Activity implements View.OnClickListener, SystemSta
                         return false;//invalid data
                     }
                     try {
-                        minIncline = Integer.parseInt(inputText);
+                        minIncline = Double.parseDouble(inputText);
                     } catch (NumberFormatException e) {
                         e.printStackTrace();
                     }
@@ -519,7 +529,7 @@ public class TestApp extends Activity implements View.OnClickListener, SystemSta
                         inputText = "0";
                     }
 
-                    minIncline = Integer.parseInt(inputText);
+                    minIncline = Double.parseDouble(inputText);
                 }
 
             }
@@ -539,7 +549,7 @@ public class TestApp extends Activity implements View.OnClickListener, SystemSta
                         return false;//invalid data
                     }
                     try {
-                        maxSpeed = Integer.parseInt(inputText);
+                        maxSpeed = Double.parseDouble(inputText);
                     } catch (NumberFormatException e) {
                         e.printStackTrace();
                     }
@@ -559,7 +569,7 @@ public class TestApp extends Activity implements View.OnClickListener, SystemSta
                         inputText = "0";
                     }
 
-                    maxSpeed = Integer.parseInt(inputText);
+                    maxSpeed = Double.parseDouble(inputText);
                 }
 
             }
@@ -579,7 +589,7 @@ public class TestApp extends Activity implements View.OnClickListener, SystemSta
                         return false;//invalid data
                     }
                     try {
-                        minSpeed = Integer.parseInt(inputText);
+                        minSpeed = Double.parseDouble(inputText);
                     } catch (NumberFormatException e) {
                         e.printStackTrace();
                     }
@@ -599,7 +609,7 @@ public class TestApp extends Activity implements View.OnClickListener, SystemSta
                         inputText = "0";
                     }
 
-                    minSpeed = Integer.parseInt(inputText);
+                    minSpeed = Double.parseDouble(inputText);
                 }
 
             }
@@ -636,7 +646,7 @@ public class TestApp extends Activity implements View.OnClickListener, SystemSta
                 if(!hasFocus) {
                     if (inputText.isEmpty()) {
                         inputText = "";
-                        Toast.makeText(TestApp.this, "Please enter an email", Toast.LENGTH_LONG).show();
+                        Toast.makeText(BaseTest.this, "Please enter an email", Toast.LENGTH_LONG).show();
                     }
                     emailAddress = inputText;
                 }
@@ -647,19 +657,13 @@ public class TestApp extends Activity implements View.OnClickListener, SystemSta
 
     }
 
-    /**
-     * Called when a view has been clicked.
-     *
-     * @param v The view that was clicked.
-     */
     @Override
     public void onClick(View v)
     {
-        testingView = (TextView) findViewById(R.id.testView);
-        resultView = (TextView)findViewById(R.id.passFailView);
+
         //Press this button to check the values entered by the user
         if(v == checkValsButton){
-
+            //TODO: Move this test to Integration Test Layout
             configString = "";      //clear out Configuration results for each time the Check Values button is pressed
             //This is on TestIntegration class in SystemConfiguration method
 
@@ -668,77 +672,67 @@ public class TestApp extends Activity implements View.OnClickListener, SystemSta
                     "\"\nSerial Number: \""+ serialNumber+"\"\nManufacturing Number: \""+manufactureNumber+
                     "\"\nMax Incline: \""+maxIncline+"\"\nMin. Incline: \""+minIncline+"\"\nMax Speed: \""+maxSpeed+"\"\n" +
                     "Min Speed: \""+minSpeed+"\"\n";
+//
+            final TestIntegration t = new TestIntegration(ManageTests.fecpController, (BaseTest) context, ManageTests.mSFitSysCntrl);
+            final ScrollView scrollview = ((ScrollView) findViewById(R.id.scrollView));
 
-            try{
-                TestIntegration system = new TestIntegration(this.fecpController,this,this.mSFitSysCntrl);
-               configString += system.testSystemConfiguration(systemString);
+//            t.setUpdateResultViewListener(new TestIntegration.UpdateResultView() {
+//                @Override
+//                public void onUpdate(final String msg) {
+//                    runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            testingView.setText(Html.fromHtml(msg));
+//                            scrollview.fullScroll(ScrollView.FOCUS_DOWN);
+//                        }
+//                    });
+//
+//
+//                }
+//            });
 
-                //try to write to the file in main from the machine control structure
-                outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
-               outputStream.write((configString).getBytes());
-               outputStream.close();
-            } catch(Exception e){
-                e.printStackTrace();
-            }
-            testingView.setText(configString);
-            if(configString.contains("FAIL")) {
-                passFail = "<font color = #ff0000>FAIL </font>";
-            }
-            else {
-                passFail = "<font color = #00ff00>PASS </font>";
-            }
-            resultView.setText(Html.fromHtml(passFail));
+            Thread th = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+
+                      returnString = t.testSystemConfiguration(systemString);
+                        try {
+                            returnString += "\n" + systemString;
+
+                            outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
+                            outputStream.write((returnString).getBytes());
+                            outputStream.close();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        if (returnString.isEmpty()) {
+                            passFail = "<font color = #ff0000>ERROR</font>";
+                        } else if (returnString.contains("FAIL")) {
+                            passFail = "<font color = #ff0000>FAIL</font>";
+                        } else {
+                            passFail = "<font color = #00ff00>PASS</font>";
+                        }
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                resultView.setText(Html.fromHtml(passFail));
+                            }
+                        });
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            th.start();
         }
         else if(v==allTestsButton)
         {
-
-            try{
-               TestMotor t = new TestMotor(this.fecpController,this,this.mSFitSysCntrl);
-               returnString = t.testStartSpeed();
-                // returnString= t.testSpeedController();
-               // returnString= t.testPwmOvershoot();
-                // returnString= t.testDistance();
-                // returnString= t.testModeChange();
-                // returnString= t.testPauseResume();
-              //TestIntegration ti = new TestIntegration(this.fecpController,this,this.mSFitSysCntrl);
-              // returnString = ti.testRunningTime();
-                // returnString = ti.testAge();
-                // returnString = ti.testWeight();
-                //returnString = ti.testPauseTimeout();
-                //returnString = ti.testIdleTimeout();
-                //returnString = ti.testMaxSpeedTime();
-                //TestBitfields tc = new TestBitfields(this.fecpController,this,this.mSFitSysCntrl);
-                //  returnString = tc.testBitfieldRdWr();
-                //  returnString = tc.testBitfieldValuesValidation();
-             //  TestPhysicalKeyCodes tpk = new TestPhysicalKeyCodes(this.fecpController,this,this.mSFitSysCntrl);
-                //returnString = tpk.testStartKey();
-                //returnString = tpk.testStopKey();
-                //returnString = tpk.testQuickInclineKeys();
-                //TestTreadmillKeyCodes ttk = new TestTreadmillKeyCodes(this.fecpController,this,this.mSFitSysCntrl);
-                // returnString = ttk.testAllKeys();
-           //  TestIncline tin = new TestIncline(this.fecpController,this,this.mSFitSysCntrl);
-            //  returnString= tin.testInclineController();
-                returnString += "\n" + systemString;
-                //try to write to the file in main from the machine control structure
-                outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
-                outputStream.write((returnString).getBytes());
-                outputStream.close();
-
-            } catch(Exception e){
-                e.printStackTrace();
-            }
-
-            testingView.setText(returnString);
-            if(returnString.isEmpty()){
-                passFail = "<font color = #ff0000>ERROR</font>";
-            }
-            else if(returnString.contains("FAIL")) {
-                passFail = "<font color = #ff0000>FAIL</font>";
-            }
-            else {
-                passFail = "<font color = #00ff00>PASS</font>";
-            }
-            resultView.setText(Html.fromHtml(passFail));
+            resultView.setText(" ");
+            testingView.setText(" ");
+            runTest();
         }
         if(v == findFailButton) {
             try{
@@ -764,18 +758,13 @@ public class TestApp extends Activity implements View.OnClickListener, SystemSta
         }
 
         if(v == emailButton) {
-            try {
+
                 if(editEmail.getText().toString().isEmpty()){
                     Toast.makeText(this, "Please enter an email!", Toast.LENGTH_LONG).show();
                 }
                 else {
                     new SendEmailAsyncTask(emailAddress).execute();
                 }
-            }catch(Exception e){
-                Toast.makeText(this, "Email was not sent.", Toast.LENGTH_LONG).show();
-                e.printStackTrace();
-            }
-
         }
 
         if(v == clearButton) {
@@ -786,42 +775,13 @@ public class TestApp extends Activity implements View.OnClickListener, SystemSta
             }
 
         }
-
-        //Clear out the system device string to re-enter new values for next test
-        systemString = "";
-        //clear out print string to recheck values if needed from a typo
-        returnString = "";
     }
 
-
     /**
-     * Perform any final cleanup before an activity is destroyed.  This can
-     * happen either because the activity is finishing (someone called
-     * {@link #finish} on it, or because the system is temporarily destroying
-     * this instance of the activity to save space.  You can distinguish
-     * between these two scenarios with the {@link #isFinishing} method.
-     * <p/>
-     * <p><em>Note: do not count on this method being called as a place for
-     * saving data! For example, if an activity is editing data in a content
-     * provider, those edits should be committed in either {@link #onPause} or
-     * {@link #onSaveInstanceState}, not here.</em> This method is usually implemented to
-     * free resources like threads that are associated with an activity, so
-     * that a destroyed activity does not leave such things around while the
-     * rest of its application is still running.  There are situations where
-     * the system will simply kill the activity's hosting process without
-     * calling this method (or any others) in it, so it should not be used to
-     * do things that are intended to remain around after the process goes
-     * away.
-     * <p/>
-     * <p><em>Derived classes must call through to the super class's
-     * implementation of this method.  If they do not, an exception will be
-     * thrown.</em></p>
-     *
-     * @see #onPause
-     * @see #onStop
-     * @see #finish
-     * @see #isFinishing
+     * Abstract method to run test specific to each test class
      */
+    abstract void runTest();
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -832,161 +792,16 @@ public class TestApp extends Activity implements View.OnClickListener, SystemSta
         }
     }
 
-    /**
-     * Called as part of the activity lifecycle when an activity is going into
-     * the background, but has not (yet) been killed.  The counterpart to
-     * {@link #onResume}.
-     * <p/>
-     * <p>When activity B is launched in front of activity A, this callback will
-     * be invoked on A.  B will not be created until A's {@link #onPause} returns,
-     * so be sure to not do anything lengthy here.
-     * <p/>
-     * <p>This callback is mostly used for saving any persistent state the
-     * activity is editing, to present a "edit in place" model to the user and
-     * making sure nothing is lost if there are not enough resources to start
-     * the new activity without first killing this one.  This is also a good
-     * place to do things like stop animations and other things that consume a
-     * noticeable amount of CPU in order to make the switch to the next activity
-     * as fast as possible, or to close resources that are exclusive access
-     * such as the camera.
-     * <p/>
-     * <p>In situations where the system needs more memory it may kill paused
-     * processes to reclaim resources.  Because of this, you should be sure
-     * that all of your state is saved by the time you return from
-     * this function.  In general {@link #onSaveInstanceState} is used to save
-     * per-instance state in the activity and this method is used to store
-     * global persistent data (in content providers, files, etc.)
-     * <p/>
-     * <p>After receiving this call you will usually receive a following call
-     * to {@link #onStop} (after the next activity has been resumed and
-     * displayed), however in some cases there will be a direct call back to
-     * {@link #onResume} without going through the stopped state.
-     * <p/>
-     * <p><em>Derived classes must call through to the super class's
-     * implementation of this method.  If they do not, an exception will be
-     * thrown.</em></p>
-     *
-     * @see #onResume
-     * @see #onSaveInstanceState
-     * @see #onStop
-     */
     @Override
     protected void onPause() {
         super.onPause();
         if(mToast != null) {
-                        mToast.cancel();
+            mToast.cancel();
         }
     }
 
     /**
      * this method is called when the system is disconnected.
      */
-    @Override
-    public void systemDisconnected() {
-
-        //change display back to the original screen
-        this.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if(null == mToast)
-                {
-                    mToast = Toast.makeText(getApplicationContext(), "Connection Lost", Toast.LENGTH_LONG);
-                }
-                mToast.setDuration(Toast.LENGTH_LONG);
-                mToast.setText("Connection Lost");
-
-                mToast.show();
-//                Toast.makeText(getApplicationContext(),"Connection Lost", Toast.LENGTH_LONG).show();
-            }
-        });
-    }
-
-    /**
-     * This is called after system is connected
-     *
-     * @param dev the System device that is connected.
-     */
-    @Override
-    public void systemDeviceConnected(final SystemDevice dev) {
-
-        //if successful the dev won't be null
-        //system is connected used this in the rest of the system.
-
-        if(dev == null || dev.getInfo().getDevId() == DeviceId.NONE)
-        {
-            Toast.makeText(this,"Connection Failed",Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        this.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if(null == mToast)
-                {
-                    mToast = Toast.makeText(getApplicationContext(), "Connected to "+ dev.getInfo().getDevId().getDescription()+ ":" + dev.getSysDevInfo().getConsoleName(), Toast.LENGTH_LONG);
-                }
-//                Toast.makeText(getApplicationContext(),"Connected to "+ dev.getInfo().getDevId().getDescription()+ ":" + dev.getConsoleName() , Toast.LENGTH_LONG).show();
-                mToast.setText("Connected to "+ dev.getInfo().getDevId().getDescription()+ ":" + dev.getSysDevInfo().getConsoleName() );
-                mToast.setDuration(Toast.LENGTH_LONG);
-                mToast.show();
-            }
-        });
-
-        //check if treadmill or incline trainer
-        if(dev.getInfo().getDevId() == DeviceId.INCLINE_TRAINER || dev.getInfo().getDevId() == DeviceId.TREADMILL)
-        {
-            if(dev.getInfo().getSupportedBitfields().contains(BitFieldId.WORKOUT_MODE)) {
-
-                try {
-
-                    this.mSystemStopCmd = new FecpCommand(dev.getCommand(CommandId.WRITE_READ_DATA));
-                    ((WriteReadDataCmd)this.mSystemStopCmd.getCommand()).addWriteData(BitFieldId.WORKOUT_MODE, ModeId.PAUSE);
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-    /**
-     * This will be called when the communication layer is connected. this is a lower level of
-     * communication notification.
-     */
-    @Override
-    public void systemCommunicationConnected() {
-        //nothing to do, implemented in fitpro layer
-        this.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (null == mToast) {
-                    mToast = Toast.makeText(getApplicationContext(), "Connected ", Toast.LENGTH_LONG);
-                }
-//                Toast.makeText(getApplicationContext(),"Connected to "+ dev.getInfo().getDevId().getDescription()+ ":" + dev.getConsoleName() , Toast.LENGTH_LONG).show();
-                mToast.setText("Connected ");
-                mToast.setDuration(Toast.LENGTH_LONG);
-                mToast.show();
-            }
-        });
-    }
-
-    @Override
-    public void systemSecurityValidated() {
-
-//        //system is validated you may control the system
-//        this.runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                if (null == mToast) {
-//                    mToast = Toast.makeText(getApplicationContext(), "System is Validated", Toast.LENGTH_LONG);
-//                }
-////                Toast.makeText(getApplicationContext(),"Connected to "+ dev.getInfo().getDevId().getDescription()+ ":" + dev.getConsoleName() , Toast.LENGTH_LONG).show();
-//                mToast.setText("System is Validated");
-//                mToast.setDuration(Toast.LENGTH_LONG);
-//                mToast.show();
-//            }
-//        });
-//        this.mSFitSysCntrl.getInitialSysItems(this, 0, 0);
-    }
 
 }

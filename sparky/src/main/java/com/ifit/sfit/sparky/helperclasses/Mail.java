@@ -1,4 +1,4 @@
-package com.ifit.sfit.sparky;
+package com.ifit.sfit.sparky.helperclasses;
 
 /**
  * Created by jc.almonte on 7/10/14.
