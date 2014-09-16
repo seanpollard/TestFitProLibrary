@@ -48,27 +48,6 @@ public class InclineTest extends BaseTest implements View.OnClickListener, Adapt
     void runTest() {
 
         final TestIncline t = new TestIncline(ManageTests.fecpController, (BaseTest) context, ManageTests.mSFitSysCntrl);
-//        final ScrollView scrollview = ((ScrollView) findViewById(R.id.scrollView));
-//
-//        t.setUpdateResultViewListener(new TestIncline.UpdateResultView() {
-//            @Override
-//            public void onUpdate(final String msg) {
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        testingView.setText(Html.fromHtml(msg));
-//                        scrollview.fullScroll(ScrollView.FOCUS_DOWN);
-////                        scrollview.post(new Runnable() {
-////                            @Override
-////                            public void run() {
-////                                scrollview.fullScroll(ScrollView.FOCUS_DOWN);
-////                            }
-////                        });
-//                    }
-//                });
-//
-//            }
-//        });
 
         Thread th = new Thread(new Runnable() {
             @Override

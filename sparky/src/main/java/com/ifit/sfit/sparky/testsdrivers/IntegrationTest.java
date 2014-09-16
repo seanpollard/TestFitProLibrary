@@ -48,27 +48,6 @@ import com.ifit.sfit.sparky.tests.TestIntegration;
      void runTest() {
 
          final TestIntegration t = new TestIntegration(ManageTests.fecpController, (BaseTest) context, ManageTests.mSFitSysCntrl);
-//         final ScrollView scrollview = ((ScrollView) findViewById(R.id.scrollView));
-//         t.setUpdateResultViewListener(new TestIntegration.UpdateResultView() {
-//             @Override
-//             public void onUpdate(final String msg) {
-//                 runOnUiThread(new Runnable() {
-//                     @Override
-//                     public void run() {
-//                         testingView.setText(Html.fromHtml(msg));
-//                         scrollview.fullScroll(ScrollView.FOCUS_DOWN);
-////                         scrollview.post(new Runnable() {
-////                             @Override
-////                             public void run() {
-////                                 scrollview.fullScroll(ScrollView.FOCUS_DOWN);
-////                             }
-////                         });
-//                     }
-//                 });
-//
-//
-//             }
-//         });
 
          Thread th = new Thread(new Runnable() {
              @Override

@@ -12,14 +12,6 @@ import com.ifit.sfit.sparky.testsdrivers.BaseTest;
  * Common features shared among all test classes
  */
 public abstract class CommonFeatures extends Activity {
-//    protected UpdateResultView listener;
-//    protected String res = "";
-//    public void setUpdateResultViewListener(UpdateResultView listener) {
-//        this.listener = listener;
-//    }
-//    public interface UpdateResultView {
-//        public void onUpdate(String msg);
-//    }
 
     /**
      * Takes care of displaying on screen the test results sent through "msg" param
@@ -27,8 +19,7 @@ public abstract class CommonFeatures extends Activity {
      */
 
     public void appendMessage(final String msg) {
-        //res += msg;
-        //listener.onUpdate(msg);
+
         runOnUiThread(new Runnable() {
             @Override
             public void run() {

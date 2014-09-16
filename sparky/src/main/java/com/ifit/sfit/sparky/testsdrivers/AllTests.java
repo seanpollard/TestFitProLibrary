@@ -76,85 +76,6 @@ public class AllTests extends BaseTest implements View.OnClickListener, AdapterV
          g = new TestIncline(ManageTests.fecpController, (BaseTest) context, ManageTests.mSFitSysCntrl);
         final ScrollView scrollview = ((ScrollView) findViewById(R.id.scrollView));
 
-//        b.setUpdateResultViewListener(new TestBitfields.UpdateResultView() {
-//            @Override
-//            public void onUpdate(final String msg) {
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        testingView.setText(Html.fromHtml(msg));
-//                        scrollview.fullScroll(ScrollView.FOCUS_DOWN);
-////                        scrollview.post(new Runnable() {
-////                            @Override
-////                            public void run() {
-////                                scrollview.fullScroll(ScrollView.FOCUS_DOWN);
-////                            }
-////                        });
-//                    }
-//                });
-//            }
-//        });
-//
-//
-//        m.setUpdateResultViewListener(new TestMotor.UpdateResultView() {
-//            @Override
-//            public void onUpdate(final String msg) {
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        testingView.setText(Html.fromHtml(msg));
-//                        scrollview.fullScroll(ScrollView.FOCUS_DOWN);
-////                        scrollview.post(new Runnable() {
-////                            @Override
-////                            public void run() {
-////                                scrollview.fullScroll(ScrollView.FOCUS_DOWN);
-////                            }
-////                        });
-//                    }
-//                });
-//
-//            }
-//        });
-//
-//        i.setUpdateResultViewListener(new TestIntegration.UpdateResultView() {
-//            @Override
-//            public void onUpdate(final String msg) {
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        testingView.setText(Html.fromHtml(msg));
-//                        scrollview.fullScroll(ScrollView.FOCUS_DOWN);
-////                        scrollview.post(new Runnable() {
-////                            @Override
-////                            public void run() {
-////                                scrollview.fullScroll(ScrollView.FOCUS_DOWN);
-////                            }
-////                        });
-//                    }
-//                });
-//
-//            }
-//        });
-//
-//        g.setUpdateResultViewListener(new TestIncline.UpdateResultView() {
-//            @Override
-//            public void onUpdate(final String msg) {
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        testingView.setText(Html.fromHtml(msg));
-//                        scrollview.fullScroll(ScrollView.FOCUS_DOWN);
-////                        scrollview.post(new Runnable() {
-////                            @Override
-////                            public void run() {
-////                                scrollview.fullScroll(ScrollView.FOCUS_DOWN);
-////                            }
-////                        });
-//                    }
-//                });
-//
-//            }
-//        });
         Thread th = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -215,7 +136,7 @@ public class AllTests extends BaseTest implements View.OnClickListener, AdapterV
     }
 
     /**
-     * Indicates test to run based item selected
+     * Indicates test to run based on item selected
      * @param parent the parent adapter view
      * @param view current view
      * @param pos position of selected item

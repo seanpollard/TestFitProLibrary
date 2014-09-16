@@ -47,27 +47,6 @@ public class MotorTest extends BaseTest implements AdapterView.OnItemSelectedLis
     void runTest() {
 
         final TestMotor t = new TestMotor(ManageTests.fecpController, (BaseTest) context, ManageTests.mSFitSysCntrl);
-//        final ScrollView scrollview = ((ScrollView) findViewById(R.id.scrollView));
-//
-//        t.setUpdateResultViewListener(new TestMotor.UpdateResultView() {
-//            @Override
-//            public void onUpdate(final String msg) {
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        testingView.append(Html.fromHtml(msg));
-//                        scrollview.fullScroll(ScrollView.FOCUS_DOWN);
-////                        scrollview.post(new Runnable() {
-////                            @Override
-////                            public void run() {
-////                                scrollview.fullScroll(ScrollView.FOCUS_DOWN);
-////                            }
-////                        });
-//                    }
-//                });
-//
-//            }
-//        });
 
         Thread th = new Thread(new Runnable() {
             @Override

@@ -238,10 +238,11 @@ public class TestMotor extends CommonFeatures {
         //read distance value
         //verify distance is 250 meters
 
-        double distance = 0;
-        double setSpeed = 10;// speed to use in the test in KPH
-        double expectedDistance = 250; //
-        long time = 90; // time to run test in seconds (1.5 mins in this case)
+        double distance = 0;//resulting distance
+        double [] setSpeed={10,5};// speeds to use in the test in KPH
+        double expectedDistance;// calcualted expected distance
+        BigDecimal expectedDistanceRounded;
+        long [] time ={90,30}; // time to run test in seconds
         double timeOfTest = 0; //how long test took in seconds
         long startTestTimer = System.nanoTime();
 
@@ -249,12 +250,20 @@ public class TestMotor extends CommonFeatures {
 
         appendMessage("<br>----------------------------DISTANCE TEST---------------------------<br><br>");
         appendMessage(Calendar.getInstance().getTime() + "<br><br>");
-        appendMessage("Test runs for " +time+ " seconds at a speed of "+setSpeed+" KPH. Expected distance is: "+expectedDistance+" meters\n");
+
+        for(int i = 0; i<setSpeed.length;i++)
+        {
+
+        expectedDistance = setSpeed[i]*0.277778*time[i]; //D = S*T, S in m/s, and T in seconds
+        expectedDistanceRounded = new BigDecimal(expectedDistance);
+        expectedDistanceRounded = expectedDistanceRounded.setScale(0, BigDecimal.ROUND_UP);
+
+        appendMessage("Test runs for " +time[i]+ " seconds at a speed of "+setSpeed[i]+" KPH. Expected distance is: "+expectedDistanceRounded+" meters\n");
         appendMessage("Current Mode is: " + hCmd.getMode() + "<br>");
 
         results+="\n----------------------------DISTANCE TEST---------------------------\n\n";
         results+=Calendar.getInstance().getTime() + "\n\n";
-        results+="Test runs for " +time+ " seconds at a speed of "+setSpeed+" KPH. Expected distance is: "+expectedDistance+" meters\n";
+        results+="Test runs for " +time+ " seconds at a speed of "+setSpeed[i]+" KPH. Expected distance is: "+expectedDistance+" meters\n";
         results+="Current Mode is: " + hCmd.getMode() + "\n";
 
         //set mode to running
@@ -269,20 +278,20 @@ public class TestMotor extends CommonFeatures {
         results+="Current Mode is: " + hCmd.getMode() + "\n";
 
         //Set the motor speed to 10 KPH
-        ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(BitFieldId.KPH, setSpeed);
+        ((WriteReadDataCmd) wrCmd.getCommand()).addWriteData(BitFieldId.KPH, setSpeed[i]);
         mSFitSysCntrl.getFitProCntrl().addCmd(wrCmd);
         Thread.sleep(1000);
 
-        appendMessage("The status of setting speed to "+setSpeed+" is: " + wrCmd.getCommand().getStatus().getStsId().getDescription() + "<br>");
+        appendMessage("The status of setting speed to "+setSpeed[i]+" is: " + wrCmd.getCommand().getStatus().getStsId().getDescription() + "<br>");
         appendMessage("Current Mode is: " + hCmd.getMode() + "<br>");
-        appendMessage("Now wait "+time+" seconds...<br>");
+        appendMessage("Now wait "+time[i]+" seconds...<br>");
 
-        results+="The status of setting speed to "+setSpeed+" is: " + wrCmd.getCommand().getStatus().getStsId().getDescription() + "\n";
+        results+="The status of setting speed to "+setSpeed[i]+" is: " + wrCmd.getCommand().getStatus().getStsId().getDescription() + "\n";
         results+="Current Mode is: " + hCmd.getMode() + "\n";
-        results+="Now wait "+time+" seconds...\n";
+        results+="Now wait "+time[i]+" seconds...\n";
 
         //wait time seconds
-        Thread.sleep(time*1000);
+        Thread.sleep(time[i]*1000);
 
         distance = hCmd.getDistance();
         appendMessage("The distance was " + distance + "<br>");
@@ -322,6 +331,8 @@ public class TestMotor extends CommonFeatures {
             appendMessage("<br><font color = #00ff00>* PASS *</font><br><br>The distance should be " + expectedDistance + "  meters and is " + distance + " meters which is within 5%<br><br>");
 
             results+="\n* PASS *\n\nThe distance should be "+expectedDistance+"  meters and is " + distance + " meters which is within 5%\n\n";
+
+        }
 
         }
         //Remove all commands from the device that have a command ID = "WRITE_READ_DATA"
@@ -790,7 +801,7 @@ public class TestMotor extends CommonFeatures {
         BigDecimal expectedCalories;
 
         double [] incline ={0,5,10,15};      // Incline to be used for the test (in % grade)
-                                                      //-2,0,5,10,15 % grade respectively
+                                                      //0,5,10,15 % grade respectively
 
         double [] weight= {115,185,400}; //weight to be used for the test (in lbs)
                                                 //52.16,83.91 and 181.44 kgs respectively

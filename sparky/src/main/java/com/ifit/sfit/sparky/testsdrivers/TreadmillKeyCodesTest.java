@@ -46,27 +46,6 @@ public class TreadmillKeyCodesTest  extends BaseTest implements AdapterView.OnIt
     void runTest() {
 
         final TestTreadmillKeyCodes t = new TestTreadmillKeyCodes(fecpController, (BaseTest) context, this.mSFitSysCntrl);
-//        final ScrollView scrollview = ((ScrollView) findViewById(R.id.scrollView));
-//
-//        t.setUpdateResultViewListener(new TestMotor.UpdateResultView() {
-//            @Override
-//            public void onUpdate(final String msg) {
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        testingView.setText(Html.fromHtml(msg));
-//                        scrollview.fullScroll(ScrollView.FOCUS_DOWN);
-////                        scrollview.post(new Runnable() {
-////                            @Override
-////                            public void run() {
-////                                scrollview.fullScroll(ScrollView.FOCUS_DOWN);
-////                            }
-////                        });
-//                    }
-//                });
-//
-//            }
-//        });
 
         Thread th = new Thread(new Runnable() {
             @Override
